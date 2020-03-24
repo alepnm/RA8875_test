@@ -32,7 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
- 
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -47,7 +47,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
-
+extern void TP_Clear_IRQ(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -62,7 +62,7 @@
 /* USER CODE END EV */
 
 /******************************************************************************/
-/*           Cortex-M4 Processor Interruption and Exception Handlers          */ 
+/*           Cortex-M4 Processor Interruption and Exception Handlers          */
 /******************************************************************************/
 /**
   * @brief This function handles Non maskable interrupt.
@@ -184,6 +184,7 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
   /* USER CODE END SysTick_IRQn 0 */
+  HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */
@@ -195,6 +196,26 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32f4xx.s).                    */
 /******************************************************************************/
+
+/**
+  * @brief This function handles EXTI line[9:5] interrupts.
+  */
+void EXTI9_5_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
+
+  /* USER CODE END EXTI9_5_IRQn 0 */
+  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_8) != RESET)
+  {
+    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_8);
+    /* USER CODE BEGIN LL_EXTI_LINE_8 */
+    TP_Clear_IRQ();
+    /* USER CODE END LL_EXTI_LINE_8 */
+  }
+  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
+
+  /* USER CODE END EXTI9_5_IRQn 1 */
+}
 
 /**
   * @brief This function handles USART1 global interrupt.

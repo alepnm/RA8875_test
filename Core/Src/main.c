@@ -20,11 +20,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm3210e_lcd.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "ra8875.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,7 +57,8 @@ static void MX_FSMC_Init(void);
 static void MX_TIM11_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
-
+extern void LCD_ClearTP_IRQ(void);
+extern uint8_t TP_Check(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -89,7 +89,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  SysTick_Config(SystemCoreClock/1000);
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -101,17 +101,17 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
-  STM3210E_LCD_Init();
-
+  LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_13);  // A18 - pagal default aukstas lygis
+  LL_GPIO_ResetOutputPin(GPIOD, LL_GPIO_PIN_4); // RD - pagal default zemas lygis
 
   LL_TIM_EnableAllOutputs(TIM11);
   LL_TIM_CC_EnableChannel(TIM11, LL_TIM_CHANNEL_CH1);
   LL_TIM_EnableCounter(TIM11);
-  LL_TIM_OC_SetCompareCH1(TIM11, 80);
+  LL_TIM_OC_SetCompareCH1(TIM11, 0);
 
 
-  LCD_Clear(BLUE);
 
+  TFTM050_Init();
 
   /* USER CODE END 2 */
 
@@ -119,7 +119,22 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+    LCD_Clear(GRAY);
+    LL_mDelay(1000);
+    LCD_Clear(BLUE);
+    LL_mDelay(1000);
+    LCD_Clear(MAGENTA);
+    LL_mDelay(1000);
+
+
+    //if(TP_Check()) LCD_Clear(RED);
+    //else LCD_Clear(BLACK);
+
+    //LL_mDelay(100);
+
     /* USER CODE END WHILE */
+
 
     /* USER CODE BEGIN 3 */
   }
@@ -398,6 +413,7 @@ static void MX_USART1_UART_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+  LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
@@ -453,6 +469,26 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(LCD_RST_GPIO_Port, &GPIO_InitStruct);
 
+  /**/
+  LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE8);
+
+  /**/
+  EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_8;
+  EXTI_InitStruct.LineCommand = ENABLE;
+  EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+  EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING;
+  LL_EXTI_Init(&EXTI_InitStruct);
+
+  /**/
+  LL_GPIO_SetPinPull(LCD_INT_GPIO_Port, LCD_INT_Pin, LL_GPIO_PULL_UP);
+
+  /**/
+  LL_GPIO_SetPinMode(LCD_INT_GPIO_Port, LCD_INT_Pin, LL_GPIO_MODE_INPUT);
+
+  /* EXTI interrupt init*/
+  NVIC_SetPriority(EXTI9_5_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+  NVIC_EnableIRQ(EXTI9_5_IRQn);
+
 }
 
 /* FSMC initialization function */
@@ -464,7 +500,6 @@ static void MX_FSMC_Init(void)
   /* USER CODE END FSMC_Init 0 */
 
   FSMC_NORSRAM_TimingTypeDef Timing = {0};
-  FSMC_NORSRAM_TimingTypeDef ExtTiming = {0};
 
   /* USER CODE BEGIN FSMC_Init 1 */
 
@@ -485,28 +520,21 @@ static void MX_FSMC_Init(void)
   hsram1.Init.WaitSignalActive = FSMC_WAIT_TIMING_BEFORE_WS;
   hsram1.Init.WriteOperation = FSMC_WRITE_OPERATION_ENABLE;
   hsram1.Init.WaitSignal = FSMC_WAIT_SIGNAL_DISABLE;
-  hsram1.Init.ExtendedMode = FSMC_EXTENDED_MODE_ENABLE;
+  hsram1.Init.ExtendedMode = FSMC_EXTENDED_MODE_DISABLE;
   hsram1.Init.AsynchronousWait = FSMC_ASYNCHRONOUS_WAIT_DISABLE;
   hsram1.Init.WriteBurst = FSMC_WRITE_BURST_DISABLE;
   hsram1.Init.PageSize = FSMC_PAGE_SIZE_NONE;
   /* Timing */
-  Timing.AddressSetupTime = 15;
+  Timing.AddressSetupTime = 6;
   Timing.AddressHoldTime = 15;
-  Timing.DataSetupTime = 255;
-  Timing.BusTurnAroundDuration = 15;
+  Timing.DataSetupTime = 6;
+  Timing.BusTurnAroundDuration = 0;
   Timing.CLKDivision = 16;
   Timing.DataLatency = 17;
   Timing.AccessMode = FSMC_ACCESS_MODE_A;
   /* ExtTiming */
-  ExtTiming.AddressSetupTime = 15;
-  ExtTiming.AddressHoldTime = 15;
-  ExtTiming.DataSetupTime = 255;
-  ExtTiming.BusTurnAroundDuration = 15;
-  ExtTiming.CLKDivision = 16;
-  ExtTiming.DataLatency = 17;
-  ExtTiming.AccessMode = FSMC_ACCESS_MODE_A;
 
-  if (HAL_SRAM_Init(&hsram1, &Timing, &ExtTiming) != HAL_OK)
+  if (HAL_SRAM_Init(&hsram1, &Timing, NULL) != HAL_OK)
   {
     Error_Handler( );
   }

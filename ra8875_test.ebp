@@ -85,16 +85,11 @@
 		<Unit filename="Core\Inc\stm32_assert.h" />
 		<Unit filename="Core\Inc\stm32f4xx_hal_conf.h" />
 		<Unit filename="Core\Inc\stm32f4xx_it.h" />
-		<Unit filename="Core\lib\ra8875\fonts.h" />
-		<Unit filename="Core\lib\ra8875\ra8875.c">
+		<Unit filename="Core\lib\TFTM050\fonts.h" />
+		<Unit filename="Core\lib\TFTM050\ra8875.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="Core\lib\ra8875\ra8875.h" />
-		<Unit filename="Core\lib\ra8875\ra8875_registers.h" />
-		<Unit filename="Core\lib\ra8875\stm3210e_lcd.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="Core\lib\ra8875\stm3210e_lcd.h" />
+		<Unit filename="Core\lib\TFTM050\ra8875.h" />
 		<Unit filename="Core\Src\main.c">
 			<Option compilerVar="CC" />
 		</Unit>

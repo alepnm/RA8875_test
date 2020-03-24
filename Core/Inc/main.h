@@ -93,6 +93,9 @@ void Error_Handler(void);
 #define LCD_RST_GPIO_Port GPIOC
 #define LCD_WAIT_Pin LL_GPIO_PIN_9
 #define LCD_WAIT_GPIO_Port GPIOC
+#define LCD_INT_Pin LL_GPIO_PIN_8
+#define LCD_INT_GPIO_Port GPIOA
+#define LCD_INT_EXTI_IRQn EXTI9_5_IRQn
 #define LCD_BACKLIGHT_Pin LL_GPIO_PIN_9
 #define LCD_BACKLIGHT_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
