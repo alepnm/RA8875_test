@@ -73,7 +73,7 @@ extern uint8_t TP_Check(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  uint32_t delay = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -113,28 +113,38 @@ int main(void)
 
   TFTM050_Init();
 
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  //LCD_DisplayStringLine(16, "QWERTYU");
+  LCD_DrawLine(100, 100, 50, 1);
+
   while (1)
   {
 
-    LCD_Clear(GRAY);
-    LL_mDelay(1000);
-    LCD_Clear(BLUE);
-    LL_mDelay(1000);
-    LCD_Clear(MAGENTA);
-    LL_mDelay(1000);
+    if(delay < timestamp){
+
+        delay = timestamp + 10;
+
+        if( TP_Check() ){
+
+            sprintf(TP_Data.strXPos, "%03d", TP_Data.XPos);
+            LCD_PutString(52, 0, TP_Data.strXPos);
+
+            sprintf(TP_Data.strYPos, "%03d", TP_Data.YPos);
+            LCD_PutString(56, 0, TP_Data.strYPos);
+        }
 
 
-    //if(TP_Check()) LCD_Clear(RED);
-    //else LCD_Clear(BLACK);
 
-    //LL_mDelay(100);
+
+    }
+
 
     /* USER CODE END WHILE */
-
 
     /* USER CODE BEGIN 3 */
   }
@@ -161,7 +171,7 @@ void SystemClock_Config(void)
   {
 
   }
-  LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_4, 160, LL_RCC_PLLP_DIV_2);
+  LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_4, 168, LL_RCC_PLLP_DIV_2);
   LL_RCC_PLL_Enable();
 
    /* Wait till PLL is ready */
@@ -179,7 +189,7 @@ void SystemClock_Config(void)
   {
 
   }
-  LL_SetSystemCoreClock(160000000);
+  LL_SetSystemCoreClock(168000000);
 
    /* Update the time base */
   if (HAL_InitTick (TICK_INT_PRIORITY) != HAL_OK)
@@ -526,11 +536,11 @@ static void MX_FSMC_Init(void)
   hsram1.Init.PageSize = FSMC_PAGE_SIZE_NONE;
   /* Timing */
   Timing.AddressSetupTime = 6;
-  Timing.AddressHoldTime = 15;
+  Timing.AddressHoldTime = 6;
   Timing.DataSetupTime = 6;
   Timing.BusTurnAroundDuration = 0;
-  Timing.CLKDivision = 16;
-  Timing.DataLatency = 17;
+  Timing.CLKDivision = 1;
+  Timing.DataLatency = 2;
   Timing.AccessMode = FSMC_ACCESS_MODE_A;
   /* ExtTiming */
 

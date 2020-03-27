@@ -24,7 +24,49 @@
 #define __STM3210E_LCD_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx.h"
+#include "main.h"
+
+#define RA8875_RST_LOW()    LL_GPIO_ResetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin)
+#define RA8875_RST_HIGH()   LL_GPIO_SetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin)
+#define RA8875_WAIT()       while(!LL_GPIO_IsInputPinSet(LCD_WAIT_GPIO_Port, LCD_WAIT_Pin))
+#define RA8875_GPOX(state)  FSMC_WriteReg(0xC7, state);
+
+
+#define Bank1_SRAM1_ADDR  ((uint32_t)0x60000000)  // NE1
+#define Bank1_SRAM2_ADDR  ((uint32_t)0x64000000)  // NE2
+#define Bank1_SRAM3_ADDR  ((uint32_t)0x68000000)  // NE3
+#define Bank1_SRAM4_ADDR  ((uint32_t)0x6C000000)  // NE4
+
+typedef struct {
+    __IO uint16_t LCD_REG;
+    __IO uint16_t LCD_RAM;
+}LCD_TypeDef;
+
+/* LCD is connected to the FSMC_Bank1_NOR/SRAM1 and NE1 is used as ship select signal */
+#define LCD_BASE    ((uint32_t)(Bank1_SRAM1_ADDR | 0x000FFFFE))
+#define LCD         ((LCD_TypeDef *) LCD_BASE)
+
+
+
+struct _lcd{
+
+    uint8_t  IsInitilized;
+    __IO uint16_t BackColor;
+    __IO uint16_t FontColor;
+    uint8_t  Backlight;
+
+    struct{
+        uint8_t Type;
+        uint8_t Width;
+        uint8_t Height;
+    }Font;
+
+    uint8_t Columns;
+    uint8_t Lines;
+};
+
+extern struct _lcd Display;
+
 
 /* LCD color */
 #define WHITE          0xFFFF
@@ -38,51 +80,104 @@
 #define CYAN           0x7FFF
 #define YELLOW         0xFFE0
 
-#define Line0          0
-#define Line1          24
-#define Line2          48
-#define Line3          72
-#define Line4          96
-#define Line5          120
-#define Line6          144
-#define Line7          168
-#define Line8          192
-#define Line9          216
+#define LCD_HORISONTAL 0x00
+#define LCD_VERTICAL   0x01
+#define LCD_ROTATE     LCD_HORIZONTAL
 
-#define Horizontal     0x00
-#define Vertical       0x01
 
 /* Exported macro ------------------------------------------------------------*/
+
+#define FSMC_WAIT_BUSY() while((FSMC_ReadStatus()&0x80) == 0x80)
+
+
+/*  */
+static inline uint16_t FSMC_ReadStatus(void){
+
+    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_OUTPUT);
+    //LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_4, LL_GPIO_MODE_OUTPUT);
+
+    uint16_t status = LCD->LCD_RAM;
+
+    //LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_4, LL_GPIO_MODE_ALTERNATE);
+    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_ALTERNATE);
+
+    return status;
+}
+
+
+
+/*  */
+static inline void FSMC_CmdWrite( uint8_t cmd){
+
+    LCD->LCD_REG = cmd;
+}
+
+/*  */
+static inline void FSMC_WriteRAM_Prepare(void){
+
+    LCD->LCD_REG = 0x02;
+}
+
+/*  */
+static inline void FSMC_DataWrite(uint16_t data){
+
+    LCD->LCD_RAM = data;
+}
+
+/*  */
+static inline uint16_t FSMC_DataRead(void){
+
+    return LCD->LCD_RAM;
+}
+
+/*  */
+static inline void FSMC_WriteReg(uint8_t reg, uint8_t val) {
+
+    LCD->LCD_REG = reg;
+    LCD->LCD_RAM = val;
+}
+
+/*  */
+static inline uint16_t FSMC_ReadReg(uint8_t reg) {
+
+    LCD->LCD_REG = reg;
+    return LCD->LCD_RAM;
+}
+
+/*  */
+static inline uint16_t FSMC_ReadRAM(void) {
+
+    LCD->LCD_REG = 0x02;
+    return LCD->LCD_RAM;
+}
+
+
+
 /* Exported functions ------------------------------------------------------- */
 void TFTM050_Init(void);
 
 
 
 
-void LCD_DisplayOn(void);
-void LCD_DisplayOff(void);
-void LCD_CGROMFont(uint8_t font);
-void LCD_ExtROMFont(uint8_t font);
+void LCD_CGROMFont(void);
+void LCD_ExtROMFont(void);
 void LCD_EnterTextMode(void);
 void LCD_ExitTextMode(void);
 void LCD_SetTextWriteCursorAbs(uint16_t x, uint16_t y);
-void LCD_PrintString(uint8_t col, uint8_t line, const char* str);
 void LCD_SetWriteCursor(uint16_t x, uint16_t y);
 void LCD_SetReadCursor(uint16_t x, uint16_t y);
-void LCD_SetPwm1(int pwm_duty_cycle);
-void LCD_SetPwm2(int pwm_duty_cycle);
+void LCD_SetBacklight(void); //ok
+void RA8875_SetPwm2(int pwm_duty_cycle);
 
 
-void LCD_Clear(__IO uint16_t color);
-void LCD_SetForeColor(__IO uint16_t color);
-void LCD_SetBackColor(__IO uint16_t color);
-void LCD_WriteForeColor(uint8_t r, uint8_t g, uint8_t b);
-void LCD_WriteBackColor(uint8_t r, uint8_t g, uint8_t b);
+void LCD_Display_OnOff(uint8_t state);
+void LCD_Reset(void);
+
+void LCD_Clear(void); //ok
+void LCD_SetForeColor(uint16_t color); //ok
+void LCD_SetBackColor(uint16_t color); //ok
 void LCD_SetCursor(uint8_t xpos, uint16_t ypos);
-void LCD_PutString(uint16_t posx, uint16_t posy, const char* str);
-
-
-
+void LCD_PutString(uint8_t col, uint8_t line, const char* str);
 
 
 
