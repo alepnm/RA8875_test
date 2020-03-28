@@ -23,8 +23,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <math.h>
 #include "ra8875.h"
-#include "GUI.h"
 #include "WindowDLG.h"
 /* USER CODE END Includes */
 
@@ -117,7 +117,7 @@ int main(void)
   //TFTM050_Init();
   GUI_Init();
 
-  //GUI_DispString("Hello world!");
+  GUI_Clear();
 
   CreateWindow();
   /* USER CODE END 2 */

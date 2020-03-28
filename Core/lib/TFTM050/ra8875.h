@@ -122,11 +122,13 @@ static inline void FSMC_WriteRAM_Prepare(void){
 static inline void FSMC_DataWrite(uint16_t data){
 
     LCD->LCD_RAM = data;
+    FSMC_WAIT_BUSY();
 }
 
 /*  */
 static inline uint16_t FSMC_DataRead(void){
 
+    FSMC_WAIT_BUSY();
     return LCD->LCD_RAM;
 }
 
@@ -148,6 +150,7 @@ static inline uint16_t FSMC_ReadReg(uint8_t reg) {
 static inline uint16_t FSMC_ReadRAM(void) {
 
     LCD->LCD_REG = 0x02;
+    FSMC_WAIT_BUSY();
     return LCD->LCD_RAM;
 }
 

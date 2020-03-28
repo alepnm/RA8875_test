@@ -105,7 +105,7 @@ Purpose     : Display controller configuration (single layer)
 */
 static void LcdWriteReg(U16 Data) {
   // ... TBD by user
-  LCD->LCD_REG = Data;
+  FSMC_CmdWrite( Data);
 }
 
 /********************************************************************
@@ -117,7 +117,7 @@ static void LcdWriteReg(U16 Data) {
 */
 static void LcdWriteData(U16 Data) {
   // ... TBD by user
-  LCD->LCD_RAM = Data;
+  FSMC_DataWrite(Data);
 }
 
 /********************************************************************
@@ -132,7 +132,7 @@ static void LcdWriteDataMultiple(U16 * pData, int NumItems)
     while (NumItems--)
     {
         // ... TBD by user
-        LCD->LCD_RAM = *pData;
+        FSMC_DataWrite(*pData);
         pData++;
     }
 }
@@ -149,7 +149,7 @@ static void LcdReadDataMultiple(U16 * pData, int NumItems)
     while (NumItems--)
     {
         // ... TBD by user
-        *pData = LCD->LCD_RAM;
+        *pData = FSMC_DataRead();
         pData++;
     }
 }
@@ -157,12 +157,13 @@ static void LcdReadDataMultiple(U16 * pData, int NumItems)
 
 
 static U16 LcdReadReg(U16 Data) {
-    LCD->LCD_REG = Data;
-    return LCD->LCD_RAM;
+
+    return FSMC_ReadReg(Data);
 }
 
 static U16 LcdReadData(void) {
-    return LCD->LCD_RAM;
+
+    return FSMC_DataRead();
 }
 
 /*********************************************************************
@@ -198,10 +199,13 @@ void LCD_X_Config(void) {
   //
   //Config.Orientation = GUI_SWAP_XY | GUI_MIRROR_Y;
 #warning RegEntryMode!!!
-  //Config.RegEntryMode = 0x02;
+  //Config.RegEntryMode = 0x6319;
   GUIDRV_FlexColor_Config(pDevice, &Config);
   //
-  // Set controller and operation mode
+  // Set controller and operation mode:
+  //
+  // A0 - RS low (data)
+  // A1 - RS high(command)
   //
   PortAPI.pfWrite16_A0  = LcdWriteData;
   PortAPI.pfWrite16_A1  = LcdWriteReg;
