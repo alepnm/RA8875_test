@@ -26,11 +26,16 @@ Full source code is available at: www.segger.com
 
 We appreciate your understanding and fairness.
 ----------------------------------------------------------------------
+File        : GUIDRV_Template.h
+Purpose     : Interface definition for GUIDRV_Template driver
+---------------------------END-OF-HEADER------------------------------
+*/
 
+/**
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license SLA0044,
@@ -39,65 +44,25 @@ We appreciate your understanding and fairness.
   *                      http://www.st.com/SLA0044
   *
   ******************************************************************************
-----------------------------------------------------------------------
-File        : LCD_Private.h
-Purpose     : To be used only by the display drivers
-----------------------------------------------------------------------
-*/
+  */
 
-#ifndef LCD_Private_H
-#define LCD_Private_H
-
-#include "LCDConf.h"
-#include "LCD_Protected.h"
-#include "GUI.h"
+#ifndef GUIDRV_TEMPLATE_H
+#define GUIDRV_TEMPLATE_H
 
 /*********************************************************************
 *
-*       API functions
+*       Display drivers
 */
-extern const struct tLCDDEV_APIList_struct * /* const */ LCD_aAPI[GUI_NUM_LAYERS];
+//
+// Addresses
+//
+extern const GUI_DEVICE_API GUIDRV_Template_API;
 
-/*********************************************************************
-*
-*       Support for Segment/COMLUTs
-*/
-#define LCD_TYPE_SEGTRANS U16
-#define LCD_TYPE_COMTRANS U16
+//
+// Macro to be used in configuration files
+//
+#define GUIDRV_TEMPLATE            &GUIDRV_Template_API
 
-#ifdef LCD_LUT_COM
-  extern LCD_TYPE_COMTRANS LCD__aLine2Com0[LCD_YSIZE];
 #endif
-
-#ifdef LCD_LUT_SEG
-  extern LCD_TYPE_COMTRANS LCD__aCol2Seg0[LCD_XSIZE];
-#endif
-
-/*********************************************************************
-*
-*       Support for multiple display controllers
-*/
-#define DECLARE_PROTOTYPES(DISTX) \
-  void     LCD_##DISTX##_SetPixelIndex(int x, int y, int PixelIndex); \
-  unsigned LCD_##DISTX##_GetPixelIndex(int x, int y); \
-  void     LCD_##DISTX##_XorPixel     (int x, int y); \
-  void     LCD_##DISTX##_DrawHLine    (int x0, int y,  int x1); \
-  void     LCD_##DISTX##_DrawVLine    (int x, int y0,  int y1); \
-  void     LCD_##DISTX##_FillRect     (int x0, int y0, int x1, int y1); \
-  void     LCD_##DISTX##_DrawBitmap   (int x0, int y0, int xsize, int ysize, int BitsPerPixel, int BytesPerLine,  const U8 * pData, int Diff, const LCD_PIXELINDEX * pTrans); \
-  void     LCD_##DISTX##_SetOrg       (int x, int y); \
-  void     LCD_##DISTX##_On           (void); \
-  void     LCD_##DISTX##_Off          (void); \
-  int      LCD_##DISTX##_Init         (void); \
-  void     LCD_##DISTX##_SetLUTEntry  (U8 Pos, LCD_COLOR Color); \
-  void   * LCD_##DISTX##_GetDevFunc   (int Index); \
-  void     LCD_##DISTX##_ReInit       (void)
-
-DECLARE_PROTOTYPES(DIST0);
-DECLARE_PROTOTYPES(DIST1);
-DECLARE_PROTOTYPES(DIST2);
-DECLARE_PROTOTYPES(DIST3);
-
-#endif /* Avoid multiple inclusion */
 
 /*************************** End of file ****************************/

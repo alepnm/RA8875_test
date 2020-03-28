@@ -50,6 +50,8 @@ Purpose     : Display controller configuration (single layer)
 #include "GUIDRV_FlexColor.h"
 #include "LCDConf_FlexColor.h"
 
+
+
 /*********************************************************************
 *
 *       Layer configuration (to be modified)
@@ -201,15 +203,15 @@ void LCD_X_Config(void) {
   //
   // Set controller and operation mode
   //
-  PortAPI.pfWrite16_A0  = LcdWriteReg;
-  PortAPI.pfWrite16_A1  = LcdWriteData;
-  PortAPI.pfWriteM16_A1 = LcdWriteDataMultiple;
-  PortAPI.pfReadM16_A1  = LcdReadDataMultiple;
+  PortAPI.pfWrite16_A0  = LcdWriteData;
+  PortAPI.pfWrite16_A1  = LcdWriteReg;
+  PortAPI.pfWriteM16_A0 = LcdWriteDataMultiple;
+  PortAPI.pfReadM16_A0  = LcdReadDataMultiple;
 
-  PortAPI.pfRead16_A0 = LcdReadReg;
-  PortAPI.pfRead16_A1 = LcdReadData;
+  PortAPI.pfRead16_A0 = LcdReadData;
+  PortAPI.pfRead16_A1 = LcdReadReg;
 
-  GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66721, GUIDRV_FLEXCOLOR_M16C1B16);
+  GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66721, GUIDRV_FLEXCOLOR_M16C0B16);
 }
 
 /*********************************************************************
