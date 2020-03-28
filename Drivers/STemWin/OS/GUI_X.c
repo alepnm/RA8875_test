@@ -35,7 +35,7 @@ Purpose     : Config / System dependent externals for GUI
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license SLA0044,
@@ -47,6 +47,8 @@ Purpose     : Config / System dependent externals for GUI
   */
 
 #include "GUI.h"
+#include "ra8875.h"
+
 
 /*********************************************************************
 *
@@ -65,11 +67,11 @@ volatile GUI_TIMER_TIME OS_TimeMS;
   1 ms.
 */
 
-GUI_TIMER_TIME GUI_X_GetTime(void) { 
-  return OS_TimeMS; 
+GUI_TIMER_TIME GUI_X_GetTime(void) {
+  return OS_TimeMS;
 }
 
-void GUI_X_Delay(int ms) { 
+void GUI_X_Delay(int ms) {
   int tEnd = OS_TimeMS + ms;
   while ((tEnd - OS_TimeMS) > 0);
 }
@@ -114,5 +116,57 @@ Note:
 void GUI_X_Log     (const char *s) { GUI_USE_PARA(s); }
 void GUI_X_Warn    (const char *s) { GUI_USE_PARA(s); }
 void GUI_X_ErrorOut(const char *s) { GUI_USE_PARA(s); }
+
+
+
+
+
+
+/*********************************************************************
+*
+*       GUI_X_Touch API
+*
+* Note:
+*  Vykdomi pagrindiniame cikle GUI_TOUCH_Exec()
+*/
+int GUI_TOUCH_X_ReadState(void){
+
+    return ((FSMC_ReadReg(0x74)&0x80) == 0x80) ? 0 : 1;
+}
+
+
+void GUI_TOUCH_X_ActivateX(void){
+
+    FSMC_WriteReg(0x71, 0x42);
+    LL_mDelay(1);
+}
+
+/*  */
+void GUI_TOUCH_X_ActivateY(void){
+
+    FSMC_WriteReg(0x71, 0x43);
+    LL_mDelay(1);
+}
+
+/*  */
+void GUI_TOUCH_X_Disable  (void){
+
+    FSMC_WriteReg(0x71, 0x41);
+}
+
+/*  */
+int  GUI_TOUCH_X_MeasureX (void){
+
+    return ( (FSMC_ReadReg(0x72)<<8) | (FSMC_ReadReg(0x74)&0x03) );
+}
+
+/*  */
+int  GUI_TOUCH_X_MeasureY (void){
+
+    return ( (FSMC_ReadReg(0x73)<<8) | (FSMC_ReadReg(0x74)&0x0C) );
+}
+
+
+
 
 /*************************** End of file ****************************/

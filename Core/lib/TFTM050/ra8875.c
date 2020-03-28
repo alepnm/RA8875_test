@@ -27,17 +27,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "ra8875.h"
 #include "main.h"
-#include "tp.h"
+
 
 
 #include "fonts.h"
 
 /* Private typedef -----------------------------------------------------------*/
 
-
-#define X_SIZE 480
-#define Y_SIZE 272
-#define DISPLAY_PIXELS (X_SIZE*Y_SIZE)
 
 struct _lcd Display;
 
@@ -230,39 +226,6 @@ void TFTM050_Init(void) {
     LCD_SetForeColor(BLUE);
 
 }
-
-
-
-
-
-
-/*  */
-uint8_t TP_Check(void){
-
-    TP_Data.IsTouched = ((FSMC_ReadReg(0x74)&0x80) == 0x80) ? 0 : 1;
-
-    if(TP_Data.IsTouched){
-
-        FSMC_WriteReg(0x71, 0x42);
-        LL_mDelay(1);
-
-        FSMC_WriteReg(0x71, 0x43);
-        LL_mDelay(1);
-
-        TP_Data.XPos = FSMC_ReadReg(0x72)*2;
-        TP_Data.YPos = FSMC_ReadReg(0x73);
-
-        FSMC_WriteReg(0x71, 0x41);
-    }
-
-    return TP_Data.IsTouched;
-}
-
-
-
-
-
-
 
 
 

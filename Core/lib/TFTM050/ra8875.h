@@ -25,6 +25,12 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "touch.h"
+
+#define X_SIZE 480
+#define Y_SIZE 272
+#define DISPLAY_PIXELS (X_SIZE*Y_SIZE)
+
 
 #define RA8875_RST_LOW()    LL_GPIO_ResetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin)
 #define RA8875_RST_HIGH()   LL_GPIO_SetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin)

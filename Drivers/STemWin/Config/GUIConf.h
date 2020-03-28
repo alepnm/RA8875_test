@@ -70,7 +70,7 @@ Purpose     : Configures emWins abilities, fonts etc.
 *       Configuration of touch support
 */
 #ifndef   GUI_SUPPORT_TOUCH
-  #define GUI_SUPPORT_TOUCH       (0)  // Support touchscreen
+  #define GUI_SUPPORT_TOUCH       (1)  // Support touchscreen
 #endif
 
 /*********************************************************************
@@ -86,6 +86,6 @@ Purpose     : Configures emWins abilities, fonts etc.
 #define GUI_SUPPORT_MOUSE             (0)    /* Support a mouse */
 #define GUI_WINSUPPORT                (1)    /* Use window manager */
 #define GUI_SUPPORT_MEMDEV            (0)    /* Memory device package available */
-#define GUI_SUPPORT_DEVICES           (0)    /* Enable use of device pointers */
+#define GUI_SUPPORT_DEVICES           (1)    /* Enable use of device pointers */
 
 #endif  /* Avoid multiple inclusion */

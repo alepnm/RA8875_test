@@ -23,18 +23,24 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <math.h>
 #include "ra8875.h"
 #include "WindowDLG.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+#define GUI_TOUCH_AD_TOP    6200
+#define GUI_TOUCH_AD_BOTTOM 60000
+#define GUI_TOUCH_AD_LEFT   4000
+#define GUI_TOUCH_AD_RIGHT  62000
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+  GUI_PID_STATE TS_PidState;
+
+
+WM_HWIN hText1, hText2;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -60,8 +66,7 @@ static void MX_TIM11_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_CRC_Init(void);
 /* USER CODE BEGIN PFP */
-extern void LCD_ClearTP_IRQ(void);
-extern uint8_t TP_Check(void);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -77,6 +82,7 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
   uint32_t delay = 0;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -108,37 +114,81 @@ int main(void)
   LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_13);  // A18 - pagal default aukstas lygis
   LL_GPIO_ResetOutputPin(GPIOD, LL_GPIO_PIN_4); // RD - pagal default zemas lygis
 
+
+
   LL_TIM_EnableAllOutputs(TIM11);
   LL_TIM_CC_EnableChannel(TIM11, LL_TIM_CHANNEL_CH1);
   LL_TIM_EnableCounter(TIM11);
-  LL_TIM_OC_SetCompareCH1(TIM11, 80);
+  LL_TIM_OC_SetCompareCH1(TIM11, 100);
 
 
   //TFTM050_Init();
   GUI_Init();
 
+
+  GUI_SetBkColor(GUI_BLUE);
   GUI_Clear();
 
-  CreateWindow();
+  //GUI_SetFont(&GUI_Font8x8);
+  //GUI_SetFont(&GUI_Font8x10_ASCII);
+
+
+  WM_HWIN hWin = CreateWindow();
+
+
+  GUI_TOUCH_Calibrate(GUI_COORD_X, 0, 480, GUI_TOUCH_AD_LEFT, GUI_TOUCH_AD_RIGHT);
+  GUI_TOUCH_Calibrate(GUI_COORD_Y, 0, 272, GUI_TOUCH_AD_TOP, GUI_TOUCH_AD_BOTTOM);
+
+
+  //hText1 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x12);
+  //hText2 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x13);
+
+
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  TS_Data.IsEnabled = 1;
 
   while (1)
   {
 
     if(delay < timestamp){
 
-        delay = timestamp + 10;
+        delay = timestamp + 100;
 
 
-        TP_Check();
+        GUI_TOUCH_Exec();
+
+
+        //GUI_DispHexAt(timestamp, 0, 0, 8);
+        //GUI_DispDecAt(timestamp, 0, 10, 10);
+
+
+
+        //TS_ReadState();
+
+        //TS_PidState.Pressed = TS_Data.IsTouched;
+
+        //TS_PidState.x = TS_Data.XAdc;
+        //TS_PidState.y = TS_Data.YAdc;
+
+        //GUI_TOUCH_StoreStateEx(&TS_PidState);
+
     }
+
+
+    //if(TS_PidState.Pressed){
+        //TS_ReadXY();
+    //}
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
 
     GUI_Delay(10);
 

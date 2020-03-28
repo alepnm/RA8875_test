@@ -155,12 +155,13 @@ static void LcdReadDataMultiple(U16 * pData, int NumItems)
 }
 
 
-
+/*  */
 static U16 LcdReadReg(U16 Data) {
 
     return FSMC_ReadReg(Data);
 }
 
+/*  */
 static U16 LcdReadData(void) {
 
     return FSMC_DataRead();
@@ -188,7 +189,7 @@ void LCD_X_Config(void) {
   //
   // Set display driver and color conversion
   //
-  pDevice = GUI_DEVICE_CreateAndLink(GUIDRV_FLEXCOLOR, GUICC_565, 0, 0);
+  pDevice = GUI_DEVICE_CreateAndLink(GUIDRV_FLEXCOLOR, GUICC_M565, 0, 0);
   //
   // Display driver configuration, required for Lin-driver
   //
@@ -239,29 +240,42 @@ void LCD_X_Config(void) {
 *     -1 - Command not handled
 *      0 - Ok
 */
-int LCD_X_DisplayDriver(unsigned LayerIndex, unsigned Cmd, void * pData) {
-  int r;
-  (void) LayerIndex;
-  (void) pData;
+int LCD_X_DisplayDriver(unsigned LayerIndex, unsigned Cmd, void * pData)
+{
+    int r;
+    (void) LayerIndex;
+    (void) pData;
 
-  switch (Cmd) {
-  case LCD_X_INITCONTROLLER: {
-    //
-    // Called during the initialization process in order to set up the
-    // display controller and put it into operation. If the display
-    // controller is not initialized by any external routine this needs
-    // to be adapted by the customer...
-    //
-    // ...
+    switch (Cmd)
+    {
+    case LCD_X_INITCONTROLLER:
+    {
+        //
+        // Called during the initialization process in order to set up the
+        // display controller and put it into operation. If the display
+        // controller is not initialized by any external routine this needs
+        // to be adapted by the customer...
+        //
+        // ...
 
-    TFTM050_Init();
+        TFTM050_Init();
 
-    return 0;
-  }
-  default:
-    r = -1;
-  }
-  return r;
+        return 0;
+    }
+
+    case LCD_X_ON:
+
+        break;
+
+    case LCD_X_OFF:
+
+        break;
+
+    default:
+        r = -1;
+    }
+
+    return r;
 }
 
 /*************************** End of file ****************************/

@@ -30,7 +30,7 @@ We appreciate your understanding and fairness.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license SLA0044,
@@ -1513,6 +1513,7 @@ int  GUI_TOUCH_TransformPoint   (int * px, int * py);          /* Not to be docu
 * They need to be part of your application software (or rather, part
 * of the hardware-layer of your software).
 */
+int  GUI_TOUCH_X_ReadState(void);
 void GUI_TOUCH_X_ActivateX(void);
 void GUI_TOUCH_X_ActivateY(void);
 void GUI_TOUCH_X_Disable  (void);
