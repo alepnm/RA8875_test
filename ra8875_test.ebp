@@ -32,7 +32,6 @@
 				</Assembler>
 				<Linker>
 					<Add option="-Wl,--gc-sections" />
-					<Add library="Drivers\STemWin\Lib\STemWin_CM4_wc32.a" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -81,11 +80,13 @@
 		<Linker>
 			<Add option="-eb_lib=n" />
 			<Add option="-eb_start_files" />
+			<Add library="Drivers\STemWin\Lib\STemWin_CM4_wc32.a" />
 		</Linker>
 		<Unit filename="Core\Inc\main.h" />
 		<Unit filename="Core\Inc\stm32_assert.h" />
 		<Unit filename="Core\Inc\stm32f4xx_hal_conf.h" />
 		<Unit filename="Core\Inc\stm32f4xx_it.h" />
+		<Unit filename="Core\Inc\WindowDLG.h" />
 		<Unit filename="Core\lib\TFTM050\fonts.h" />
 		<Unit filename="Core\lib\TFTM050\ra8875.c">
 			<Option compilerVar="CC" />
@@ -105,6 +106,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Core\Src\system_stm32f4xx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Core\Src\WindowDLG.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h" />

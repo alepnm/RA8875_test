@@ -222,7 +222,7 @@ void TFTM050_Init(void) {
         if(RegisterTestStatus) LCD_PutString(0, 1, "Register Test OK...");
         else LCD_PutString(0, 1, "Register Test FAIL...");
 
-        LL_mDelay(3000);
+        LL_mDelay(1000);
 
     } /* data bus test. */
 

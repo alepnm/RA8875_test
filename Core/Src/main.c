@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include "ra8875.h"
 #include "GUI.h"
+#include "WindowDLG.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -110,13 +111,15 @@ int main(void)
   LL_TIM_EnableAllOutputs(TIM11);
   LL_TIM_CC_EnableChannel(TIM11, LL_TIM_CHANNEL_CH1);
   LL_TIM_EnableCounter(TIM11);
-  LL_TIM_OC_SetCompareCH1(TIM11, 0);
+  LL_TIM_OC_SetCompareCH1(TIM11, 80);
 
 
-
+  //TFTM050_Init();
   GUI_Init();
 
+  //GUI_DispString("Hello world!");
 
+  CreateWindow();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -130,15 +133,15 @@ int main(void)
         delay = timestamp + 10;
 
 
-
-
-
+        TP_Check();
     }
-
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+    GUI_Delay(10);
+
   }
   /* USER CODE END 3 */
 }
@@ -153,7 +156,7 @@ void SystemClock_Config(void)
 
   if(LL_FLASH_GetLatency() != LL_FLASH_LATENCY_5)
   {
-  Error_Handler();  
+  Error_Handler();
   }
   LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
   LL_RCC_HSE_Enable();
@@ -161,7 +164,7 @@ void SystemClock_Config(void)
    /* Wait till HSE is ready */
   while(LL_RCC_HSE_IsReady() != 1)
   {
-    
+
   }
   LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_4, 168, LL_RCC_PLLP_DIV_2);
   LL_RCC_PLL_Enable();
@@ -169,7 +172,7 @@ void SystemClock_Config(void)
    /* Wait till PLL is ready */
   while(LL_RCC_PLL_IsReady() != 1)
   {
-    
+
   }
   LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
   LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_4);
@@ -179,14 +182,14 @@ void SystemClock_Config(void)
    /* Wait till System clock is ready */
   while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL)
   {
-  
+
   }
   LL_SetSystemCoreClock(168000000);
 
    /* Update the time base */
   if (HAL_InitTick (TICK_INT_PRIORITY) != HAL_OK)
   {
-    Error_Handler();  
+    Error_Handler();
   };
 }
 
@@ -231,9 +234,9 @@ static void MX_I2C1_Init(void)
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
-  /**I2C1 GPIO Configuration  
+  /**I2C1 GPIO Configuration
   PB6   ------> I2C1_SCL
-  PB7   ------> I2C1_SDA 
+  PB7   ------> I2C1_SDA
   */
   GPIO_InitStruct.Pin = LL_GPIO_PIN_6|LL_GPIO_PIN_7;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
@@ -249,7 +252,7 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 1 */
 
   /* USER CODE END I2C1_Init 1 */
-  /** I2C Initialization 
+  /** I2C Initialization
   */
   LL_I2C_DisableOwnAddress2(I2C1);
   LL_I2C_DisableGeneralCall(I2C1);
@@ -286,12 +289,12 @@ static void MX_SPI1_Init(void)
 
   /* Peripheral clock enable */
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SPI1);
-  
+
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
-  /**SPI1 GPIO Configuration  
+  /**SPI1 GPIO Configuration
   PA5   ------> SPI1_SCK
   PA6   ------> SPI1_MISO
-  PA7   ------> SPI1_MOSI 
+  PA7   ------> SPI1_MOSI
   */
   GPIO_InitStruct.Pin = LL_GPIO_PIN_5|LL_GPIO_PIN_6|LL_GPIO_PIN_7;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
@@ -364,8 +367,8 @@ static void MX_TIM11_Init(void)
 
   /* USER CODE END TIM11_Init 2 */
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
-  /**TIM11 GPIO Configuration  
-  PB9   ------> TIM11_CH1 
+  /**TIM11 GPIO Configuration
+  PB9   ------> TIM11_CH1
   */
   GPIO_InitStruct.Pin = LCD_BACKLIGHT_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
@@ -395,11 +398,11 @@ static void MX_USART1_UART_Init(void)
 
   /* Peripheral clock enable */
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1);
-  
+
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
-  /**USART1 GPIO Configuration  
+  /**USART1 GPIO Configuration
   PA9   ------> USART1_TX
-  PA10   ------> USART1_RX 
+  PA10   ------> USART1_RX
   */
   GPIO_InitStruct.Pin = LL_GPIO_PIN_9|LL_GPIO_PIN_10;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
@@ -595,7 +598,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */

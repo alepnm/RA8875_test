@@ -130,7 +130,8 @@ static void LcdWriteDataMultiple(U16 * pData, int NumItems)
     while (NumItems--)
     {
         // ... TBD by user
-        LCD->LCD_RAM = *pData++;
+        LCD->LCD_RAM = *pData;
+        pData++;
     }
 }
 
@@ -146,8 +147,20 @@ static void LcdReadDataMultiple(U16 * pData, int NumItems)
     while (NumItems--)
     {
         // ... TBD by user
-        *pData++ = LCD->LCD_RAM;
+        *pData = LCD->LCD_RAM;
+        pData++;
     }
+}
+
+
+
+static U16 LcdReadReg(U16 Data) {
+    LCD->LCD_REG = Data;
+    return LCD->LCD_RAM;
+}
+
+static U16 LcdReadData(void) {
+    return LCD->LCD_RAM;
 }
 
 /*********************************************************************
@@ -182,7 +195,8 @@ void LCD_X_Config(void) {
   // Orientation
   //
   //Config.Orientation = GUI_SWAP_XY | GUI_MIRROR_Y;
-  //Config.RegEntryMode =
+#warning RegEntryMode!!!
+  //Config.RegEntryMode = 0x02;
   GUIDRV_FlexColor_Config(pDevice, &Config);
   //
   // Set controller and operation mode
@@ -191,7 +205,11 @@ void LCD_X_Config(void) {
   PortAPI.pfWrite16_A1  = LcdWriteData;
   PortAPI.pfWriteM16_A1 = LcdWriteDataMultiple;
   PortAPI.pfReadM16_A1  = LcdReadDataMultiple;
-  GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66721, GUIDRV_FLEXCOLOR_M16C0B16);
+
+  PortAPI.pfRead16_A0 = LcdReadReg;
+  PortAPI.pfRead16_A1 = LcdReadData;
+
+  GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66721, GUIDRV_FLEXCOLOR_M16C1B16);
 }
 
 /*********************************************************************
