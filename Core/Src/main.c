@@ -29,16 +29,14 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-#define GUI_TOUCH_AD_TOP    6200
-#define GUI_TOUCH_AD_BOTTOM 60000
-#define GUI_TOUCH_AD_LEFT   4000
-#define GUI_TOUCH_AD_RIGHT  62000
+//#define GUI_TOUCH_AD_TOP    7500
+//#define GUI_TOUCH_AD_BOTTOM 57200
+//#define GUI_TOUCH_AD_LEFT   4400
+//#define GUI_TOUCH_AD_RIGHT  64000
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-  GUI_PID_STATE TS_PidState;
-
 
 WM_HWIN hText1, hText2;
 /* USER CODE END PD */
@@ -82,7 +80,6 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
   uint32_t delay = 0;
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -123,6 +120,9 @@ int main(void)
 
 
   //TFTM050_Init();
+  TS_Init();
+
+
   GUI_Init();
 
 
@@ -136,8 +136,8 @@ int main(void)
   WM_HWIN hWin = CreateWindow();
 
 
-  GUI_TOUCH_Calibrate(GUI_COORD_X, 0, 480, GUI_TOUCH_AD_LEFT, GUI_TOUCH_AD_RIGHT);
-  GUI_TOUCH_Calibrate(GUI_COORD_Y, 0, 272, GUI_TOUCH_AD_TOP, GUI_TOUCH_AD_BOTTOM);
+  //GUI_TOUCH_Calibrate(GUI_COORD_X, 0, 480, GUI_TOUCH_AD_LEFT, GUI_TOUCH_AD_RIGHT);
+  //GUI_TOUCH_Calibrate(GUI_COORD_Y, 0, 272, GUI_TOUCH_AD_TOP, GUI_TOUCH_AD_BOTTOM);
 
 
   //hText1 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x12);
@@ -161,34 +161,16 @@ int main(void)
         delay = timestamp + 100;
 
 
-        GUI_TOUCH_Exec();
+        TS_ReadState();
 
+        TS_ReadXY();
 
-        //GUI_DispHexAt(timestamp, 0, 0, 8);
-        //GUI_DispDecAt(timestamp, 0, 10, 10);
-
-
-
-        //TS_ReadState();
-
-        //TS_PidState.Pressed = TS_Data.IsTouched;
-
-        //TS_PidState.x = TS_Data.XAdc;
-        //TS_PidState.y = TS_Data.YAdc;
-
-        //GUI_TOUCH_StoreStateEx(&TS_PidState);
-
+        GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
     }
-
-
-    //if(TS_PidState.Pressed){
-        //TS_ReadXY();
-    //}
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
 
     GUI_Delay(10);
 
