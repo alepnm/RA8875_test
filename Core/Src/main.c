@@ -25,14 +25,16 @@
 /* USER CODE BEGIN Includes */
 #include "ra8875.h"
 #include "WindowDLG.h"
+
+#include "examples.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-//#define GUI_TOUCH_AD_TOP    7500
-//#define GUI_TOUCH_AD_BOTTOM 57200
-//#define GUI_TOUCH_AD_LEFT   4400
-//#define GUI_TOUCH_AD_RIGHT  64000
+#define GUI_TOUCH_AD_TOP    7500
+#define GUI_TOUCH_AD_BOTTOM 57200
+#define GUI_TOUCH_AD_LEFT   4400
+#define GUI_TOUCH_AD_RIGHT  64000
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -126,8 +128,7 @@ int main(void)
   GUI_Init();
 
 
-  GUI_SetBkColor(GUI_BLUE);
-  GUI_Clear();
+  EXAMPLE_ClearScreen(GUI_BLUE);
 
   //GUI_SetFont(&GUI_Font8x8);
   //GUI_SetFont(&GUI_Font8x10_ASCII);
@@ -140,10 +141,8 @@ int main(void)
   //GUI_TOUCH_Calibrate(GUI_COORD_Y, 0, 272, GUI_TOUCH_AD_TOP, GUI_TOUCH_AD_BOTTOM);
 
 
-  //hText1 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x12);
-  //hText2 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x13);
-
-
+  hText1 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x12);
+  hText2 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x13);
 
 
   /* USER CODE END 2 */
@@ -153,6 +152,9 @@ int main(void)
 
   TS_Data.IsEnabled = 1;
 
+  TEXT_SetTextColor(hText1, GUI_BLUE);
+  TEXT_SetText(hText1, "QWERTY");
+
   while (1)
   {
 
@@ -160,13 +162,17 @@ int main(void)
 
         delay = timestamp + 100;
 
-
         TS_ReadState();
 
         TS_ReadXY();
 
         GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
+
+
+        //EXAMPLE_Text(hText2);
+
     }
+
 
     /* USER CODE END WHILE */
 
