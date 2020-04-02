@@ -20,6 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -40,7 +41,6 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-WM_HWIN hText1, hText2;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -52,8 +52,15 @@ WM_HWIN hText1, hText2;
 
 SRAM_HandleTypeDef hsram1;
 
+osThreadId MainTaskHandle;
+osThreadId GUI_TaskHandle;
+osTimerId TS_TimerHandle;
 /* USER CODE BEGIN PV */
+WM_HWIN hWin;
+WM_HWIN hText1, hText2;
 
+char st[20];
+uint32_t GUI_FreeMem = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -65,6 +72,10 @@ static void MX_FSMC_Init(void);
 static void MX_TIM11_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_CRC_Init(void);
+void T_Main(void const * argument);
+void T_GUI(void const * argument);
+void TS_TimerCallback(void const * argument);
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -81,7 +92,7 @@ static void MX_CRC_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  uint32_t delay = 0;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -97,7 +108,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  SysTick_Config(SystemCoreClock/1000);
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -120,67 +131,59 @@ int main(void)
   LL_TIM_EnableCounter(TIM11);
   LL_TIM_OC_SetCompareCH1(TIM11, 100);
 
-
-  //TFTM050_Init();
-  TS_Init();
-
-
-  GUI_Init();
-
-
-  EXAMPLE_ClearScreen(GUI_BLUE);
-
-  //GUI_SetFont(&GUI_Font8x8);
-  //GUI_SetFont(&GUI_Font8x10_ASCII);
-
-
-  WM_HWIN hWin = CreateWindow();
-
-
-  //GUI_TOUCH_Calibrate(GUI_COORD_X, 0, 480, GUI_TOUCH_AD_LEFT, GUI_TOUCH_AD_RIGHT);
-  //GUI_TOUCH_Calibrate(GUI_COORD_Y, 0, 272, GUI_TOUCH_AD_TOP, GUI_TOUCH_AD_BOTTOM);
-
-
-  hText1 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x12);
-  hText2 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x13);
-
-
   /* USER CODE END 2 */
 
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* Create the timer(s) */
+  /* definition and creation of TS_Timer */
+  osTimerDef(TS_Timer, TS_TimerCallback);
+  TS_TimerHandle = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, NULL);
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+
+  /* USER CODE END RTOS_TIMERS */
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+
+  /* Create the thread(s) */
+  /* definition and creation of MainTask */
+  osThreadDef(MainTask, T_Main, osPriorityLow, 0, 128);
+  MainTaskHandle = osThreadCreate(osThread(MainTask), NULL);
+
+  /* definition and creation of GUI_Task */
+  osThreadDef(GUI_Task, T_GUI, osPriorityIdle, 0, 1280);
+  GUI_TaskHandle = osThreadCreate(osThread(GUI_Task), NULL);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+
+  GUI_X_InitOS();
+  /* USER CODE END RTOS_THREADS */
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  TS_Data.IsEnabled = 1;
-
-  TEXT_SetTextColor(hText1, GUI_BLUE);
-  TEXT_SetText(hText1, "QWERTY");
-
-  while (1)
-  {
-
-    if(delay < timestamp){
-
-        delay = timestamp + 100;
-
-        TS_ReadState();
-
-        TS_ReadXY();
-
-        GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
-
-
-        //EXAMPLE_Text(hText2);
-
-    }
+  while (1);
 
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 
-    GUI_Delay(10);
-
-  }
   /* USER CODE END 3 */
 }
 
@@ -451,7 +454,7 @@ static void MX_USART1_UART_Init(void)
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /* USART1 interrupt Init */
-  NVIC_SetPriority(USART1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+  NVIC_SetPriority(USART1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
   NVIC_EnableIRQ(USART1_IRQn);
 
   /* USER CODE BEGIN USART1_Init 1 */
@@ -553,7 +556,7 @@ static void MX_GPIO_Init(void)
   LL_GPIO_SetPinMode(LCD_INT_GPIO_Port, LCD_INT_Pin, LL_GPIO_MODE_INPUT);
 
   /* EXTI interrupt init*/
-  NVIC_SetPriority(EXTI9_5_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+  NVIC_SetPriority(EXTI9_5_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
   NVIC_EnableIRQ(EXTI9_5_IRQn);
 
 }
@@ -613,7 +616,108 @@ static void MX_FSMC_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+
 /* USER CODE END 4 */
+
+/* USER CODE BEGIN Header_T_Main */
+/**
+  * @brief  Function implementing the MainTask thread.
+  * @param  argument: Not used
+  * @retval None
+  */
+/* USER CODE END Header_T_Main */
+void T_Main(void const * argument)
+{
+  /* USER CODE BEGIN 5 */
+
+  TS_Init();
+
+  /* Infinite loop */
+  for(;;)
+  {
+
+    EXAMPLE_ShowTimestamp(hText2);
+
+    osDelay(100);
+  }
+  /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_T_GUI */
+/**
+* @brief Function implementing the GUI_Task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_T_GUI */
+void T_GUI(void const * argument)
+{
+    /* USER CODE BEGIN T_GUI */
+    GUI_Init();
+
+    EXAMPLE_ClearScreen(GUI_BLUE);
+
+    osDelay(100);
+
+    //GUI_SetFont(&GUI_Font8x8);
+    GUI_SetFont(&GUI_Font8x10_ASCII);
+
+
+    hWin = CreateWindow();
+
+    hText1 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x12);
+    hText2 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x13);
+
+    TEXT_SetTextColor(hText2, GUI_BLUE);
+    TEXT_SetText(hText2, "QWERTY");
+
+    GUI_CURSOR_Show();
+
+    osTimerStart(TS_TimerHandle, 100);
+
+    /* Infinite loop */
+    for(;;)
+    {
+        GUI_FreeMem = GUI_ALLOC_GetNumFreeBytes();
+
+        GUI_Exec();
+        GUI_X_ExecIdle();
+        osDelay(10);
+    }
+    /* USER CODE END T_GUI */
+}
+
+/* TS_TimerCallback function */
+void TS_TimerCallback(void const * argument)
+{
+    /* USER CODE BEGIN TS_TimerCallback */
+
+    TS_ReadXY();
+
+    GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
+    /* USER CODE END TS_TimerCallback */
+}
+
+ /**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM6 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM6) {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.

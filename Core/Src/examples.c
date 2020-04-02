@@ -3,7 +3,7 @@
 #include "examples.h"
 
 
-static char st[20];
+char st[20];
 
 
 
@@ -15,10 +15,10 @@ void EXAMPLE_ClearScreen(GUI_COLOR color){
 
 
 
-void EXAMPLE_Text(TEXT_Handle hObj){
+void EXAMPLE_ShowTimestamp(TEXT_Handle hObj){
 
   TEXT_SetTextColor(hObj, GUI_BLUE);
 
-  sprintf(st,"%ld", timestamp);
+  //sprintf(st,"%ld", timestamp);
   TEXT_SetText(hObj, st);
 }

@@ -10,7 +10,7 @@
 
 void EXAMPLE_ClearScreen(GUI_COLOR color);
 
-void EXAMPLE_Text(TEXT_Handle hObj);
+void EXAMPLE_ShowTimestamp(TEXT_Handle hObj);
 
 
 #endif /* SAMPLES_H_INCLUDED */

@@ -104,8 +104,8 @@ Purpose     : Display controller configuration (single layer)
 *   Sets display register
 */
 static void LcdWriteReg(U16 Data) {
-  // ... TBD by user
-  FSMC_CmdWrite( Data);
+      // ... TBD by user
+      FSMC_CmdWrite( Data);
 }
 
 /********************************************************************
@@ -116,8 +116,8 @@ static void LcdWriteReg(U16 Data) {
 *   Writes a value to a display register
 */
 static void LcdWriteData(U16 Data) {
-  // ... TBD by user
-  FSMC_DataWrite(Data);
+      // ... TBD by user
+      FSMC_DataWrite(Data);
 }
 
 /********************************************************************

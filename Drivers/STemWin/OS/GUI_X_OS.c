@@ -35,7 +35,7 @@ Purpose     : This file provides emWin Interface with FreeRTOS
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license SLA0044,
@@ -49,10 +49,11 @@ Purpose     : This file provides emWin Interface with FreeRTOS
 /* Includes ------------------------------------------------------------------*/
 
 #include "GUI.h"
-    
+#include "ra8875.h"
+
     /* FreeRTOS include files */
 #include "cmsis_os.h"
-    
+
 /*********************************************************************
 *
 * Global data
@@ -124,22 +125,22 @@ void GUI_X_ExecIdle(void) {}
 
 /* Init OS */
 void GUI_X_InitOS(void)
-{ 
+{
   /* Create Mutex lock */
   osMutexDef(MUTEX);
-  
+
   /* Create the Mutex used by the two threads */
   osMutex = osMutexCreate(osMutex(MUTEX));
-  
+
   /* Create Semaphore lock */
   osSemaphoreDef(SEM);
-  
+
   /* Create the Semaphore used by the two threads */
-  osSemaphore= osSemaphoreCreate(osSemaphore(SEM), 1);  
+  osSemaphore= osSemaphoreCreate(osSemaphore(SEM), 1);
 }
 
 void GUI_X_Unlock(void)
-{ 
+{
   osMutexRelease(osMutex);
 }
 
@@ -149,19 +150,19 @@ void GUI_X_Lock(void)
 }
 
 /* Get Task handle */
-U32 GUI_X_GetTaskId(void) 
-{ 
+U32 GUI_X_GetTaskId(void)
+{
   return ((U32) osThreadGetId());
 }
 
 
-void GUI_X_WaitEvent (void) 
+void GUI_X_WaitEvent (void)
 {
   osSemaphoreWait(osSemaphore , osWaitForever) ;
 }
 
 
-void GUI_X_SignalEvent (void) 
+void GUI_X_SignalEvent (void)
 {
   osMutexRelease(osSemaphore);
 }
@@ -183,5 +184,53 @@ functions automatically)
 void GUI_X_Log (const char *s) { }
 void GUI_X_Warn (const char *s) { }
 void GUI_X_ErrorOut(const char *s) { }
+
+
+
+
+/*********************************************************************
+*
+*       GUI_X_Touch API
+*
+* Note:
+*  Vykdomi pagrindiniame cikle GUI_TOUCH_Exec()
+*/
+int GUI_TOUCH_X_ReadState(void){
+
+    return ((FSMC_ReadReg(0x74)&0x80) == 0x80) ? 0 : 1;
+}
+
+
+void GUI_TOUCH_X_ActivateX(void){
+
+    FSMC_WriteReg(0x71, 0x42);
+    HAL_Delay(1);
+}
+
+/*  */
+void GUI_TOUCH_X_ActivateY(void){
+
+    FSMC_WriteReg(0x71, 0x43);
+    HAL_Delay(1);
+}
+
+/*  */
+void GUI_TOUCH_X_Disable  (void){
+
+    FSMC_WriteReg(0x71, 0x41);
+}
+
+/*  */
+int  GUI_TOUCH_X_MeasureX (void){
+
+    return ( (FSMC_ReadReg(0x72)<<2) | (FSMC_ReadReg(0x74)&0x03) );
+}
+
+/*  */
+int  GUI_TOUCH_X_MeasureY (void){
+
+    return ( (FSMC_ReadReg(0x73)<<2) | ((FSMC_ReadReg(0x74)&0x0C)>>2) );
+}
+
 
 /*************************** End of file ****************************/

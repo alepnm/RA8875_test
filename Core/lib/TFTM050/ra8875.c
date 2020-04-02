@@ -86,14 +86,14 @@ void TFTM050_Init(void) {
 
     } /* register rw test */
 
-    LL_mDelay(50); /* delay 50 ms */
+    HAL_Delay(50); /* delay 50 ms */
 
 
     /* PLL clock frequency */
     FSMC_WriteReg(0x88, 0x09);   // PLL Control Register1
-    LL_mDelay(1);
+    HAL_Delay(1);
     FSMC_WriteReg(0x89, 0x02);   // PLL Control Register2
-    LL_mDelay(1);
+    HAL_Delay(1);
 
 
     /* color deep/MCU Interface */
@@ -101,7 +101,7 @@ void TFTM050_Init(void) {
 
     /* pixel clock period */
     FSMC_WriteReg(0x04, 0x82);   // Pixel Clock Setting Register
-    LL_mDelay(1);
+    HAL_Delay(1);
 
     /* Serial Flash/ROM settings */
     FSMC_WriteReg(0x05, 0x00);   // Serial Flash/ROM Configuration Register
@@ -206,10 +206,15 @@ void TFTM050_Init(void) {
             Display.IsInitilized = 1;
         }
 
-        //LCD_CGROMFont();
-        LCD_ExtROMFont();
 
-        LCD_Clear();
+        LCD_CGROMFont();
+        //LCD_ExtROMFont();
+
+        //LCD_Clear();
+        LCD_ClearScreen();
+
+
+
         Display.FontColor = GREEN;
 
         if(BusTestStatus) LCD_PutString(0, 0, "BUS Test OK...");
@@ -218,12 +223,16 @@ void TFTM050_Init(void) {
         if(RegisterTestStatus) LCD_PutString(0, 1, "Register Test OK...");
         else LCD_PutString(0, 1, "Register Test FAIL...");
 
-        LL_mDelay(1000);
+
+
+
+        HAL_Delay(1000);
 
     } /* data bus test. */
 
 
     LCD_SetForeColor(BLUE);
+    //LCD_SetBackColor(GREEN);
 
 }
 
@@ -412,10 +421,10 @@ void LCD_Display_OnOff(uint8_t state){
 void LCD_Reset(void)
 {
     RA8875_RST_LOW();
-    LL_mDelay(10);
+    HAL_Delay(10);
     RA8875_RST_HIGH();
 
-    LL_mDelay(50);
+    HAL_Delay(50);
 }
 
 
@@ -478,7 +487,7 @@ void LCD_SetCursor(uint8_t xpos, uint16_t ypos) {
 }
 
 
-
+/*  */
 void LCD_PutString(uint8_t col, uint8_t line, const char* str){
 
     uint16_t posx = col*Display.Font.Width, posy = line*Display.Font.Height;
@@ -631,119 +640,161 @@ void LCD_SetDisplayWindow(uint8_t Xpos, uint16_t Ypos, uint8_t Height, uint16_t 
 }
 
 
-/**
-  * @brief  Displays a line.
-  * @param Xpos: specifies the X position.
-  * @param Ypos: specifies the Y position.
-  * @param Length: line length.
-  * @param Direction: line direction.
-  *   This parameter can be one of the following values: Vertical
-  *   or Horizontal.
-  * @retval : None
-  */
-void LCD_DrawLine(uint8_t Xpos, uint16_t Ypos, uint16_t Length, uint8_t Direction) {
 
-    uint32_t i = 0;
 
-    LCD_SetWriteCursor(Xpos, Ypos);
 
-    if(Direction == LCD_HORISONTAL) {
 
-        FSMC_WriteRAM_Prepare(); /* Prepare to write GRAM */
 
-        for(i = 0; i < Length; i++) {
-            FSMC_DataWrite(Display.FontColor);
-        }
-    } else {
 
-        for(i = 0; i < Length; i++) {
+/* ok */
+void LCD_ClearScreen(void){
 
-            FSMC_WriteRAM_Prepare(); /* Prepare to write GRAM */
-
-            FSMC_DataWrite(Display.FontColor);
-
-            Ypos++;
-
-            LCD_SetCursor(Xpos, Ypos);
-        }
-    }
+    FSMC_WriteReg(0x8E, 0x80);
+    while((FSMC_ReadReg(0x8E)&0x80) == 0x80) FSMC_WAIT_BUSY();
 }
 
-/**
-  * @brief  Displays a rectangle.
-  * @param Xpos: specifies the X position.
-  * @param Ypos: specifies the Y position.
-  * @param Height: display rectangle height.
-  * @param Width: display rectangle width.
-  * @retval : None
-  */
-void LCD_DrawRect(uint8_t Xpos, uint16_t Ypos, uint8_t Height, uint16_t Width) {
-    LCD_DrawLine(Xpos, Ypos, Width, LCD_HORISONTAL);
-    LCD_DrawLine((Xpos + Height), Ypos, Width, LCD_HORISONTAL);
+/*  */
+void LCD_ClearActiveWindow(void){
 
-    LCD_DrawLine(Xpos, Ypos, Height, LCD_VERTICAL);
-    LCD_DrawLine(Xpos, (Ypos - Width + 1), Height, LCD_VERTICAL);
+    FSMC_WriteReg(0x8E, 0xC0);
+    while((FSMC_ReadReg(0x8E)&0x80) == 0x80) FSMC_WAIT_BUSY();
 }
 
-/**
-  * @brief  Displays a circle.
-  * @param Xpos: specifies the X position.
-  * @param Ypos: specifies the Y position.
-  * @param Height: display rectangle height.
-  * @param Width: display rectangle width.
-  * @retval : None
-  */
-void LCD_DrawCircle(uint8_t Xpos, uint16_t Ypos, uint16_t Radius) {
-    int32_t  D;/* Decision Variable */
-    uint32_t  CurX;/* Current X Value */
-    uint32_t  CurY;/* Current Y Value */
 
-    D = 3 - (Radius << 1);
-    CurX = 0;
-    CurY = Radius;
+/* ok */
+void LCD_DrawLine(uint16_t Xpos_start, uint16_t Ypos_start, uint16_t Xpos_end, uint16_t Ypos_end) {
 
-    while (CurX <= CurY) {
-        LCD_SetCursor(Xpos + CurX, Ypos + CurY);
-        FSMC_WriteRAM_Prepare(); /* Prepare to write GRAM */
-        FSMC_DataWrite(WHITE);
+    FSMC_WriteReg(0x91, Xpos_start&0xFF);
+    FSMC_WriteReg(0x92, Xpos_start>>0x08);
 
-        LCD_SetCursor(Xpos + CurX, Ypos - CurY);
-        FSMC_WriteRAM_Prepare(); /* Prepare to write GRAM */
-        FSMC_DataWrite(WHITE);
+    FSMC_WriteReg(0x93, Ypos_start&0xFF);
+    FSMC_WriteReg(0x94, Ypos_start>>0x08);
 
-        LCD_SetCursor(Xpos - CurX, Ypos + CurY);
-        FSMC_WriteRAM_Prepare(); /* Prepare to write GRAM */
-        FSMC_DataWrite(WHITE);
+    FSMC_WriteReg(0x95, Xpos_end&0xFF);
+    FSMC_WriteReg(0x96, Xpos_end>>0x08);
 
-        LCD_SetCursor(Xpos - CurX, Ypos - CurY);
-        FSMC_WriteRAM_Prepare(); /* Prepare to write GRAM */
-        FSMC_DataWrite(WHITE);
+    FSMC_WriteReg(0x97, Ypos_end&0xFF);
+    FSMC_WriteReg(0x98, Ypos_end>>0x08);
 
-        LCD_SetCursor(Xpos + CurY, Ypos + CurX);
-        FSMC_WriteRAM_Prepare(); /* Prepare to write GRAM */
-        FSMC_DataWrite(WHITE);
+    FSMC_WriteReg(0x90, 0x80);
 
-        LCD_SetCursor(Xpos + CurY, Ypos - CurX);
-        FSMC_WriteRAM_Prepare(); /* Prepare to write GRAM */
-        FSMC_DataWrite(WHITE);
-
-        LCD_SetCursor(Xpos - CurY, Ypos + CurX);
-        FSMC_WriteRAM_Prepare(); /* Prepare to write GRAM */
-        FSMC_DataWrite(WHITE);
-
-        LCD_SetCursor(Xpos - CurY, Ypos - CurX);
-        FSMC_WriteRAM_Prepare(); /* Prepare to write GRAM */
-        FSMC_DataWrite(WHITE);
-
-        if (D < 0) {
-            D += (CurX << 2) + 6;
-        } else {
-            D += ((CurX - CurY) << 2) + 10;
-            CurY--;
-        }
-        CurX++;
-    }
+    while((FSMC_ReadReg(0x90)&0x80) == 0x80) FSMC_WAIT_BUSY();
 }
+
+
+/* ok */
+void LCD_DrawRect(uint16_t Xpos_start, uint16_t Ypos_start, uint16_t Xpos_end, uint16_t Ypos_end, uint8_t fill) {
+
+    if(fill) fill = 0x20;
+
+    FSMC_WriteReg(0x91, Xpos_start&0xFF);
+    FSMC_WriteReg(0x92, Xpos_start>>0x08);
+
+    FSMC_WriteReg(0x93, Ypos_start&0xFF);
+    FSMC_WriteReg(0x94, Ypos_start>>0x08);
+
+    FSMC_WriteReg(0x95, Xpos_end&0xFF);
+    FSMC_WriteReg(0x96, Xpos_end>>0x08);
+
+    FSMC_WriteReg(0x97, Ypos_end&0xFF);
+    FSMC_WriteReg(0x98, Ypos_end>>0x08);
+
+    FSMC_WriteReg(0x90, (0x90|fill));
+
+    while((FSMC_ReadReg(0x90)&0x80) == 0x80) FSMC_WAIT_BUSY();
+}
+
+
+/* ok */
+void LCD_DrawTriangle(uint16_t xa, uint16_t ya, uint16_t xb, uint16_t yb, uint16_t xc, uint16_t yc, uint8_t fill) {
+
+    if(fill) fill = 0x20;
+
+    FSMC_WriteReg(0x91, xa&0xFF);
+    FSMC_WriteReg(0x92, xa>>0x08);
+
+    FSMC_WriteReg(0x93, ya&0xFF);
+    FSMC_WriteReg(0x94, ya>>0x08);
+
+    FSMC_WriteReg(0x95, xb&0xFF);
+    FSMC_WriteReg(0x96, xb>>0x08);
+
+    FSMC_WriteReg(0x97, yb&0xFF);
+    FSMC_WriteReg(0x98, yb>>0x08);
+
+    FSMC_WriteReg(0xA9, xc&0xFF);
+    FSMC_WriteReg(0xAA, xc>>0x08);
+
+    FSMC_WriteReg(0xAB, yc&0xFF);
+    FSMC_WriteReg(0xAC, yc>>0x08);
+
+    FSMC_WriteReg(0x90, (0x81|fill));
+
+    while((FSMC_ReadReg(0x90)&0x80) == 0x80) FSMC_WAIT_BUSY();
+}
+
+
+/* ok */
+void LCD_DrawCircle(uint16_t Xpos, uint16_t Ypos, uint16_t radius, uint8_t fill) {
+
+    if(fill) fill = 0x20;
+
+    /* horizontal position */
+    FSMC_WriteReg(0x99, Xpos&0xFF);
+    FSMC_WriteReg(0x9A, Xpos>>0x08);
+
+    /* vertical position */
+    FSMC_WriteReg(0x9B, Ypos&0xFF);
+    FSMC_WriteReg(0x9C, Ypos>>0x08);
+
+    /* circle radius */
+    FSMC_WriteReg(0x9D, radius);
+
+    /* start draw */
+    FSMC_WriteReg(0x90, (0x40|fill));
+
+    while((FSMC_ReadReg(0x90)&0x40) == 0x40) FSMC_WAIT_BUSY();
+}
+
+
+/* ok */
+void LCD_DrawSquareOfCircleCorner(uint16_t Xpos_start, uint16_t Ypos_start, uint16_t Xpos_end, uint16_t Ypos_end, uint16_t axish, uint16_t axisy, uint8_t fill) {
+
+    if(fill) fill = 0x40;
+
+    FSMC_WriteReg(0x91, Xpos_start&0xFF);
+    FSMC_WriteReg(0x92, Xpos_start>>0x08);
+
+    FSMC_WriteReg(0x93, Ypos_start&0xFF);
+    FSMC_WriteReg(0x94, Ypos_start>>0x08);
+
+    FSMC_WriteReg(0x95, Xpos_end&0xFF);
+    FSMC_WriteReg(0x96, Xpos_end>>0x08);
+
+    FSMC_WriteReg(0x97, Ypos_end&0xFF);
+    FSMC_WriteReg(0x98, Ypos_end>>0x08);
+
+    FSMC_WriteReg(0xA1, axish&0xFF);
+    FSMC_WriteReg(0xA2, axish>>0x08);
+
+    FSMC_WriteReg(0xA3, axisy&0xFF);
+    FSMC_WriteReg(0xA4, axisy>>0x08);
+
+
+    FSMC_WriteReg(0xA0, (0xA0|fill));
+
+    while((FSMC_ReadReg(0xA0)&0x80) == 0x80) FSMC_WAIT_BUSY();
+}
+
+
+
+
+
+
+
+
+
+
 
 /**
   * @brief  Displays a monocolor picture.

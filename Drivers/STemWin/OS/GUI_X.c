@@ -138,14 +138,14 @@ int GUI_TOUCH_X_ReadState(void){
 void GUI_TOUCH_X_ActivateX(void){
 
     FSMC_WriteReg(0x71, 0x42);
-    LL_mDelay(1);
+    HAL_Delay(1);
 }
 
 /*  */
 void GUI_TOUCH_X_ActivateY(void){
 
     FSMC_WriteReg(0x71, 0x43);
-    LL_mDelay(1);
+    HAL_Delay(1);
 }
 
 /*  */

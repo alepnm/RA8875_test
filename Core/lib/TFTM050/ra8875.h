@@ -102,6 +102,7 @@ static inline uint16_t FSMC_ReadStatus(void){
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_OUTPUT);
     //LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_4, LL_GPIO_MODE_OUTPUT);
 
+    //FSMC_WAIT_BUSY();
     uint16_t status = LCD->LCD_RAM;
 
     //LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_4, LL_GPIO_MODE_ALTERNATE);
@@ -192,18 +193,27 @@ void LCD_PutString(uint8_t col, uint8_t line, const char* str);
 
 
 
+void LCD_ClearScreen(void);
+void LCD_ClearActiveWindow(void);
+void LCD_DrawLine(uint16_t Xpos_start, uint16_t Ypos_start, uint16_t Xpos_end, uint16_t Ypos_end);
+void LCD_DrawTriangle(uint16_t xa, uint16_t ya, uint16_t xb, uint16_t yb, uint16_t xc, uint16_t yc, uint8_t fill);
+void LCD_DrawRect(uint16_t Xpos_start, uint16_t Ypos_start, uint16_t Xpos_end, uint16_t Ypos_end, uint8_t fill);
+void LCD_DrawCircle(uint16_t Xpos, uint16_t Ypos, uint16_t radius, uint8_t fill);
+void LCD_DrawSquareOfCircleCorner(uint16_t Xpos_start, uint16_t Ypos_start, uint16_t Xpos_end, uint16_t Ypos_end, uint16_t axish, uint16_t axisy, uint8_t fill);
+
+
+
+
 
 /*----- High layer function -----*/
-
 void LCD_ClearLine(uint8_t Line);
 void LCD_DrawChar(uint16_t Xpos, uint16_t Ypos, const uint16_t *c);
 void LCD_DisplayChar(uint8_t Line, uint16_t Column, uint8_t Ascii);
 void LCD_DisplayStringLine(uint8_t Line, uint8_t *ptr);
 void LCD_SetDisplayWindow(uint8_t Xpos, uint16_t Ypos, uint8_t Height, uint16_t Width);
 void LCD_WindowModeDisable(void);
-void LCD_DrawLine(uint8_t Xpos, uint16_t Ypos, uint16_t Length, uint8_t Direction);
-void LCD_DrawRect(uint8_t Xpos, uint16_t Ypos, uint8_t Height, uint16_t Width);
-void LCD_DrawCircle(uint8_t Xpos, uint16_t Ypos, uint16_t Radius);
+
+
 void LCD_DrawMonoPict(const uint32_t *Pict);
 void LCD_WriteBMP(uint32_t BmpAddress);
 

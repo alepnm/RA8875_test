@@ -59,6 +59,10 @@ Purpose     : Configures emWins abilities, fonts etc.
 *
 *       Multi tasking support
 */
+
+#define OS_SUPPORT
+#define GUI_MAXTASK 5
+
 #ifdef OS_SUPPORT
  #define GUI_OS                    (1)  // Compile with multitasking support
 #else

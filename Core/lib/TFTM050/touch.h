@@ -20,7 +20,6 @@ struct _tp{
 
 
 void TS_Init(void);
-void TS_ReadState(void);
 void TS_ReadXY(void);
 
 

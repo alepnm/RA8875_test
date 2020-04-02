@@ -50,6 +50,7 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include "GUI.h"
+#include "cmsis_os.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
