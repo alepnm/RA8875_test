@@ -29,9 +29,8 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+#include "stm32f4xx_ll_crc.h"
 #include "stm32f4xx_hal.h"
-#include "stm32f4xx.h"
-#include "stm32f4xx_ll_i2c.h"
 #include "stm32f4xx_ll_rcc.h"
 #include "stm32f4xx_ll_bus.h"
 #include "stm32f4xx_ll_system.h"
@@ -40,14 +39,14 @@ extern "C" {
 #include "stm32f4xx_ll_utils.h"
 #include "stm32f4xx_ll_pwr.h"
 #include "stm32f4xx_ll_dma.h"
-#include "stm32f4xx_ll_spi.h"
 #include "stm32f4xx_ll_tim.h"
 #include "stm32f4xx_ll_usart.h"
+#include "stm32f4xx.h"
 #include "stm32f4xx_ll_gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -73,22 +72,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define SDCS_Pin LL_GPIO_PIN_13
-#define SDCS_GPIO_Port GPIOC
-#define XPTREQ_Pin LL_GPIO_PIN_14
-#define XPTREQ_GPIO_Port GPIOC
-#define SD_DETECT_Pin LL_GPIO_PIN_15
-#define SD_DETECT_GPIO_Port GPIOC
-#define XPTOUT_Pin LL_GPIO_PIN_0
-#define XPTOUT_GPIO_Port GPIOA
-#define XPTIN_Pin LL_GPIO_PIN_1
-#define XPTIN_GPIO_Port GPIOA
-#define XPTCS_Pin LL_GPIO_PIN_2
-#define XPTCS_GPIO_Port GPIOA
-#define XPTCLK_Pin LL_GPIO_PIN_3
-#define XPTCLK_GPIO_Port GPIOA
-#define W25QCS_Pin LL_GPIO_PIN_4
-#define W25QCS_GPIO_Port GPIOA
 #define LCD_RST_Pin LL_GPIO_PIN_8
 #define LCD_RST_GPIO_Port GPIOC
 #define LCD_WAIT_Pin LL_GPIO_PIN_9

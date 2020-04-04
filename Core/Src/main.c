@@ -20,11 +20,13 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm3210e_lcd.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "GUIDEMO.h"
+#include "WM.h"
+#include "ra8875.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,17 +48,18 @@
 SRAM_HandleTypeDef hsram1;
 
 /* USER CODE BEGIN PV */
+extern __IO uint32_t timestamp;
 
+uint8_t GUI_Initialized = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_SPI1_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_FSMC_Init(void);
 static void MX_TIM11_Init(void);
-static void MX_I2C1_Init(void);
+static void MX_CRC_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -89,20 +92,19 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  SysTick_Config(SystemCoreClock/1000);
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_SPI1_Init();
   MX_USART1_UART_Init();
   MX_FSMC_Init();
   MX_TIM11_Init();
-  MX_I2C1_Init();
+  MX_CRC_Init();
   /* USER CODE BEGIN 2 */
 
-  STM3210E_LCD_Init();
-
+  LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_13);  // A18 - pagal default aukstas lygis
+  LL_GPIO_ResetOutputPin(GPIOD, LL_GPIO_PIN_4); // RD - pagal default zemas lygis
 
   LL_TIM_EnableAllOutputs(TIM11);
   LL_TIM_CC_EnableChannel(TIM11, LL_TIM_CHANNEL_CH1);
@@ -110,8 +112,20 @@ int main(void)
   LL_TIM_OC_SetCompareCH1(TIM11, 80);
 
 
-  LCD_Clear(BLUE);
+  //NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+  RA8875_Init();
+  //RTC_Init();
 
+  /* Activate the use of memory device feature */
+  //WM_SetCreateFlags(WM_CF_MEMDEV);
+
+  /* Init the STemWin GUI Library */
+  //GUI_Init();
+
+  //GUI_Initialized = 1;
+
+  /* Start Demo */
+  //GUIDEMO_Main();
 
   /* USER CODE END 2 */
 
@@ -122,6 +136,19 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    if(TS_ReadXY()){
+
+        sprintf(str,"%03d", TS_Data.XPos);
+        RA8875_PutString(48, 0, str);
+
+        sprintf(str,"%03d", TS_Data.YPos);
+        RA8875_PutString(55, 0, str);
+    }
+
+    sprintf(str,"%06ld", timestamp );
+    RA8875_PutString(38, 0, str);
+
+    LL_mDelay(100);
   }
   /* USER CODE END 3 */
 }
@@ -174,111 +201,26 @@ void SystemClock_Config(void)
 }
 
 /**
-  * @brief I2C1 Initialization Function
+  * @brief CRC Initialization Function
   * @param None
   * @retval None
   */
-static void MX_I2C1_Init(void)
+static void MX_CRC_Init(void)
 {
 
-  /* USER CODE BEGIN I2C1_Init 0 */
+  /* USER CODE BEGIN CRC_Init 0 */
 
-  /* USER CODE END I2C1_Init 0 */
-
-  LL_I2C_InitTypeDef I2C_InitStruct = {0};
-
-  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
-  /**I2C1 GPIO Configuration
-  PB6   ------> I2C1_SCL
-  PB7   ------> I2C1_SDA
-  */
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_6|LL_GPIO_PIN_7;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
-  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_OPENDRAIN;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
-  GPIO_InitStruct.Alternate = LL_GPIO_AF_4;
-  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  /* USER CODE END CRC_Init 0 */
 
   /* Peripheral clock enable */
-  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_I2C1);
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_CRC);
 
-  /* USER CODE BEGIN I2C1_Init 1 */
+  /* USER CODE BEGIN CRC_Init 1 */
 
-  /* USER CODE END I2C1_Init 1 */
-  /** I2C Initialization
-  */
-  LL_I2C_DisableOwnAddress2(I2C1);
-  LL_I2C_DisableGeneralCall(I2C1);
-  LL_I2C_EnableClockStretching(I2C1);
-  I2C_InitStruct.PeripheralMode = LL_I2C_MODE_I2C;
-  I2C_InitStruct.ClockSpeed = 100000;
-  I2C_InitStruct.DutyCycle = LL_I2C_DUTYCYCLE_2;
-  I2C_InitStruct.OwnAddress1 = 0;
-  I2C_InitStruct.TypeAcknowledge = LL_I2C_ACK;
-  I2C_InitStruct.OwnAddrSize = LL_I2C_OWNADDRESS1_7BIT;
-  LL_I2C_Init(I2C1, &I2C_InitStruct);
-  LL_I2C_SetOwnAddress2(I2C1, 0);
-  /* USER CODE BEGIN I2C1_Init 2 */
+  /* USER CODE END CRC_Init 1 */
+  /* USER CODE BEGIN CRC_Init 2 */
 
-  /* USER CODE END I2C1_Init 2 */
-
-}
-
-/**
-  * @brief SPI1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_SPI1_Init(void)
-{
-
-  /* USER CODE BEGIN SPI1_Init 0 */
-
-  /* USER CODE END SPI1_Init 0 */
-
-  LL_SPI_InitTypeDef SPI_InitStruct = {0};
-
-  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-  /* Peripheral clock enable */
-  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SPI1);
-
-  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
-  /**SPI1 GPIO Configuration
-  PA5   ------> SPI1_SCK
-  PA6   ------> SPI1_MISO
-  PA7   ------> SPI1_MOSI
-  */
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_5|LL_GPIO_PIN_6|LL_GPIO_PIN_7;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
-  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  GPIO_InitStruct.Alternate = LL_GPIO_AF_5;
-  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /* USER CODE BEGIN SPI1_Init 1 */
-
-  /* USER CODE END SPI1_Init 1 */
-  /* SPI1 parameter configuration*/
-  SPI_InitStruct.TransferDirection = LL_SPI_FULL_DUPLEX;
-  SPI_InitStruct.Mode = LL_SPI_MODE_MASTER;
-  SPI_InitStruct.DataWidth = LL_SPI_DATAWIDTH_8BIT;
-  SPI_InitStruct.ClockPolarity = LL_SPI_POLARITY_LOW;
-  SPI_InitStruct.ClockPhase = LL_SPI_PHASE_1EDGE;
-  SPI_InitStruct.NSS = LL_SPI_NSS_SOFT;
-  SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV4;
-  SPI_InitStruct.BitOrder = LL_SPI_MSB_FIRST;
-  SPI_InitStruct.CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE;
-  SPI_InitStruct.CRCPoly = 10;
-  LL_SPI_Init(SPI1, &SPI_InitStruct);
-  LL_SPI_SetStandard(SPI1, LL_SPI_PROTOCOL_MOTOROLA);
-  /* USER CODE BEGIN SPI1_Init 2 */
-
-  /* USER CODE END SPI1_Init 2 */
+  /* USER CODE END CRC_Init 2 */
 
 }
 
@@ -403,47 +345,13 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOH);
-  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOE);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD);
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
 
   /**/
-  LL_GPIO_SetOutputPin(GPIOC, SDCS_Pin|LCD_RST_Pin);
-
-  /**/
-  LL_GPIO_SetOutputPin(GPIOA, XPTCS_Pin|W25QCS_Pin);
-
-  /**/
-  LL_GPIO_ResetOutputPin(GPIOA, XPTIN_Pin|XPTCLK_Pin);
-
-  /**/
-  GPIO_InitStruct.Pin = SDCS_Pin;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  LL_GPIO_Init(SDCS_GPIO_Port, &GPIO_InitStruct);
-
-  /**/
-  GPIO_InitStruct.Pin = XPTREQ_Pin|SD_DETECT_Pin|LCD_WAIT_Pin;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
-  LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /**/
-  GPIO_InitStruct.Pin = XPTOUT_Pin;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
-  LL_GPIO_Init(XPTOUT_GPIO_Port, &GPIO_InitStruct);
-
-  /**/
-  GPIO_InitStruct.Pin = XPTIN_Pin|XPTCS_Pin|XPTCLK_Pin|W25QCS_Pin;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  LL_GPIO_SetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin);
 
   /**/
   GPIO_InitStruct.Pin = LCD_RST_Pin;
@@ -452,6 +360,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(LCD_RST_GPIO_Port, &GPIO_InitStruct);
+
+  /**/
+  GPIO_InitStruct.Pin = LCD_WAIT_Pin;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
+  LL_GPIO_Init(LCD_WAIT_GPIO_Port, &GPIO_InitStruct);
 
 }
 
@@ -464,7 +378,6 @@ static void MX_FSMC_Init(void)
   /* USER CODE END FSMC_Init 0 */
 
   FSMC_NORSRAM_TimingTypeDef Timing = {0};
-  FSMC_NORSRAM_TimingTypeDef ExtTiming = {0};
 
   /* USER CODE BEGIN FSMC_Init 1 */
 
@@ -485,33 +398,35 @@ static void MX_FSMC_Init(void)
   hsram1.Init.WaitSignalActive = FSMC_WAIT_TIMING_BEFORE_WS;
   hsram1.Init.WriteOperation = FSMC_WRITE_OPERATION_ENABLE;
   hsram1.Init.WaitSignal = FSMC_WAIT_SIGNAL_DISABLE;
-  hsram1.Init.ExtendedMode = FSMC_EXTENDED_MODE_ENABLE;
+  hsram1.Init.ExtendedMode = FSMC_EXTENDED_MODE_DISABLE;
   hsram1.Init.AsynchronousWait = FSMC_ASYNCHRONOUS_WAIT_DISABLE;
   hsram1.Init.WriteBurst = FSMC_WRITE_BURST_DISABLE;
   hsram1.Init.PageSize = FSMC_PAGE_SIZE_NONE;
   /* Timing */
-  Timing.AddressSetupTime = 15;
+  Timing.AddressSetupTime = 5;
   Timing.AddressHoldTime = 15;
-  Timing.DataSetupTime = 255;
-  Timing.BusTurnAroundDuration = 15;
-  Timing.CLKDivision = 16;
-  Timing.DataLatency = 17;
+  Timing.DataSetupTime = 9;
+  Timing.BusTurnAroundDuration = 0;
+  Timing.CLKDivision = 4;
+  Timing.DataLatency = 2;
   Timing.AccessMode = FSMC_ACCESS_MODE_A;
   /* ExtTiming */
-  ExtTiming.AddressSetupTime = 15;
-  ExtTiming.AddressHoldTime = 15;
-  ExtTiming.DataSetupTime = 255;
-  ExtTiming.BusTurnAroundDuration = 15;
-  ExtTiming.CLKDivision = 16;
-  ExtTiming.DataLatency = 17;
-  ExtTiming.AccessMode = FSMC_ACCESS_MODE_A;
 
-  if (HAL_SRAM_Init(&hsram1, &Timing, &ExtTiming) != HAL_OK)
+  if (HAL_SRAM_Init(&hsram1, &Timing, NULL) != HAL_OK)
   {
     Error_Handler( );
   }
 
   /* USER CODE BEGIN FSMC_Init 2 */
+
+// Nustatymai:
+//  Timing.AddressSetupTime = 5;
+//  Timing.AddressHoldTime = 15;
+//  Timing.DataSetupTime = 9;
+//  Timing.BusTurnAroundDuration = 0;
+//  Timing.CLKDivision = 2;
+//  Timing.DataLatency = 2;
+//  Timing.AccessMode = FSMC_ACCESS_MODE_A;
 
   /* USER CODE END FSMC_Init 2 */
 }

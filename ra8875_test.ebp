@@ -14,18 +14,18 @@
 				<Option compiler="armgcc_eb" />
 				<Option projectDeviceOptionsRelation="0" />
 				<Compiler>
-					<Add option="-g3" />
-					<Add option="-O0" />
 					<Add option="-Wall" />
 					<Add option="-fdata-sections" />
 					<Add option="-ffunction-sections" />
+					<Add option="-O0" />
+					<Add option="-g3" />
 				</Compiler>
 				<Cpp>
-					<Add option="-g3" />
-					<Add option="-O0" />
 					<Add option="-Wall" />
 					<Add option="-fdata-sections" />
 					<Add option="-ffunction-sections" />
+					<Add option="-O0" />
+					<Add option="-g3" />
 				</Cpp>
 				<Assembler>
 					<Add option="-Wa,--gdwarf-2" />
@@ -73,28 +73,106 @@
 			<Add option="-fno-strict-aliasing" />
 			<Add symbol="STM32F407xx" />
 			<Add symbol="USE_FULL_LL_DRIVER" />
-			<Add directory=".\inc" />
-			<Add directory=".\src" />
-			<Add directory=".\cmsis" />
 		</Compiler>
 		<Linker>
 			<Add option="-eb_lib=n" />
 			<Add option="-eb_start_files" />
+			<Add option="-lm" />
+			<Add library="Drivers\STemWin\Lib\STemWin532_CM4_GCC.a" />
 		</Linker>
+		<Unit filename="App\Conf\global_includes.h" />
+		<Unit filename="App\Conf\GUIConf.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\Conf\GUIConf.h" />
+		<Unit filename="App\Conf\LCDConf.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\Conf\LCDConf.h" />
+		<Unit filename="App\GUI\GUIDEMO.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO.h" />
+		<Unit filename="App\GUI\GUIDEMO_AntialiasedText.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_Automotive.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_BarGraph.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_Bitmap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_ColorBar.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_Conf.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_Cursor.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_Fading.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_Graph.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_IconView.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_ImageFlow.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_Intro.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_Listview.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_RadialMenu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_Resource.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_Skinning.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_Speed.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_Speedometer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_Start.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_TransparentDialog.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_Treeview.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_VScreen.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_WashingMachine.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUI\GUIDEMO_ZoomAndRotate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\Target\ra8875.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\Target\ra8875.h" />
 		<Unit filename="Core\Inc\main.h" />
 		<Unit filename="Core\Inc\stm32_assert.h" />
 		<Unit filename="Core\Inc\stm32f4xx_hal_conf.h" />
 		<Unit filename="Core\Inc\stm32f4xx_it.h" />
-		<Unit filename="Core\lib\ra8875\fonts.h" />
-		<Unit filename="Core\lib\ra8875\ra8875.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="Core\lib\ra8875\ra8875.h" />
-		<Unit filename="Core\lib\ra8875\ra8875_registers.h" />
-		<Unit filename="Core\lib\ra8875\stm3210e_lcd.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="Core\lib\ra8875\stm3210e_lcd.h" />
 		<Unit filename="Core\Src\main.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -110,12 +188,184 @@
 		<Unit filename="Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h" />
 		<Unit filename="Drivers\CMSIS\Device\ST\STM32F4xx\Include\system_stm32f4xx.h" />
 		<Unit filename="Drivers\CMSIS\Include\cmsis_gcc.h" />
+		<Unit filename="Drivers\STemWin\inc\BUTTON.h" />
+		<Unit filename="Drivers\STemWin\inc\BUTTON_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\CALENDAR.h" />
+		<Unit filename="Drivers\STemWin\inc\CHECKBOX.h" />
+		<Unit filename="Drivers\STemWin\inc\CHECKBOX_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\CHOOSECOLOR.h" />
+		<Unit filename="Drivers\STemWin\inc\CHOOSEFILE.h" />
+		<Unit filename="Drivers\STemWin\inc\DIALOG.h" />
+		<Unit filename="Drivers\STemWin\inc\DIALOG_Intern.h" />
+		<Unit filename="Drivers\STemWin\inc\DROPDOWN.h" />
+		<Unit filename="Drivers\STemWin\inc\DROPDOWN_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\EDIT.h" />
+		<Unit filename="Drivers\STemWin\inc\EDIT_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\FRAMEWIN.h" />
+		<Unit filename="Drivers\STemWin\inc\FRAMEWIN_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\Global.h" />
+		<Unit filename="Drivers\STemWin\inc\GRAPH.h" />
+		<Unit filename="Drivers\STemWin\inc\GRAPH_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI__BiDi2_Brackets_800.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI__BiDi2_Types_800.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_ARRAY.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_ARRAY_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_BMP_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_ConfDefaults.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_Debug.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_FontIntern.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_GCache_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_GIF_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_HOOK.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_JPEG_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_SetOrientation.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_SetOrientationCX.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_SIM_Win32.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_SPRITE_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_Type.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_Version.h" />
+		<Unit filename="Drivers\STemWin\inc\GUI_VNC.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_DCache.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_DCache_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_Dist.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_FlexColor.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_FlexColor_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_Lin.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_Lin_Opt_16.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_Lin_Opt_24.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_Lin_Opt_32.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_Lin_Opt_8.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_Lin_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_NoOpt_1_8.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_Template.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_TemplateI.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIDRV_TemplateI_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\GUIMTDRV_TangoC32.h" />
+		<Unit filename="Drivers\STemWin\inc\GUITDRV_ADS7846.h" />
+		<Unit filename="Drivers\STemWin\inc\HEADER.h" />
+		<Unit filename="Drivers\STemWin\inc\HEADER_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\ICONVIEW.h" />
+		<Unit filename="Drivers\STemWin\inc\ICONVIEW_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\IMAGE.h" />
+		<Unit filename="Drivers\STemWin\inc\IMAGE_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\IP_FS.h" />
+		<Unit filename="Drivers\STemWin\inc\KNOB.h" />
+		<Unit filename="Drivers\STemWin\inc\KNOB_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\LCD.h" />
+		<Unit filename="Drivers\STemWin\inc\LCD_ConfDefaults.h" />
+		<Unit filename="Drivers\STemWin\inc\LCD_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\LCD_Protected.h" />
+		<Unit filename="Drivers\STemWin\inc\LCD_SIM.h" />
+		<Unit filename="Drivers\STemWin\inc\LISTBOX.h" />
+		<Unit filename="Drivers\STemWin\inc\LISTBOX_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\LISTVIEW.h" />
+		<Unit filename="Drivers\STemWin\inc\LISTVIEW_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\LISTWHEEL.h" />
+		<Unit filename="Drivers\STemWin\inc\LISTWHEEL_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\MENU.h" />
+		<Unit filename="Drivers\STemWin\inc\MENU_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\MESSAGEBOX.h" />
+		<Unit filename="Drivers\STemWin\inc\MULTIEDIT.h" />
+		<Unit filename="Drivers\STemWin\inc\MULTIPAGE.h" />
+		<Unit filename="Drivers\STemWin\inc\MULTIPAGE_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\PROGBAR.h" />
+		<Unit filename="Drivers\STemWin\inc\PROGBAR_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\RADIO.h" />
+		<Unit filename="Drivers\STemWin\inc\RADIO_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\SCROLLBAR.h" />
+		<Unit filename="Drivers\STemWin\inc\SCROLLBAR_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\SEGGER.h" />
+		<Unit filename="Drivers\STemWin\inc\SLIDER.h" />
+		<Unit filename="Drivers\STemWin\inc\SLIDER_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\SPINBOX.h" />
+		<Unit filename="Drivers\STemWin\inc\SPINBOX_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\SWIPELIST.h" />
+		<Unit filename="Drivers\STemWin\inc\SWIPELIST_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\TEXT.h" />
+		<Unit filename="Drivers\STemWin\inc\TEXT_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\TREEVIEW.h" />
+		<Unit filename="Drivers\STemWin\inc\TREEVIEW_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\WIDGET.h" />
+		<Unit filename="Drivers\STemWin\inc\WINDOW_Private.h" />
+		<Unit filename="Drivers\STemWin\inc\WM.h" />
+		<Unit filename="Drivers\STemWin\inc\WM_GUI.h" />
+		<Unit filename="Drivers\STemWin\inc\WM_Intern.h" />
+		<Unit filename="Drivers\STemWin\OS\GUI_X.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\Legacy\stm32f4xx_hal_can_legacy.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_adc.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_adc_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_can.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_cec.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_cortex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_crc.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_cryp.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_cryp_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dac.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dac_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dcmi.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dcmi_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dfsdm.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dma.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dma2d.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dma_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dsi.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_eth.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_exti.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ramfunc.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_fmpi2c.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_fmpi2c_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_fmpsmbus.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_gpio.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_gpio_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_hash.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_hash_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_hcd.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_i2c.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_i2c_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_i2s.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_i2s_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_irda.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_iwdg.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_lptim.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_ltdc.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_ltdc_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_mmc.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_nand.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_nor.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pccard.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pcd.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pcd_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pwr.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pwr_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_qspi.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rng.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rtc.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rtc_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_sai.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_sai_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_sd.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_sdram.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_smartcard.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_smbus.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_spdifrx.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_spi.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_sram.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_uart.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_usart.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_wwdg.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_adc.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_bus.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_cortex.h" />
@@ -125,6 +375,7 @@
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_dma2d.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_exti.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_fmc.h" />
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_fmpi2c.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_fsmc.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_gpio.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_i2c.h" />
@@ -145,13 +396,202 @@
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_can.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cec.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_crc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cryp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cryp_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dac.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dac_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dcmi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dcmi_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dfsdm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma2d.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dsi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_eth.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_exti.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash_ramfunc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_fmpi2c.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_fmpi2c_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_fmpsmbus.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_hash.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_hash_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_hcd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2c_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2s.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_i2s_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_irda.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_iwdg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_lptim.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_ltdc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_ltdc_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_mmc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_nand.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_nor.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pccard.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pcd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pcd_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_qspi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rng.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rtc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rtc_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sai.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sai_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sdram.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_smartcard.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_smbus.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spdifrx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sram.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_usart.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_wwdg.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_adc.c">
@@ -173,6 +613,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fmc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fmpi2c.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fsmc.c">
