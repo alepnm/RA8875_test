@@ -1,84 +1,89 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <EmBitz_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="App\Conf\GUIConf.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\Conf\global_includes.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3026" topLine="36" />
+			<Cursor1 position="831" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="App\Conf\GUIConf.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\Conf\GUIConf.c" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2462" topLine="9" />
+			<Cursor1 position="3308" topLine="57" />
 		</Cursor>
 	</File>
-	<File name="App\Conf\LCDConf_FlexColor.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\Conf\GUIConf.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="7267" topLine="176" />
+			<Cursor1 position="3937" topLine="33" />
 		</Cursor>
 	</File>
-	<File name="App\GUI\GUIDEMO.c" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\Conf\LCDConf.c" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="16800" topLine="482" />
+			<Cursor1 position="5356" topLine="135" />
 		</Cursor>
 	</File>
-	<File name="App\GUI\GUIDEMO.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\Conf\LCDConf.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="10661" topLine="57" />
+			<Cursor1 position="640" topLine="12" />
 		</Cursor>
 	</File>
-	<File name="App\Target\calibration.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\GUI\GUIDEMO.c" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="8323" topLine="228" />
+			<Cursor1 position="11236" topLine="312" />
 		</Cursor>
 	</File>
-	<File name="App\Target\rtc.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\GUI\GUIDEMO.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2850" topLine="17" />
+			<Cursor1 position="5789" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="App\GUI\GUIDEMO_Automotive.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2390" topLine="9" />
+		</Cursor>
+	</File>
+	<File name="App\GUI\GUIDEMO_Conf.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4606" topLine="38" />
+		</Cursor>
+	</File>
+	<File name="App\GUI\GUIDEMO_ImageFlow.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="367013" topLine="1866" />
+		</Cursor>
+	</File>
+	<File name="App\Target\ra8875.c" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6569" topLine="68" />
+		</Cursor>
+	</File>
+	<File name="App\Target\ra8875.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="487" topLine="101" />
+		</Cursor>
+	</File>
+	<File name="App\win\WindowDLG.c" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="17052" topLine="407" />
 		</Cursor>
 	</File>
 	<File name="Core\Inc\main.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1689" topLine="0" />
+			<Cursor1 position="1692" topLine="6" />
 		</Cursor>
 	</File>
 	<File name="Core\Inc\stm32f4xx_hal_conf.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1865" topLine="0" />
+			<Cursor1 position="10494" topLine="206" />
 		</Cursor>
 	</File>
-	<File name="Core\Src\main.c" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Core\Src\main.c" open="1" top="1" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3370" topLine="81" />
+			<Cursor1 position="3684" topLine="99" />
 		</Cursor>
 	</File>
-	<File name="Core\Src\stm32f4xx_it.c" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Core\Src\stm32f4xx_it.c" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4401" topLine="90" />
-		</Cursor>
-	</File>
-	<File name="Drivers\BSP\STM324xG_EVAL\stm324xg_eval.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5599" topLine="109" />
-		</Cursor>
-	</File>
-	<File name="Drivers\BSP\STM324xG_EVAL\stm324xg_eval.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="11984" topLine="290" />
-		</Cursor>
-	</File>
-	<File name="Drivers\BSP\STM324xG_EVAL\stm324xg_eval_eeprom.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="45" />
-		</Cursor>
-	</File>
-	<File name="Drivers\BSP\STM324xG_EVAL\stm324xg_eval_lcd.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3737" topLine="36" />
-		</Cursor>
-	</File>
-	<File name="Drivers\BSP\STM324xG_EVAL\stm324xg_eval_lcd.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2486" topLine="0" />
+			<Cursor1 position="2751" topLine="26" />
 		</Cursor>
 	</File>
 	<File name="Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -86,9 +91,59 @@
 			<Cursor1 position="8672" topLine="180" />
 		</Cursor>
 	</File>
+	<File name="Drivers\STemWin\inc\GUI.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="88268" topLine="2035" />
+		</Cursor>
+	</File>
+	<File name="Drivers\STemWin\inc\GUI_GCache_Private.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="63" />
+		</Cursor>
+	</File>
+	<File name="Drivers\STemWin\inc\GUI_Type.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4244" topLine="62" />
+		</Cursor>
+	</File>
+	<File name="Drivers\STemWin\inc\GUIDRV_FlexColor.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5540" topLine="86" />
+		</Cursor>
+	</File>
+	<File name="Drivers\STemWin\inc\GUIDRV_Template.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="27" />
+		</Cursor>
+	</File>
+	<File name="Drivers\STemWin\inc\LCD.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="285" />
+		</Cursor>
+	</File>
+	<File name="Drivers\STemWin\inc\LCD_ConfDefaults.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="37" />
+		</Cursor>
+	</File>
+	<File name="Drivers\STemWin\inc\WIDGET.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="123" />
+		</Cursor>
+	</File>
+	<File name="Drivers\STemWin\OS\GUI_X.c" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2584" topLine="38" />
+		</Cursor>
+	</File>
 	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="0" topLine="174" />
+		</Cursor>
+	</File>
+	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_cortex.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="93" />
 		</Cursor>
 	</File>
 	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_gpio.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -123,7 +178,17 @@
 	</File>
 	<File name="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="14238" topLine="334" />
+			<Cursor1 position="12482" topLine="308" />
+		</Cursor>
+	</File>
+	<File name="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8040" topLine="144" />
+		</Cursor>
+	</File>
+	<File name="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="16077" topLine="379" />
 		</Cursor>
 	</File>
 	<File name="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sram.c" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -156,24 +221,9 @@
 			<Cursor1 position="16467" topLine="229" />
 		</Cursor>
 	</File>
-	<File name="Middlewares\ST\STemWin\inc\BUTTON.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="startup\startup_stm32f4xx.S" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="9371" topLine="143" />
-		</Cursor>
-	</File>
-	<File name="Middlewares\ST\STemWin\inc\GUI.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2911" topLine="12" />
-		</Cursor>
-	</File>
-	<File name="Middlewares\ST\STemWin\inc\GUI_ConfDefaults.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2211" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="startup\startup_stm32f4xx.S" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="9726" topLine="175" />
+			<Cursor1 position="9439" topLine="193" />
 		</Cursor>
 	</File>
 </EmBitz_layout_file>

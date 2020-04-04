@@ -65,8 +65,8 @@
 			<Add option="$device=cortex-m4" />
 			<Add option="$fpu=fpv4-sp-d16" />
 			<Add option="$lscript=startup/stm32f407vg_flash.ld" />
-			<Add option="$stack=0x0200" />
-			<Add option="$heap=0x0400" />
+			<Add option="$stack=0x0400" />
+			<Add option="$heap=0x0800" />
 		</Device>
 		<Compiler>
 			<Add option="-mfloat-abi=hard" />
@@ -169,6 +169,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="App\Target\ra8875.h" />
+		<Unit filename="App\win\WindowDLG.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\win\WindowDLG.h" />
 		<Unit filename="Core\Inc\main.h" />
 		<Unit filename="Core\Inc\stm32_assert.h" />
 		<Unit filename="Core\Inc\stm32f4xx_hal_conf.h" />
