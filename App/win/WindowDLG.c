@@ -23,6 +23,7 @@
 
 #include "DIALOG.h"
 #include "main.h"
+#include "ra8875.h"
 
 /*********************************************************************
 *
@@ -61,8 +62,11 @@
 */
 
 // USER START (Optionally insert additional static data)
-extern WM_HWIN hText1, hText2;
+WM_HWIN hWin, hText1, hText2, hSlider0;
+WM_HTIMER hTimer;
+
 extern __IO uint32_t timestamp;
+extern char st[];
 
 // USER END
 
@@ -173,6 +177,17 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     hItem = WM_GetDialogItem(pMsg->hWin, ID_RADIO_0);
     RADIO_SetFont(hItem, GUI_FONT_13_1);
     // USER START (Optionally insert additional code for further widget initialization)
+
+    hText1 = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
+    TEXT_SetTextColor(hText1, GUI_BLUE);
+
+    hText2 = WM_GetDialogItem(pMsg->hWin, ID_TEXT_1);
+
+    hSlider0 = WM_GetDialogItem(pMsg->hWin, ID_SLIDER_0);
+    SLIDER_SetRange(hSlider0, 10, 100);
+
+    hTimer = WM_CreateTimer(pMsg->hWin, 0, 100, 0);
+
     // USER END
     break;
   case WM_NOTIFY_PARENT:
@@ -223,6 +238,10 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
+        sprintf(st, "%d", SLIDER_GetValue(hSlider0));
+        TEXT_SetText(hText1, st);
+
+        LL_TIM_OC_SetCompareCH1(TIM11, SLIDER_GetValue(hSlider0));
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)
@@ -442,12 +461,17 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     }
     break;
   // USER START (Optionally insert additional message handling)
-  // USER END
 
     case WM_TIMER:
 
+        TS_ReadXY();
+
+        GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
+
         WM_RestartTimer(pMsg->Data.v, 100);
         break;
+
+  // USER END
   default:
     WM_DefaultProc(pMsg);
     break;

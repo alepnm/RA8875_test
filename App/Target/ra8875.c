@@ -86,7 +86,7 @@ void RA8875_Init(void) {
 
 
     /* PLL clock frequency */
-    FSMC_WriteRegister(0x88, 0x07);   // PLL Control Register1
+    FSMC_WriteRegister(0x88, 0x05);   // PLL Control Register1
     HAL_Delay(1);
     FSMC_WriteRegister(0x89, 0x01);   // PLL Control Register2
     HAL_Delay(1);
@@ -227,7 +227,7 @@ void FSMC_ReadDDRAM(uint16_t *pdata, int pixels){
     (void)LCD->LCD_RAM;// dummy read
 
     while(pixels--){
-        RA8875_WAIT();//FSMC_WAIT_BUSY();
+        FSMC_WAIT_BUSY();
         *pdata = LCD->LCD_RAM;
         pdata++;
     }
@@ -239,7 +239,7 @@ void FSMC_WriteDDRAM(uint16_t *pdata, int pixels){
     LCD->LCD_REG = 0x02;
 
     while(pixels--){
-        RA8875_WAIT();//FSMC_WAIT_BUSY();
+        FSMC_WAIT_BUSY();
         LCD->LCD_RAM = *pdata;
         pdata++;
     }

@@ -53,11 +53,11 @@ SRAM_HandleTypeDef hsram1;
 /* USER CODE BEGIN PV */
 extern __IO uint32_t timestamp;
 
+char st[20];
 uint8_t GUI_Initialized = 0;
 
-WM_HWIN hWin;
-WM_HTIMER hTimer;
-WM_HWIN hText1, hText2;
+extern WM_HWIN hWin;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -116,7 +116,7 @@ int main(void)
   LL_TIM_EnableAllOutputs(TIM11);
   LL_TIM_CC_EnableChannel(TIM11, LL_TIM_CHANNEL_CH1);
   LL_TIM_EnableCounter(TIM11);
-  LL_TIM_OC_SetCompareCH1(TIM11, 100);
+  LL_TIM_OC_SetCompareCH1(TIM11, 80);
 
 
   //NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
@@ -129,10 +129,12 @@ int main(void)
   /* Init the STemWin GUI Library */
   GUI_Init();
 
+  GUI_X_Init(); // --> user implement GUI_X.c
+
   GUI_Initialized = 1;
 
   /* Start Demo */
-  GUIDEMO_Main();
+  //GUIDEMO_Main();
 
   GUI_Clear();
 
@@ -166,13 +168,7 @@ int main(void)
     }
 
 
-    {
-//        hWin = CreateWindow();
-//        hTimer = WM_CreateTimer(hWin, 0, 100, 0);
-//
-//        hText1 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x12);
-//        hText2 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x13);
-    }
+    hWin = CreateWindow();
 
   /* USER CODE END 2 */
 
@@ -183,23 +179,10 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    if(TS_ReadXY()){
 
-        GUI_GotoXY(400, 0);
-        GUI_DispDecSpace(TS_Data.XPos, 3);
-
-        GUI_GotoXY(440, 0);
-        GUI_DispDecSpace(TS_Data.YPos, 3);
-
-        //GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
-    }
-
-    GUI_GotoXY(0, 0);
-    GUI_DispDecSpace(timestamp, 8);
-
-    //LL_mDelay(100);
-    //GUI_Exec();
-    GUI_Delay(100);
+    GUI_Exec();
+    GUI_X_ExecIdle(); // --> user implement GUI_X.c
+    //GUI_Delay(10);
   }
   /* USER CODE END 3 */
 }
@@ -448,7 +431,7 @@ static void MX_FSMC_Init(void)
   hsram1.Init.WrapMode = FSMC_WRAP_MODE_DISABLE;
   hsram1.Init.WaitSignalActive = FSMC_WAIT_TIMING_BEFORE_WS;
   hsram1.Init.WriteOperation = FSMC_WRITE_OPERATION_ENABLE;
-  hsram1.Init.WaitSignal = FSMC_WAIT_SIGNAL_DISABLE;
+  hsram1.Init.WaitSignal = FSMC_WAIT_SIGNAL_ENABLE;
   hsram1.Init.ExtendedMode = FSMC_EXTENDED_MODE_DISABLE;
   hsram1.Init.AsynchronousWait = FSMC_ASYNCHRONOUS_WAIT_DISABLE;
   hsram1.Init.WriteBurst = FSMC_WRITE_BURST_DISABLE;

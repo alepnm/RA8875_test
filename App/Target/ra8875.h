@@ -29,7 +29,8 @@ typedef struct {
 
 /* LCD is connected to the FSMC_Bank1_NOR/SRAM1 and NE1 is used as ship select signal */
 #define LCD_BASE    ((uint32_t)(Bank1_SRAM1_ADDR | 0x000FFFFE))
-#define LCD         ((LCD_TypeDef *) LCD_BASE)
+//#define LCD_BASE    ( (uint32_t)(Bank1_SRAM1_ADDR | (0x01<<19)) )
+#define LCD         ( (LCD_TypeDef *) LCD_BASE)
 
 
 
