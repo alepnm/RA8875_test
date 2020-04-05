@@ -14,7 +14,7 @@
 #define RA8875_RST_LOW()    LL_GPIO_ResetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin)
 #define RA8875_RST_HIGH()   LL_GPIO_SetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin)
 #define RA8875_WAIT()       while(!LL_GPIO_IsInputPinSet(LCD_WAIT_GPIO_Port, LCD_WAIT_Pin))
-#define RA8875_GPOX(state)  FSMC_WriteReg(0xC7, state);
+#define RA8875_GPOX(state)  FSMC_WriteRegister(0xC7, state);
 
 
 #define Bank1_SRAM1_ADDR  ((uint32_t)0x60000000)  // NE1
@@ -51,8 +51,6 @@ struct _lcd{
 };
 
 extern struct _lcd Display;
-
-extern char str[];
 
 
 /* LCD color */
@@ -102,9 +100,6 @@ static inline void FSMC_WaitDMA(void){
 }
 
 
-
-
-
 /*  */
 static inline uint16_t FSMC_ReadStatus(void){
 
@@ -120,66 +115,53 @@ static inline uint16_t FSMC_ReadStatus(void){
 }
 
 
-
 /*  */
-static inline void FSMC_CmdWrite( uint8_t cmd){
+static inline uint16_t FSMC_ReadRegister(uint16_t reg){
 
-    LCD->LCD_REG = cmd;
-    //FSMC_WAIT_BUSY();
-}
-
-/*  */
-static inline void FSMC_WriteRAM_Prepare(void){
-
-    LCD->LCD_REG = 0x02;
-    /*FSMC_WAIT_BUSY();*/
-}
-
-/*  */
-static inline void FSMC_DataWrite(uint16_t data){
-
-    LCD->LCD_RAM = data;
-    //FSMC_WAIT_BUSY();
-}
-
-/*  */
-static inline uint16_t FSMC_DataRead(void){
-
-    //FSMC_WAIT_BUSY();
+    LCD->LCD_REG = reg;
     return LCD->LCD_RAM;
 }
 
 /*  */
-static inline void FSMC_WriteReg(uint8_t reg, uint8_t val) {
+static inline void FSMC_WriteRegister(uint16_t reg, uint16_t val){
 
     LCD->LCD_REG = reg;
-
-    //FSMC_WAIT_BUSY();
     LCD->LCD_RAM = val;
 }
 
+
 /*  */
-static inline uint16_t FSMC_ReadReg(uint8_t reg) {
+static inline uint16_t FSMC_GetA0(void){
 
-    LCD->LCD_REG = reg;
-
-    //FSMC_WAIT_BUSY();
     return LCD->LCD_RAM;
 }
 
 /*  */
-static inline uint16_t FSMC_ReadRAM(void) {
+static inline void FSMC_SetA0(uint16_t data){
 
-    LCD->LCD_REG = 0x02;
-
-    //FSMC_WAIT_BUSY();
-    return LCD->LCD_RAM;
+    LCD->LCD_RAM = data;
 }
 
+
+/*  */
+static inline uint16_t FSMC_GetA1(void){
+
+    return LCD->LCD_REG;
+}
+
+/*  */
+static inline void FSMC_SetA1(uint16_t data){
+
+    LCD->LCD_REG = data;
+}
 
 
 /* Exported functions ------------------------------------------------------- */
 void RA8875_Init(void);
+void FSMC_ReadDDRAM(uint16_t *pdata, int pixels);
+uint16_t FSMC_ReadPixel(uint16_t xpos, uint16_t ypos);
+void FSMC_WriteDDRAM(uint16_t *pdata, int pixels);
+void FSMC_WritePixel(uint16_t xpos, uint16_t ypos, uint16_t pixel);
 void RA8875_Display_OnOff(uint8_t state);
 void RA8875_Reset(void);
 void RA8875_ClearScreen(void);
@@ -194,7 +176,7 @@ void RA8875_ExitTextMode(void);
 void RA8875_SetTextWriteCursorAbs(uint16_t x, uint16_t y);
 
 void RA8875_SetPixelWriteCursor(uint16_t x, uint16_t y);
-void RA8875_SetReadCursor(uint16_t x, uint16_t y);
+void RA8875_SetPixelReadCursor(uint16_t x, uint16_t y);
 
 
 void RA8875_SetForeColor(uint16_t color); //ok

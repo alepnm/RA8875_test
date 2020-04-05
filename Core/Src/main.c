@@ -198,8 +198,8 @@ int main(void)
     GUI_DispDecSpace(timestamp, 8);
 
     //LL_mDelay(100);
-    GUI_Exec();
-    //GUI_Delay(100);
+    //GUI_Exec();
+    GUI_Delay(100);
   }
   /* USER CODE END 3 */
 }
@@ -454,11 +454,11 @@ static void MX_FSMC_Init(void)
   hsram1.Init.WriteBurst = FSMC_WRITE_BURST_DISABLE;
   hsram1.Init.PageSize = FSMC_PAGE_SIZE_NONE;
   /* Timing */
-  Timing.AddressSetupTime = 5;
-  Timing.AddressHoldTime = 15;
-  Timing.DataSetupTime = 9;
+  Timing.AddressSetupTime = 6;
+  Timing.AddressHoldTime = 4;
+  Timing.DataSetupTime = 6;
   Timing.BusTurnAroundDuration = 0;
-  Timing.CLKDivision = 4;
+  Timing.CLKDivision = 2;
   Timing.DataLatency = 2;
   Timing.AccessMode = FSMC_ACCESS_MODE_A;
   /* ExtTiming */

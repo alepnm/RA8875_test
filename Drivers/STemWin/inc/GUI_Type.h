@@ -46,15 +46,15 @@ Attention : Do not modify this file ! If you do, you will not
   *
   *        http://www.st.com/software_license_agreement_liberty_v2
   *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
   *
   ******************************************************************************
   */
-  
+
 #ifndef  GUITYPE_H_INCLUDED
 #define  GUITYPE_H_INCLUDED
 
@@ -75,20 +75,20 @@ typedef LCD_RECT        GUI_RECT;
 typedef struct {
   void      (* pfDraw)  (int x0,
                          int y0,
-                         int xsize, 
-                         int ysize, 
-                         const U8 * pPixel, 
-                         const LCD_LOGPALETTE * pLogPal, 
-                         int xMag, 
+                         int xsize,
+                         int ysize,
+                         const U8 * pPixel,
+                         const LCD_LOGPALETTE * pLogPal,
+                         int xMag,
                          int yMag);
   GUI_COLOR (* pfIndex2Color)(unsigned Index);
   void      (* pfDrawHW)(int x0,
                          int y0,
-                         int xsize, 
-                         int ysize, 
-                         const U8 * pPixel, 
-                         const LCD_LOGPALETTE * pLogPal, 
-                         int xMag, 
+                         int xsize,
+                         int ysize,
+                         const U8 * pPixel,
+                         const LCD_LOGPALETTE * pLogPal,
+                         int xMag,
                          int yMag);
   const LCD_API_COLOR_CONV * pColorConvAPI;
 } GUI_BITMAP_METHODS;
@@ -437,9 +437,9 @@ DECLARE_FONT(PROP_AA4_EXT);
 #endif
 
 struct GUI_FONT {
-  GUI_DISPCHAR     * pfDispChar; 
-  GUI_GETCHARDISTX * pfGetCharDistX; 
-  GUI_GETFONTINFO  * pfGetFontInfo; 
+  GUI_DISPCHAR     * pfDispChar;
+  GUI_GETCHARDISTX * pfGetCharDistX;
+  GUI_GETFONTINFO  * pfGetFontInfo;
   GUI_ISINFONT     * pfIsInFont;
   GUI_GETCHARINFO  * pfGetCharInfo;
   const tGUI_ENC_APIList* pafEncode;
@@ -565,7 +565,7 @@ typedef struct {
                             * between two lines of text. With other words the value returned byGUI_GetFontSizeY()
                             * is not identically with this value. */
   int FaceIndex;           /* Some font files can contain more than one font face. In case of more than one face
-                            * this index specifies the zero based face index to be used to create the font. 
+                            * this index specifies the zero based face index to be used to create the font.
                             * Usually 0. */
 } GUI_TTF_CS;
 
@@ -643,12 +643,12 @@ typedef struct {
   //
   // 16 Bit access
   //
-  void (* pfWrite16_A0) (U16 Data);
-  void (* pfWrite16_A1) (U16 Data);
+  void (* pfWrite16_A0) (U16 Data);  // data
+  void (* pfWrite16_A1) (U16 Data);  // register
   void (* pfWriteM16_A0)(U16 * pData, int NumItems);
   void (* pfWriteM16_A1)(U16 * pData, int NumItems);
-  U16  (* pfRead16_A0)  (void);
-  U16  (* pfRead16_A1)  (void);
+  U16  (* pfRead16_A0)  (void);      // data
+  U16  (* pfRead16_A1)  (void);      // register
   void (* pfReadM16_A0) (U16 * pData, int NumItems);
   void (* pfReadM16_A1) (U16 * pData, int NumItems);
   //

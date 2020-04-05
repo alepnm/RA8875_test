@@ -127,7 +127,6 @@ Purpose     : Display controller configuration (single layer)
 */
 static void LcdWriteReg(U16 Data) {
   // ... TBD by user
-  FSMC_CmdWrite( Data);
 }
 
 /********************************************************************
@@ -139,8 +138,6 @@ static void LcdWriteReg(U16 Data) {
 */
 static void LcdWriteData(U16 Data) {
   // ... TBD by user
-    FSMC_DataWrite(Data);
-    FSMC_WAIT_BUSY();
 }
 
 /********************************************************************
@@ -155,7 +152,6 @@ static void LcdWriteDataMultiple(U16 * pData, int NumItems)
     while (NumItems--)
     {
         // ... TBD by user
-        FSMC_DataWrite(*pData);
         pData++;
     }
 }
@@ -172,23 +168,8 @@ static void LcdReadDataMultiple(U16 * pData, int NumItems)
     while (NumItems--)
     {
         // ... TBD by user
-        *pData = FSMC_DataRead();
         pData++;
     }
-}
-
-
-/*  */
-static U16 LcdReadReg(U16 Data) {
-
-    return FSMC_ReadReg(Data);
-}
-
-/*  */
-static U16 LcdReadData(void) {
-
-    FSMC_WAIT_BUSY();
-    return FSMC_DataRead();
 }
 
 /*********************************************************************
@@ -227,13 +208,13 @@ void LCD_X_Config(void) {
   //
   // Set controller and operation mode
   //
-  PortAPI.pfWrite16_A0  = LcdWriteData;
-  PortAPI.pfWrite16_A1  = LcdWriteReg;
-  PortAPI.pfWriteM16_A0 = LcdWriteDataMultiple;
-  PortAPI.pfReadM16_A0  = LcdReadDataMultiple;
+  PortAPI.pfWrite16_A0  = FSMC_SetA0;
+  PortAPI.pfWrite16_A1  = FSMC_SetA1;
+  PortAPI.pfWriteM16_A0 = FSMC_WriteDDRAM;
+  PortAPI.pfReadM16_A0  = FSMC_ReadDDRAM;
 
-  PortAPI.pfRead16_A0 = LcdReadData;
-  PortAPI.pfRead16_A1 = LcdReadReg;
+  PortAPI.pfRead16_A0 = FSMC_GetA0;
+  PortAPI.pfRead16_A1 = FSMC_GetA1;
 
   GUIDRV_FlexColor_SetFunc(pDevice, &PortAPI, GUIDRV_FLEXCOLOR_F66721, GUIDRV_FLEXCOLOR_M16C0B16);
 }

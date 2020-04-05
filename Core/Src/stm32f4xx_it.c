@@ -189,7 +189,7 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 0 */
   /* USER CODE BEGIN SysTick_IRQn 1 */
   timestamp++;
-  OS_TimeMS ++;
+  OS_TimeMS++;
   /* USER CODE END SysTick_IRQn 1 */
 }
 
