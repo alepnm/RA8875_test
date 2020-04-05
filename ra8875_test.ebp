@@ -77,10 +77,11 @@
 		<Linker>
 			<Add option="-eb_lib=n" />
 			<Add option="-eb_start_files" />
+			<Add option="-Wl,--cref" />
 			<Add option="-lm" />
 			<Add library="Drivers\STemWin\Lib\STemWin532_CM4_GCC.a" />
 		</Linker>
-		<Unit filename="App\Conf\global_includes.h" />
+		<Unit filename="App\Conf\globals.h" />
 		<Unit filename="App\Conf\GUIConf.c">
 			<Option compilerVar="CC" />
 		</Unit>

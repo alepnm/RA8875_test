@@ -82,13 +82,13 @@ Purpose     : Display controller initialization
 /* 32 bit aligned memory area */
 
 #ifdef __ICCARM__
- #pragma location=0x64000000
- static __no_init U32 extMem[GUI_NUMBYTES / 4];
+  #pragma location=0x64000000
+  static __no_init U32 extMem[GUI_NUMBYTES / 4];
 #elif defined (__CC_ARM)
- static U32 extMem[GUI_NUMBYTES / 4] __attribute__((at(0x64000000)));
+  static U32 extMem[GUI_NUMBYTES / 4] __attribute__((at(0x64000000)));
 #elif defined (__GNUC__)
- static U32 extMem[GUI_NUMBYTES / 4] __attribute__((section(".ExtRAMData")));
- //static U32 extMem[GUI_NUMBYTES / 4];
+ //static U32 extMem[GUI_NUMBYTES / 4] __attribute__((section(".ExtRAMData")));
+  static U32 extMem[GUI_NUMBYTES / 4];
 #endif
 
 /*********************************************************************

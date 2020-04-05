@@ -32,10 +32,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "ra8875.h"
-//#include "stm324xg_eval.h"
-//#include "stm324xg_eval_lcd.h"
-//#include "stm324xg_eval_ioe.h"
-//#include "stm324xg_eval_fsmc_sram.h"
 
 #include "GUI.h"
 #include "DIALOG.h"

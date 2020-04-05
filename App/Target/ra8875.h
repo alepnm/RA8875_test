@@ -74,7 +74,35 @@ extern char str[];
 
 /* Exported macro ------------------------------------------------------------*/
 
-#define FSMC_WAIT_BUSY() while((FSMC_ReadStatus()&0x80) == 0x80)
+//#define FSMC_WAIT_BUSY() while((FSMC_ReadStatus()&0x80) == 0x80)
+#define FSMC_WAIT_BUSY() FSMC_WaitMem()
+
+
+
+
+/*  */
+static inline void FSMC_WaitMem(void){
+
+    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_OUTPUT);
+
+    while((LCD->LCD_RAM&0x80) == 0x80);
+
+    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_ALTERNATE);
+}
+
+
+/*  */
+static inline void FSMC_WaitDMA(void){
+
+    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_OUTPUT);
+
+    while((LCD->LCD_RAM&0x01) == 0x01);
+
+    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_ALTERNATE);
+}
+
+
+
 
 
 /*  */
@@ -83,9 +111,7 @@ static inline uint16_t FSMC_ReadStatus(void){
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_OUTPUT);
     //LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_4, LL_GPIO_MODE_OUTPUT);
 
-    //FSMC_WAIT_BUSY();
     uint16_t status = LCD->LCD_RAM;
-    //FSMC_WAIT_BUSY();
 
     //LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_4, LL_GPIO_MODE_ALTERNATE);
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_ALTERNATE);
@@ -99,20 +125,21 @@ static inline uint16_t FSMC_ReadStatus(void){
 static inline void FSMC_CmdWrite( uint8_t cmd){
 
     LCD->LCD_REG = cmd;
+    //FSMC_WAIT_BUSY();
 }
 
 /*  */
 static inline void FSMC_WriteRAM_Prepare(void){
 
     LCD->LCD_REG = 0x02;
-    FSMC_WAIT_BUSY();
+    /*FSMC_WAIT_BUSY();*/
 }
 
 /*  */
 static inline void FSMC_DataWrite(uint16_t data){
 
     LCD->LCD_RAM = data;
-    FSMC_WAIT_BUSY();
+    //FSMC_WAIT_BUSY();
 }
 
 /*  */
@@ -126,6 +153,8 @@ static inline uint16_t FSMC_DataRead(void){
 static inline void FSMC_WriteReg(uint8_t reg, uint8_t val) {
 
     LCD->LCD_REG = reg;
+
+    //FSMC_WAIT_BUSY();
     LCD->LCD_RAM = val;
 }
 
@@ -133,7 +162,8 @@ static inline void FSMC_WriteReg(uint8_t reg, uint8_t val) {
 static inline uint16_t FSMC_ReadReg(uint8_t reg) {
 
     LCD->LCD_REG = reg;
-    FSMC_WAIT_BUSY();
+
+    //FSMC_WAIT_BUSY();
     return LCD->LCD_RAM;
 }
 
@@ -141,7 +171,8 @@ static inline uint16_t FSMC_ReadReg(uint8_t reg) {
 static inline uint16_t FSMC_ReadRAM(void) {
 
     LCD->LCD_REG = 0x02;
-    FSMC_WAIT_BUSY();
+
+    //FSMC_WAIT_BUSY();
     return LCD->LCD_RAM;
 }
 

@@ -59,7 +59,7 @@ Purpose     : Display controller configuration (single layer)
 
 #include "GUI.h"
 #include "GUIDRV_FlexColor.h"
-#include "global_includes.h"
+#include "ra8875.h"
 
 /*********************************************************************
 *
@@ -140,6 +140,7 @@ static void LcdWriteReg(U16 Data) {
 static void LcdWriteData(U16 Data) {
   // ... TBD by user
     FSMC_DataWrite(Data);
+    FSMC_WAIT_BUSY();
 }
 
 /********************************************************************
@@ -186,6 +187,7 @@ static U16 LcdReadReg(U16 Data) {
 /*  */
 static U16 LcdReadData(void) {
 
+    FSMC_WAIT_BUSY();
     return FSMC_DataRead();
 }
 

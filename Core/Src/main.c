@@ -55,6 +55,8 @@ extern __IO uint32_t timestamp;
 
 uint8_t GUI_Initialized = 0;
 
+WM_HWIN hWin;
+WM_HTIMER hTimer;
 WM_HWIN hText1, hText2;
 /* USER CODE END PV */
 
@@ -66,7 +68,7 @@ static void MX_FSMC_Init(void);
 static void MX_TIM11_Init(void);
 static void MX_CRC_Init(void);
 /* USER CODE BEGIN PFP */
-extern void MainTask_1(void);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -114,7 +116,7 @@ int main(void)
   LL_TIM_EnableAllOutputs(TIM11);
   LL_TIM_CC_EnableChannel(TIM11, LL_TIM_CHANNEL_CH1);
   LL_TIM_EnableCounter(TIM11);
-  LL_TIM_OC_SetCompareCH1(TIM11, 80);
+  LL_TIM_OC_SetCompareCH1(TIM11, 100);
 
 
   //NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
@@ -122,7 +124,7 @@ int main(void)
   //RTC_Init();
 
   /* Activate the use of memory device feature */
-  WM_SetCreateFlags(WM_CF_MEMDEV);
+  //WM_SetCreateFlags(WM_CF_MEMDEV);
 
   /* Init the STemWin GUI Library */
   GUI_Init();
@@ -132,39 +134,45 @@ int main(void)
   /* Start Demo */
   GUIDEMO_Main();
 
-//  GUI_Clear();
+  GUI_Clear();
 
-//  GUI_SetFont(GUI_FONT_8X12_ASCII);
+  GUI_SetFont(GUI_FONT_8X12_ASCII);
 
-  WM_HWIN hWin = CreateWindow();
-  WM_HTIMER hTimer = WM_CreateTimer(hWin, 0, 100, 0);
-
-//  hText1 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x12);
-//  hText2 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x13);
-
-
-    GUI_SetColor(GUI_BLUE);
-    GUI_FillCircle(100, 50, 49);
-    GUI_SetColor(GUI_YELLOW);
-    for (uint8_t i = 0; i < 100; i++)
     {
-        U8 Alpha;
-        Alpha = (i * 255 / 100);
-        GUI_SetAlpha(Alpha);
-        GUI_DrawHLine(i, 100 - i, 100 + i);
+        GUI_SetColor(GUI_BLUE);
+        GUI_FillCircle(100, 50, 49);
+        GUI_SetColor(GUI_YELLOW);
+
+        for (uint8_t i = 0; i < 100; i++)
+        {
+            U8 Alpha;
+            Alpha = (i * 255 / 100);
+            GUI_SetAlpha(Alpha);
+            GUI_DrawHLine(i, 100 - i, 100 + i);
+        }
+
+        GUI_SetAlpha(0x80);
+        GUI_SetColor(GUI_MAGENTA);
+        GUI_SetFont(&GUI_Font24B_ASCII);
+        GUI_SetTextMode(GUI_TM_TRANS);
+        GUI_DispStringHCenterAt("Alphablending", 100, 10);
+        GUI_SetAlpha(0);
+        GUI_DrawBitmap(&bmSTLogo, 30, 30);
+
+        GUI_SetColor(GUI_YELLOW);
+
+        GUI_SetFont(&GUI_Font8x10_ASCII);
+        GUI_SetTextMode(GUI_TM_NORMAL);
     }
-    GUI_SetAlpha(0x80);
-    GUI_SetColor(GUI_MAGENTA);
-    GUI_SetFont(&GUI_Font24B_ASCII);
-    GUI_SetTextMode(GUI_TM_TRANS);
-    GUI_DispStringHCenterAt("Alphablending", 100, 10);
-    GUI_SetAlpha(0);
-    GUI_DrawBitmap(&bmSTLogo, 30, 30);
 
-    GUI_SetColor(GUI_YELLOW);
 
-    GUI_SetFont(&GUI_Font8x10_ASCII);
-    GUI_SetTextMode(GUI_TM_NORMAL);
+    {
+//        hWin = CreateWindow();
+//        hTimer = WM_CreateTimer(hWin, 0, 100, 0);
+//
+//        hText1 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x12);
+//        hText2 = WM_GetDialogItem(hWin, GUI_ID_USER + 0x13);
+    }
 
   /* USER CODE END 2 */
 
@@ -183,15 +191,15 @@ int main(void)
         GUI_GotoXY(440, 0);
         GUI_DispDecSpace(TS_Data.YPos, 3);
 
-        GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
+        //GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
     }
 
     GUI_GotoXY(0, 0);
     GUI_DispDecSpace(timestamp, 8);
 
     //LL_mDelay(100);
-    //GUI_Exec();
-    GUI_Delay(100);
+    GUI_Exec();
+    //GUI_Delay(100);
   }
   /* USER CODE END 3 */
 }
