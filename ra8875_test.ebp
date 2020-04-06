@@ -177,10 +177,78 @@
 		<Unit filename="App\GUISTEND\ModbusPortSettingsDLG.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\Target\ra8875.c">
+		<Unit filename="App\lib\freemodbus\modbus\ascii\mbascii.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\Target\ra8875.h" />
+		<Unit filename="App\lib\freemodbus\modbus\ascii\mbascii.h" />
+		<Unit filename="App\lib\freemodbus\modbus\functions\mbfunccoils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\modbus\functions\mbfuncdiag.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\modbus\functions\mbfuncdisc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\modbus\functions\mbfuncholding.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\modbus\functions\mbfuncinput.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\modbus\functions\mbfuncother.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\modbus\functions\mbutils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\modbus\include\mb.h" />
+		<Unit filename="App\lib\freemodbus\modbus\include\mbconfig.h" />
+		<Unit filename="App\lib\freemodbus\modbus\include\mbframe.h" />
+		<Unit filename="App\lib\freemodbus\modbus\include\mbfunc.h" />
+		<Unit filename="App\lib\freemodbus\modbus\include\mbport.h" />
+		<Unit filename="App\lib\freemodbus\modbus\include\mbproto.h" />
+		<Unit filename="App\lib\freemodbus\modbus\include\mbutils.h" />
+		<Unit filename="App\lib\freemodbus\modbus\mb.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\modbus\rtu\mbcrc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\modbus\rtu\mbcrc.h" />
+		<Unit filename="App\lib\freemodbus\modbus\rtu\mbrtu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\modbus\rtu\mbrtu.h" />
+		<Unit filename="App\lib\freemodbus\modbus\tcp\mbtcp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\modbus\tcp\mbtcp.h" />
+		<Unit filename="App\lib\freemodbus\port\port.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\port\port.h" />
+		<Unit filename="App\lib\freemodbus\port\portevent.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\port\portserial.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\port\porttimer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\user_mb_app.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\freemodbus\user_mb_app.h" />
+		<Unit filename="App\lib\ra8875.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\ra8875.h" />
+		<Unit filename="App\lib\usart.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\usart.h" />
 		<Unit filename="Core\Inc\FreeRTOSConfig.h" />
 		<Unit filename="Core\Inc\main.h" />
 		<Unit filename="Core\Inc\stm32_assert.h" />
