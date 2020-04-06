@@ -27,8 +27,12 @@
 #include "GUIDEMO.h"
 #include "WM.h"
 
+#include "GUISTEND.h"
+
 #include "WindowDLG.h"
 #include "ra8875.h"
+
+#include "../../App/Examples/examples.c"
 
 /* USER CODE END Includes */
 
@@ -54,9 +58,9 @@ SRAM_HandleTypeDef hsram1;
 extern __IO uint32_t timestamp;
 
 char st[20];
-uint8_t GUI_Initialized = 0;
 
-extern WM_HWIN hWin;
+extern uint8_t GUI_Initialized;
+extern WM_HWIN hWin, hWin1;
 
 /* USER CODE END PV */
 
@@ -121,54 +125,19 @@ int main(void)
 
   //NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
   //RA8875_Init();
-  //RTC_Init();
-
-  /* Activate the use of memory device feature */
-  //WM_SetCreateFlags(WM_CF_MEMDEV);
 
   /* Init the STemWin GUI Library */
   GUI_Init();
 
-  GUI_X_Init(); // --> user implement GUI_X.c
-
-  GUI_Initialized = 1;
 
   /* Start Demo */
   //GUIDEMO_Main();
-
-  GUI_Clear();
-
-  GUI_SetFont(GUI_FONT_8X12_ASCII);
-
-    {
-        GUI_SetColor(GUI_BLUE);
-        GUI_FillCircle(100, 50, 49);
-        GUI_SetColor(GUI_YELLOW);
-
-        for (uint8_t i = 0; i < 100; i++)
-        {
-            U8 Alpha;
-            Alpha = (i * 255 / 100);
-            GUI_SetAlpha(Alpha);
-            GUI_DrawHLine(i, 100 - i, 100 + i);
-        }
-
-        GUI_SetAlpha(0x80);
-        GUI_SetColor(GUI_MAGENTA);
-        GUI_SetFont(&GUI_Font24B_ASCII);
-        GUI_SetTextMode(GUI_TM_TRANS);
-        GUI_DispStringHCenterAt("Alphablending", 100, 10);
-        GUI_SetAlpha(0);
-        GUI_DrawBitmap(&bmSTLogo, 30, 30);
-
-        GUI_SetColor(GUI_YELLOW);
-
-        GUI_SetFont(&GUI_Font8x10_ASCII);
-        GUI_SetTextMode(GUI_TM_NORMAL);
-    }
+  //EX_AlphaChannel();
+  //GUI_Delay(1000);
 
 
-    hWin = CreateWindow();
+  hWin = CreateWindow();
+  hWin1 = CreateModbusPortSettings();
 
   /* USER CODE END 2 */
 

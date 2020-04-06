@@ -35,7 +35,7 @@ Purpose     : Config / System dependent externals for GUI
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license SLA0044,
@@ -47,12 +47,14 @@ Purpose     : Config / System dependent externals for GUI
   */
 
 #include "GUI.h"
+#include "main.h"
 
 /*********************************************************************
 *
 *       Global data
 */
-volatile GUI_TIMER_TIME OS_TimeMS;
+volatile    GUI_TIMER_TIME OS_TimeMS;
+uint8_t     GUI_Initialized = 0;
 
 /*********************************************************************
 *
@@ -65,11 +67,11 @@ volatile GUI_TIMER_TIME OS_TimeMS;
   1 ms.
 */
 
-GUI_TIMER_TIME GUI_X_GetTime(void) { 
-  return OS_TimeMS; 
+GUI_TIMER_TIME GUI_X_GetTime(void) {
+  return OS_TimeMS;
 }
 
-void GUI_X_Delay(int ms) { 
+void GUI_X_Delay(int ms) {
   int tEnd = OS_TimeMS + ms;
   while ((tEnd - OS_TimeMS) > 0);
 }
@@ -84,7 +86,14 @@ void GUI_X_Delay(int ms) {
 *     If not required, leave this routine blank.
 */
 
-void GUI_X_Init(void) {}
+void GUI_X_Init(void) {
+
+    GUI_Clear();
+
+    GUI_SetFont(GUI_FONT_8X12_ASCII);
+
+    GUI_Initialized = 1;
+}
 
 
 /*********************************************************************

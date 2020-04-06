@@ -90,90 +90,97 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="App\Conf\LCDConf.h" />
-		<Unit filename="App\GUI\GUIDEMO.c">
+		<Unit filename="App\Examples\WindowDLG.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO.h" />
-		<Unit filename="App\GUI\GUIDEMO_AntialiasedText.c">
+		<Unit filename="App\Examples\WindowDLG.h" />
+		<Unit filename="App\GUIDEMO\GUIDEMO.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_Automotive.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO.h" />
+		<Unit filename="App\GUIDEMO\GUIDEMO_AntialiasedText.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_BarGraph.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_Automotive.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_Bitmap.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_BarGraph.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_ColorBar.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_Bitmap.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_Conf.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_ColorBar.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_Cursor.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_Conf.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_Fading.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_Cursor.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_Graph.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_Fading.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_IconView.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_Graph.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_ImageFlow.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_IconView.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_Intro.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_ImageFlow.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_Listview.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_Intro.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_RadialMenu.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_Listview.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_Resource.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_RadialMenu.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_Skinning.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_Resource.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_Speed.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_Skinning.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_Speedometer.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_Speed.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_Start.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_Speedometer.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_TransparentDialog.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_Start.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_Treeview.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_TransparentDialog.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_VScreen.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_Treeview.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_WashingMachine.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_VScreen.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="App\GUI\GUIDEMO_ZoomAndRotate.c">
+		<Unit filename="App\GUIDEMO\GUIDEMO_WashingMachine.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUIDEMO\GUIDEMO_ZoomAndRotate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUISTEND\GUISTEND.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\GUISTEND\GUISTEND.h" />
+		<Unit filename="App\GUISTEND\ModbusPortSettingsDLG.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="App\Target\ra8875.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="App\Target\ra8875.h" />
-		<Unit filename="App\win\WindowDLG.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\win\WindowDLG.h" />
 		<Unit filename="Core\Inc\main.h" />
 		<Unit filename="Core\Inc\stm32_assert.h" />
 		<Unit filename="Core\Inc\stm32f4xx_hal_conf.h" />
