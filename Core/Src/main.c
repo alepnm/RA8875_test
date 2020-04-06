@@ -20,6 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -54,8 +55,11 @@
 
 SRAM_HandleTypeDef hsram1;
 
+osThreadId GUI_TaskHandle;
+osThreadId Main_TaskHandle;
+osTimerId TS_TimerHandle;
 /* USER CODE BEGIN PV */
-extern __IO uint32_t timestamp;
+__IO uint32_t timestamp;
 
 char st[20];
 
@@ -71,6 +75,10 @@ static void MX_USART1_UART_Init(void);
 static void MX_FSMC_Init(void);
 static void MX_TIM11_Init(void);
 static void MX_CRC_Init(void);
+void t_GuiTask(void const * argument);
+void t_MainTask(void const * argument);
+void cb_TsTimer(void const * argument);
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -122,25 +130,46 @@ int main(void)
   LL_TIM_EnableCounter(TIM11);
   LL_TIM_OC_SetCompareCH1(TIM11, 80);
 
-
-  //NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
-  //RA8875_Init();
-
-  /* Init the STemWin GUI Library */
-  GUI_Init();
-
-
-  /* Start Demo */
-  //GUIDEMO_Main();
-  //EX_AlphaChannel();
-  //GUI_Delay(1000);
-
-
-  hWin = CreateWindow();
-  hWin1 = CreateModbusPortSettings();
-
   /* USER CODE END 2 */
 
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* Create the timer(s) */
+  /* definition and creation of TS_Timer */
+  osTimerDef(TS_Timer, cb_TsTimer);
+  TS_TimerHandle = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, NULL);
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+
+  /* Create the thread(s) */
+  /* definition and creation of GUI_Task */
+  osThreadDef(GUI_Task, t_GuiTask, osPriorityIdle, 0, 1280);
+  GUI_TaskHandle = osThreadCreate(osThread(GUI_Task), NULL);
+
+  /* definition and creation of Main_Task */
+  osThreadDef(Main_Task, t_MainTask, osPriorityNormal, 0, 256);
+  Main_TaskHandle = osThreadCreate(osThread(Main_Task), NULL);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -148,10 +177,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-    GUI_Exec();
-    GUI_X_ExecIdle(); // --> user implement GUI_X.c
-    //GUI_Delay(10);
   }
   /* USER CODE END 3 */
 }
@@ -314,7 +339,7 @@ static void MX_USART1_UART_Init(void)
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /* USART1 interrupt Init */
-  NVIC_SetPriority(USART1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+  NVIC_SetPriority(USART1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
   NVIC_EnableIRQ(USART1_IRQn);
 
   /* USER CODE BEGIN USART1_Init 1 */
@@ -400,18 +425,18 @@ static void MX_FSMC_Init(void)
   hsram1.Init.WrapMode = FSMC_WRAP_MODE_DISABLE;
   hsram1.Init.WaitSignalActive = FSMC_WAIT_TIMING_BEFORE_WS;
   hsram1.Init.WriteOperation = FSMC_WRITE_OPERATION_ENABLE;
-  hsram1.Init.WaitSignal = FSMC_WAIT_SIGNAL_ENABLE;
+  hsram1.Init.WaitSignal = FSMC_WAIT_SIGNAL_DISABLE;
   hsram1.Init.ExtendedMode = FSMC_EXTENDED_MODE_DISABLE;
   hsram1.Init.AsynchronousWait = FSMC_ASYNCHRONOUS_WAIT_DISABLE;
   hsram1.Init.WriteBurst = FSMC_WRITE_BURST_DISABLE;
   hsram1.Init.PageSize = FSMC_PAGE_SIZE_NONE;
   /* Timing */
-  Timing.AddressSetupTime = 6;
-  Timing.AddressHoldTime = 4;
-  Timing.DataSetupTime = 6;
+  Timing.AddressSetupTime = 5;
+  Timing.AddressHoldTime = 15;
+  Timing.DataSetupTime = 9;
   Timing.BusTurnAroundDuration = 0;
-  Timing.CLKDivision = 2;
-  Timing.DataLatency = 2;
+  Timing.CLKDivision = 16;
+  Timing.DataLatency = 17;
   Timing.AccessMode = FSMC_ACCESS_MODE_A;
   /* ExtTiming */
 
@@ -437,6 +462,101 @@ static void MX_FSMC_Init(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
+
+/* USER CODE BEGIN Header_t_GuiTask */
+/**
+  * @brief  Function implementing the GUI_Task thread.
+  * @param  argument: Not used
+  * @retval None
+  */
+/* USER CODE END Header_t_GuiTask */
+void t_GuiTask(void const * argument)
+{
+  /* USER CODE BEGIN 5 */
+
+  GUI_Init();
+
+  xTaskNotifyGive( Main_TaskHandle );
+
+
+  hWin = CreateWindow();
+  hWin1 = CreateModbusPortSettings();
+
+  /* Infinite loop */
+  for(;;)
+  {
+
+
+
+    GUI_Exec();
+    GUI_X_ExecIdle(); // --> user implement GUI_X.c
+
+  }
+  /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_t_MainTask */
+/**
+* @brief Function implementing the Main_Task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_t_MainTask */
+void t_MainTask(void const * argument)
+{
+  /* USER CODE BEGIN t_MainTask */
+
+  ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
+
+  osTimerStart(TS_TimerHandle, 100);
+
+  /* Infinite loop */
+  for(;;)
+  {
+
+
+
+    osDelay(100);
+  }
+  /* USER CODE END t_MainTask */
+}
+
+/* cb_TsTimer function */
+void cb_TsTimer(void const * argument)
+{
+  /* USER CODE BEGIN cb_TsTimer */
+
+    GUI_X_Lock();
+
+    TS_ReadXY();
+
+    GUI_X_Unlock();
+
+    GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
+
+  /* USER CODE END cb_TsTimer */
+}
+
+ /**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM6 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM6) {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+  timestamp++;
+  /* USER CODE END Callback 1 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.

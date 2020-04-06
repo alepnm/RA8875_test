@@ -65,7 +65,6 @@
 WM_HWIN hWin, hText1, hText2, hSlider0;
 WM_HTIMER hTimer;
 
-extern __IO uint32_t timestamp;
 extern char st[];
 
 // USER END
@@ -466,9 +465,9 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 
     case WM_TIMER:
 
-        TS_ReadXY();
+        //TS_ReadXY();
 
-        GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
+        //GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
 
         WM_RestartTimer(pMsg->Data.v, 100);
         break;

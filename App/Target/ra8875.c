@@ -30,11 +30,8 @@
 
 /* Private typedef -----------------------------------------------------------*/
 
-
 struct _lcd Display;
 struct _tp TS_Data;
-
-char str[40];
 
 
 /*  */
@@ -683,9 +680,6 @@ void RA8875_DrawSquareOfCircleCorner(uint16_t Xpos_start, uint16_t Ypos_start, u
 
 
 
-
-
-
 /*  */
 uint8_t TS_Init(void){
 
@@ -734,6 +728,9 @@ uint8_t TS_ReadXY(void){
         TS_Data.XPos = -1;
         TS_Data.YPos = -1;
     }
+
+    sprintf(TS_Data.strXPos, "%3d", TS_Data.XPos);
+    sprintf(TS_Data.strYPos, "%3d", TS_Data.YPos);
 
     return TS_Data.IsTouched;
 }

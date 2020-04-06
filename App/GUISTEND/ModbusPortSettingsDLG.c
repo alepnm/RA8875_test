@@ -157,6 +157,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     hItem = pMsg->hWin;
     FRAMEWIN_SetMoveable(hItem, 0);
     FRAMEWIN_SetTitleHeight(hItem, 20);
+    FRAMEWIN_SetMoveable(hItem, 1);
 
 
     hItem = WM_GetDialogItem(pMsg->hWin, ID_DRP_BAUDRATE);

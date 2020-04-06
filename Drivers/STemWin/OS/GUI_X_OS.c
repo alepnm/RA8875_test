@@ -35,7 +35,7 @@ Purpose     : This file provides emWin Interface with FreeRTOS
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license SLA0044,
@@ -49,16 +49,19 @@ Purpose     : This file provides emWin Interface with FreeRTOS
 /* Includes ------------------------------------------------------------------*/
 
 #include "GUI.h"
-    
+#include "main.h"
+
     /* FreeRTOS include files */
 #include "cmsis_os.h"
-    
+
 /*********************************************************************
 *
 * Global data
 */
 static osMutexId osMutex;
 static osSemaphoreId osSemaphore;
+
+uint8_t     GUI_Initialized = 0;
 /*********************************************************************
 *
 * Timing:
@@ -91,6 +94,12 @@ void GUI_X_Delay(int ms)
 */
 
 void GUI_X_Init(void) {
+
+    GUI_Clear();
+
+    GUI_SetFont(GUI_FONT_8X12_ASCII);
+
+    GUI_Initialized = 1;
 }
 
 
@@ -102,7 +111,9 @@ void GUI_X_Init(void) {
 * Called if WM is in idle state
 */
 
-void GUI_X_ExecIdle(void) {}
+void GUI_X_ExecIdle(void) {
+
+}
 
 /*********************************************************************
 *
@@ -124,22 +135,22 @@ void GUI_X_ExecIdle(void) {}
 
 /* Init OS */
 void GUI_X_InitOS(void)
-{ 
+{
   /* Create Mutex lock */
   osMutexDef(MUTEX);
-  
+
   /* Create the Mutex used by the two threads */
   osMutex = osMutexCreate(osMutex(MUTEX));
-  
+
   /* Create Semaphore lock */
   osSemaphoreDef(SEM);
-  
+
   /* Create the Semaphore used by the two threads */
-  osSemaphore= osSemaphoreCreate(osSemaphore(SEM), 1);  
+  osSemaphore= osSemaphoreCreate(osSemaphore(SEM), 1);
 }
 
 void GUI_X_Unlock(void)
-{ 
+{
   osMutexRelease(osMutex);
 }
 
@@ -149,19 +160,19 @@ void GUI_X_Lock(void)
 }
 
 /* Get Task handle */
-U32 GUI_X_GetTaskId(void) 
-{ 
+U32 GUI_X_GetTaskId(void)
+{
   return ((U32) osThreadGetId());
 }
 
 
-void GUI_X_WaitEvent (void) 
+void GUI_X_WaitEvent (void)
 {
   osSemaphoreWait(osSemaphore , osWaitForever) ;
 }
 
 
-void GUI_X_SignalEvent (void) 
+void GUI_X_SignalEvent (void)
 {
   osMutexRelease(osSemaphore);
 }

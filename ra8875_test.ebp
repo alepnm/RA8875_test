@@ -79,7 +79,7 @@
 			<Add option="-eb_start_files" />
 			<Add option="-Wl,--cref" />
 			<Add option="-lm" />
-			<Add library="Drivers\STemWin\Lib\STemWin532_CM4_GCC.a" />
+			<Add library="Drivers\STemWin\Lib\STemWin532_CM4_OS_GCC.a" />
 		</Linker>
 		<Unit filename="App\Conf\globals.h" />
 		<Unit filename="App\Conf\GUIConf.c">
@@ -181,14 +181,21 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="App\Target\ra8875.h" />
+		<Unit filename="Core\Inc\FreeRTOSConfig.h" />
 		<Unit filename="Core\Inc\main.h" />
 		<Unit filename="Core\Inc\stm32_assert.h" />
 		<Unit filename="Core\Inc\stm32f4xx_hal_conf.h" />
 		<Unit filename="Core\Inc\stm32f4xx_it.h" />
+		<Unit filename="Core\Src\freertos.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="Core\Src\main.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Core\Src\stm32f4xx_hal_msp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Core\Src\stm32f4xx_hal_timebase_tim.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Core\Src\stm32f4xx_it.c">
@@ -304,7 +311,7 @@
 		<Unit filename="Drivers\STemWin\inc\WM.h" />
 		<Unit filename="Drivers\STemWin\inc\WM_GUI.h" />
 		<Unit filename="Drivers\STemWin\inc\WM_Intern.h" />
-		<Unit filename="Drivers\STemWin\OS\GUI_X.c">
+		<Unit filename="Drivers\STemWin\OS\GUI_X_OS.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h" />
@@ -670,6 +677,55 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_utils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\croutine.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\event_groups.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\croutine.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\deprecated_definitions.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\FreeRTOS.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\list.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\message_buffer.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\mpu_prototypes.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\mpu_wrappers.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\portable.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\projdefs.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\queue.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\stack_macros.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\StackMacros.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\stream_buffer.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\task.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\include\timers.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\list.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F\port.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F\portmacro.h" />
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\portable\MemMang\heap_4.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\queue.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\stream_buffer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\tasks.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\timers.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="startup\startup_stm32f4xx.S">
