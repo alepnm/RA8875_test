@@ -26,12 +26,12 @@
 
 //#define	INLINE
 #ifdef __cplusplus
-#define PR_BEGIN_EXTERN_C           extern "C" {
-#define	PR_END_EXTERN_C             }
+    #define PR_BEGIN_EXTERN_C           extern "C" {
+    #define	PR_END_EXTERN_C             }
 #endif
 
-#define ENTER_CRITICAL_SECTION() __disable_irq;
-#define EXIT_CRITICAL_SECTION() __enable_irq;
+#define ENTER_CRITICAL_SECTION() __disable_irq()
+#define EXIT_CRITICAL_SECTION() __enable_irq()
 
 
 typedef uint8_t         BOOL;

@@ -428,7 +428,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
         WM_HideWindow(hWin);
-        GUIDEMO_Main();
+        //GUIDEMO_Main();
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:

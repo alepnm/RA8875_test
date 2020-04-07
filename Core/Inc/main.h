@@ -47,6 +47,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+//#include "stm32f4xx_hal_conf.h" //<-- reikalingas del teisingo taktavimo
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -61,7 +62,11 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-
+__STATIC_INLINE void Delay_us(uint16_t delay)
+{
+    LL_TIM_SetCounter(TIM7, 1);
+    while(LL_TIM_GetCounter(TIM7) < delay);
+}
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
@@ -76,6 +81,8 @@ void Error_Handler(void);
 #define LCD_RST_GPIO_Port GPIOC
 #define LCD_WAIT_Pin LL_GPIO_PIN_9
 #define LCD_WAIT_GPIO_Port GPIOC
+#define LD7_Pin LL_GPIO_PIN_9
+#define LD7_GPIO_Port GPIOA
 #define LCD_BACKLIGHT_Pin LL_GPIO_PIN_9
 #define LCD_BACKLIGHT_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */

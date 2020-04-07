@@ -14,7 +14,7 @@
 
 
 typedef enum { PARITY_NONE = 0, PARITY_ODD, PARITY_EVEN } parity_t;
-typedef enum { BR2400 = 0, BR4800, BR9600, BR14400, BR19200, BR38400, BR57600 }baudrate_t;
+typedef enum { BR9600 = 0, BR19200, BR57600, BR115200 }baudrate_t;
 typedef enum { STOPBITS_1 = 0, STOPBITS_1_5, STOPBITS_2 } stopbits_t;
 
 
@@ -50,7 +50,7 @@ extern Port_TypeDef* pSecondaryPort;
     extern Port_TypeDef* pMbPort;
 #endif
 
-extern const uint16_t baudrates[7];
+extern const uint32_t baudrates[7];
 
 
 void    USART_Init(Port_TypeDef* port);

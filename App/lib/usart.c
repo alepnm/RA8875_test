@@ -1,4 +1,5 @@
 
+#include "cmsis_os.h"
 #include "main.h"
 #include "usart.h"
 
@@ -15,11 +16,13 @@ Port_TypeDef* pSecondaryPort = &Ports[SECONDARY_PORT];
     Port_TypeDef* pMbPort = &Ports[MODBUS_PORT];
 #endif
 
-const uint16_t baudrates[7] = { 2400u, 4800u, 9600u, 14400u, 19200u, 38400u, 57600u };
+const uint32_t baudrates[7] = { 9600u, 19200u, 57600u, 115200u };
 
 
 /*  */
 void USART_Config(Port_TypeDef* port, uint32_t ulBaudRate, uint32_t ulDataBits,  uint8_t uiParity, uint8_t uiStopbits) {
+
+    LL_RCC_ClocksTypeDef rcc_clocks;
 
     uint32_t parity = LL_USART_PARITY_NONE, datawidth = LL_USART_DATAWIDTH_8B, stopbits = LL_USART_STOPBITS_1;
 
@@ -56,13 +59,12 @@ void USART_Config(Port_TypeDef* port, uint32_t ulBaudRate, uint32_t ulDataBits, 
     LL_USART_ConfigCharacter(port->handle, datawidth, parity, stopbits);
     LL_USART_SetHWFlowCtrl(port->handle, LL_USART_HWCONTROL_NONE);
 
-    uint32_t periphclk = (port == pPrimaryPort) ?
-            __LL_RCC_CALC_PCLK2_FREQ(SystemCoreClock, LL_RCC_GetAPB2Prescaler()) :
-            __LL_RCC_CALC_PCLK1_FREQ(SystemCoreClock, LL_RCC_GetAPB1Prescaler());
 
+    LL_RCC_GetSystemClocksFreq(&rcc_clocks);
 
-#warning patikrinti LL_USART_OVERSAMPLING...
-    LL_USART_SetBaudRate(port->handle, periphclk, LL_USART_OVERSAMPLING_16, ulBaudRate);
+    uint32_t periphclk = (port == pPrimaryPort) ? rcc_clocks.PCLK1_Frequency : rcc_clocks.PCLK1_Frequency;
+
+    LL_USART_SetBaudRate(port->handle, periphclk, LL_USART_GetOverSampling(port->handle), ulBaudRate);
 
     LL_USART_Enable(port->handle);
 }
@@ -72,8 +74,8 @@ void USART_Config(Port_TypeDef* port, uint32_t ulBaudRate, uint32_t ulDataBits, 
 void USART_Send( Port_TypeDef* port, void* data, uint16_t len ) {
 
     while(len--) {
-        while(!LL_USART_IsActiveFlag_TC(port->handle));
         LL_USART_TransmitData8(port->handle, *((uint8_t*)data++));
+        while(!LL_USART_IsActiveFlag_TXE(port->handle)) taskYIELD();
     }
 }
 
@@ -81,17 +83,15 @@ void USART_Send( Port_TypeDef* port, void* data, uint16_t len ) {
 /*  */
 void USART_SendByte(Port_TypeDef* port, char data) {
     LL_USART_TransmitData8(port->handle, data);
+    while(!LL_USART_IsActiveFlag_TXE(port->handle)) taskYIELD();
 }
 
 /*  */
 void USART_SendString( Port_TypeDef* port, const char* str ) {
 
-    uint8_t i = 0;
-
-    while( *(str+i) ) {
-        while(!LL_USART_IsActiveFlag_TC(port->handle));
-        LL_USART_TransmitData8(port->handle, *(str+i));
-        i++;
+    while(*str) {
+        LL_USART_TransmitData8(port->handle, *((uint8_t*)str++));
+        while(!LL_USART_IsActiveFlag_TXE(port->handle)) taskYIELD();
     }
 }
 
@@ -123,7 +123,6 @@ void USART_ClearTxBuffer(Port_TypeDef* port) {
 }
 
 
-
 /*  */
 void USART_IRQ_Handler(Port_TypeDef* port) {
 
@@ -139,6 +138,8 @@ void USART_IRQ_Handler(Port_TypeDef* port) {
         if( LL_USART_IsActiveFlag_TC(pMbPort->handle) && LL_USART_IsEnabledIT_TC(pMbPort->handle) )
         {
             (void)pxMBFrameCBTransmitterEmpty();
+
+            LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_9);
         }
     }else{
 #endif
@@ -173,11 +174,13 @@ void USART_TimerHandler(Port_TypeDef* port) {
 #if defined(MODBUS_PORT)
         if(port == pMbPort){
             (void)pxMBPortCBTimerExpired( );
+
+            LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_9);
+
         }else{
 #endif
             port->Registers.RxBufferIndex = 0;
             port->Registers.TaskNotifyFlag = 1;
-
 #if defined(MODBUS_PORT)
         }
 #endif
@@ -189,9 +192,9 @@ void USART_TimerHandler(Port_TypeDef* port) {
 /*  */
 void USART_Init(Port_TypeDef* port){
 
-    port->handle = (port == pPrimaryPort) ? USART1 : USART2;
+    port->handle = (port == pPrimaryPort) ? UART4 : UART5;
 
-    USART_Config(port, baudrates[port->Config.Baudrate], port->Config.DataBits,  port->Config.Parity, port->Config.StopBits );
+    USART_Config(port, baudrates[port->Config.Baudrate], port->Config.DataBits, port->Config.Parity, port->Config.StopBits );
 
     if(port == pPrimaryPort)
     {
@@ -214,10 +217,10 @@ void USART_Init(Port_TypeDef* port){
 /*  */
 void USART_SetDefaults(Port_TypeDef* port){
 
-    port->handle = (port == pPrimaryPort) ? USART1 : USART2;
+    port->handle = (port == pPrimaryPort) ? UART4 : UART5;
 
     port->Config.Baudrate = BR19200;
-    port->Config.MbAddr = 10;
+    port->Config.MbAddr = 3;
     port->Config.DataBits = 8;
     port->Config.Parity = PARITY_NONE;
     port->Config.StopBits = STOPBITS_1;
