@@ -13,12 +13,17 @@
 	</File>
 	<File name="App\Conf\LCDConf.c" open="0" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="5576" topLine="139" />
+			<Cursor1 position="2223" topLine="55" />
+		</Cursor>
+	</File>
+	<File name="App\Conf\LCDConf.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="5" />
 		</Cursor>
 	</File>
 	<File name="App\Examples\WindowDLG.c" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="16391" topLine="404" />
+			<Cursor1 position="17655" topLine="439" />
 		</Cursor>
 	</File>
 	<File name="App\GUISTEND\ModbusPortSettingsDLG.c" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -26,9 +31,49 @@
 			<Cursor1 position="5760" topLine="89" />
 		</Cursor>
 	</File>
+	<File name="App\lib\adc.c" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4005" topLine="60" />
+		</Cursor>
+	</File>
+	<File name="App\lib\adc.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="92" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="App\lib\ds18b20\ds18b20.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="359" topLine="24" />
+		</Cursor>
+	</File>
+	<File name="App\lib\ds18b20\ds18b20.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="97" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="App\lib\ds18b20\ds18b20Config.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="854" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="App\lib\ds18b20\onewire.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4499" topLine="4" />
+		</Cursor>
+	</File>
+	<File name="App\lib\ds18b20\onewire.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="107" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="App\lib\freemodbus\modbus\include\mbport.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4402" topLine="69" />
+		</Cursor>
+	</File>
 	<File name="App\lib\freemodbus\modbus\mb.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="11307" topLine="349" />
+			<Cursor1 position="6300" topLine="124" />
 		</Cursor>
 	</File>
 	<File name="App\lib\freemodbus\modbus\rtu\mbrtu.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -41,29 +86,54 @@
 			<Cursor1 position="1215" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="App\lib\usart.c" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\lib\freemodbus\port\porttimer.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3452" topLine="126" />
+			<Cursor1 position="1846" topLine="10" />
 		</Cursor>
 	</File>
-	<File name="App\lib\usart.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\lib\freemodbus\user_mb_app.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="133" />
+		</Cursor>
+	</File>
+	<File name="App\lib\freemodbus\user_mb_app.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="107" />
+		</Cursor>
+	</File>
+	<File name="App\lib\ra8875.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="10512" topLine="373" />
+		</Cursor>
+	</File>
+	<File name="App\lib\usart.c" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4165" topLine="132" />
+		</Cursor>
+	</File>
+	<File name="App\lib\usart.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="457" topLine="10" />
 		</Cursor>
 	</File>
-	<File name="Core\Inc\main.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Core\Inc\main.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2789" topLine="24" />
+			<Cursor1 position="2474" topLine="45" />
 		</Cursor>
 	</File>
-	<File name="Core\Inc\stm32f4xx_hal_conf.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Core\Inc\stm32f4xx_hal_conf.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="3784" topLine="35" />
 		</Cursor>
 	</File>
-	<File name="Core\Src\main.c" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Core\Src\main.c" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="18906" topLine="664" />
+			<Cursor1 position="30943" topLine="972" />
+		</Cursor>
+	</File>
+	<File name="Core\Src\stm32f4xx_hal_msp.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="159" />
 		</Cursor>
 	</File>
 	<File name="Core\Src\stm32f4xx_hal_timebase_tim.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -71,12 +141,12 @@
 			<Cursor1 position="0" topLine="54" />
 		</Cursor>
 	</File>
-	<File name="Core\Src\stm32f4xx_it.c" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Core\Src\stm32f4xx_it.c" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4655" topLine="93" />
+			<Cursor1 position="1366" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="4886" topLine="54" />
 		</Cursor>
@@ -166,9 +236,19 @@
 			<Cursor1 position="0" topLine="468" />
 		</Cursor>
 	</File>
+	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_adc.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="20409" topLine="238" />
+		</Cursor>
+	</File>
 	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_crc.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="1103" topLine="4" />
+		</Cursor>
+	</File>
+	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_dma.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="75037" topLine="1703" />
 		</Cursor>
 	</File>
 	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_fsmc.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -181,14 +261,14 @@
 			<Cursor1 position="11711" topLine="251" />
 		</Cursor>
 	</File>
-	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_rcc.h" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_rcc.h" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="3083" topLine="84" />
 		</Cursor>
 	</File>
-	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_tim.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_tim.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="128355" topLine="3340" />
+			<Cursor1 position="146699" topLine="3019" />
 		</Cursor>
 	</File>
 	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_usart.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -236,6 +316,11 @@
 			<Cursor1 position="100" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_adc.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="798" />
+		</Cursor>
+	</File>
 	<File name="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_crc.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="0" topLine="48" />
@@ -278,12 +363,27 @@
 	</File>
 	<File name="Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4691" topLine="77" />
+			<Cursor1 position="4662" topLine="131" />
+		</Cursor>
+	</File>
+	<File name="Middlewares\Third_Party\FreeRTOS\Source\include\task.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="85781" topLine="2031" />
+		</Cursor>
+	</File>
+	<File name="Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F\port.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="16370" topLine="372" />
+		</Cursor>
+	</File>
+	<File name="Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F\portmacro.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="7246" topLine="139" />
 		</Cursor>
 	</File>
 	<File name="Middlewares\Third_Party\FreeRTOS\Source\queue.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="29037" topLine="773" />
+			<Cursor1 position="28441" topLine="757" />
 		</Cursor>
 	</File>
 	<File name="Middlewares\Third_Party\FreeRTOS\Source\timers.c" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -291,7 +391,7 @@
 			<Cursor1 position="14320" topLine="275" />
 		</Cursor>
 	</File>
-	<File name="startup\startup_stm32f4xx.S" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="startup\startup_stm32f4xx.S" open="1" top="1" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="9439" topLine="187" />
 		</Cursor>

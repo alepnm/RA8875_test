@@ -173,6 +173,7 @@ void USART_TimerHandler(Port_TypeDef* port) {
 
 #if defined(MODBUS_PORT)
         if(port == pMbPort){
+
             (void)pxMBPortCBTimerExpired( );
 
             LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_9);

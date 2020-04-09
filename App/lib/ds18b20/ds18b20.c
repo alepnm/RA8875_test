@@ -12,8 +12,6 @@ uint16_t	Ds18b20Timeout = 0;
 
 #if (DS18B20_CONFIG_USE_FREERTOS == 1)
 
-//#include "tasks.h"
-
 TaskHandle_t Ds18b20Handle;
 void         xDS18B20_Task(void* arg);
 #endif

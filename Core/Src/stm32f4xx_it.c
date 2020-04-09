@@ -46,7 +46,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+extern volatile uint8_t ubDmaTransferComplete;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -145,6 +145,31 @@ void TIM6_DAC_IRQHandler(void)
 
   timestamp++;
   /* USER CODE END TIM6_DAC_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA2 stream0 global interrupt.
+  */
+void DMA2_Stream0_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream0_IRQn 0 */
+    if(LL_DMA_IsActiveFlag_TC0(DMA2) && LL_DMA_IsEnabledIT_TC(DMA2, LL_DMA_STREAM_0))
+    {
+        LL_DMA_ClearFlag_TC0(DMA2);
+
+        ubDmaTransferComplete = 1;
+    }
+
+    if(LL_DMA_IsActiveFlag_TE0(DMA2)  && LL_DMA_IsEnabledIT_TC(DMA2, LL_DMA_STREAM_0))
+    {
+        LL_DMA_ClearFlag_TE0(DMA2);
+
+    }
+  /* USER CODE END DMA2_Stream0_IRQn 0 */
+  
+  /* USER CODE BEGIN DMA2_Stream0_IRQn 1 */
+
+  /* USER CODE END DMA2_Stream0_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

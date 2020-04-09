@@ -6,8 +6,8 @@
 //###################################################################################
 #define	DS18B20_CONFIG_USE_FREERTOS		    				1
 #define DS18B20_CONFIG_MAX_SENSORS		    				5
-#define	DS18B20_CONFIG_GPIO									GPIOC
-#define	DS18B20_CONFIG_PIN									LL_GPIO_PIN_11
+#define	DS18B20_CONFIG_GPIO									DS_Data_GPIO_Port
+#define	DS18B20_CONFIG_PIN									DS_Data_Pin
 
 
 #define DS18B20_TRYES_TO_READ                               5

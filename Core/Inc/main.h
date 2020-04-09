@@ -29,7 +29,10 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+#include "stm32f4xx_ll_adc.h"
 #include "stm32f4xx_ll_crc.h"
+#include "stm32f4xx_ll_dac.h"
+#include "stm32f4xx_ll_dma.h"
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_ll_rcc.h"
 #include "stm32f4xx_ll_bus.h"
@@ -38,7 +41,6 @@ extern "C" {
 #include "stm32f4xx_ll_cortex.h"
 #include "stm32f4xx_ll_utils.h"
 #include "stm32f4xx_ll_pwr.h"
-#include "stm32f4xx_ll_dma.h"
 #include "stm32f4xx_ll_tim.h"
 #include "stm32f4xx_ll_usart.h"
 #include "stm32f4xx.h"
@@ -78,12 +80,14 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define LCD_RST_Pin LL_GPIO_PIN_8
-#define LCD_RST_GPIO_Port GPIOC
-#define LCD_WAIT_Pin LL_GPIO_PIN_9
-#define LCD_WAIT_GPIO_Port GPIOC
+#define LCD_WAIT_Pin LL_GPIO_PIN_6
+#define LCD_WAIT_GPIO_Port GPIOA
+#define LCD_RST_Pin LL_GPIO_PIN_7
+#define LCD_RST_GPIO_Port GPIOA
 #define LD7_Pin LL_GPIO_PIN_9
 #define LD7_GPIO_Port GPIOA
+#define TEST_OUT_Pin LL_GPIO_PIN_15
+#define TEST_OUT_GPIO_Port GPIOA
 #define DS_Data_Pin LL_GPIO_PIN_11
 #define DS_Data_GPIO_Port GPIOC
 #define LCD_BACKLIGHT_Pin LL_GPIO_PIN_9

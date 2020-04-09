@@ -78,6 +78,7 @@
 			<Add directory="Drivers\STM32F4xx_HAL_Driver\Inc" />
 		</Compiler>
 		<Linker>
+			<Add option="-u _printf_float" />
 			<Add option="-eb_lib=n" />
 			<Add option="-eb_start_files" />
 			<Add option="-Wl,--cref" />
@@ -180,6 +181,10 @@
 		<Unit filename="App\GUISTEND\ModbusPortSettingsDLG.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="App\lib\adc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\adc.h" />
 		<Unit filename="App\lib\ds18b20\ds18b20.c">
 			<Option compilerVar="CC" />
 		</Unit>

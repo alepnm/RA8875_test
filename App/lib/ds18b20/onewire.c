@@ -84,7 +84,7 @@ inline uint8_t OW_Reset(OneWire_t* ow)
 
 inline __attribute__((always_inline)) void OW_WriteBit(OneWire_t* ow, uint8_t bit)
 {
-    __disable_irq();
+    taskENTER_CRITICAL();//__disable_irq();
 
     OW_PinLow(ow);
     Delay_us(bit ? 1 : 80);
@@ -92,12 +92,12 @@ inline __attribute__((always_inline)) void OW_WriteBit(OneWire_t* ow, uint8_t bi
     OW_PinHigh(ow);
     Delay_us(bit ? 80 : 2);
 
-    __enable_irq();
+    taskEXIT_CRITICAL();//__enable_irq();
 }
 
 inline __attribute__((always_inline)) uint8_t OW_ReadBit(OneWire_t* ow)
 {
-    __disable_irq();
+    taskENTER_CRITICAL();//__disable_irq();
 
     OW_PinLow(ow);
     Delay_us(1);
@@ -109,7 +109,7 @@ inline __attribute__((always_inline)) uint8_t OW_ReadBit(OneWire_t* ow)
 
     Delay_us(40);
 
-    __enable_irq();
+    taskEXIT_CRITICAL();//__enable_irq();
 
     return bit;
 }
