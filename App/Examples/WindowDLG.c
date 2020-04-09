@@ -23,6 +23,7 @@
 #include "main.h"
 #include "ra8875.h"
 #include "GUIDEMO.h"
+#include "ds18b20.h"
 // USER END
 
 /*********************************************************************
@@ -237,8 +238,8 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
-        sprintf(st, "%d", SLIDER_GetValue(hSlider0));
-        TEXT_SetText(hText1, st);
+        //sprintf(st, "%d", SLIDER_GetValue(hSlider0));
+        //TEXT_SetText(hText1, st);
 
         LL_TIM_OC_SetCompareCH1(TIM11, SLIDER_GetValue(hSlider0));
         // USER END
@@ -465,9 +466,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 
     case WM_TIMER:
 
-        //TS_ReadXY();
-
-        //GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
+        TEXT_SetText(hText1, ds18b20[0].TemperatureStr);
 
         WM_RestartTimer(pMsg->Data.v, 100);
         break;

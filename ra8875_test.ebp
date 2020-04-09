@@ -73,6 +73,9 @@
 			<Add option="-fno-strict-aliasing" />
 			<Add symbol="STM32F407xx" />
 			<Add symbol="USE_FULL_LL_DRIVER" />
+			<Add directory="Drivers\CMSIS\Include" />
+			<Add directory="Drivers\STemWin\inc" />
+			<Add directory="Drivers\STM32F4xx_HAL_Driver\Inc" />
 		</Compiler>
 		<Linker>
 			<Add option="-eb_lib=n" />
@@ -177,6 +180,15 @@
 		<Unit filename="App\GUISTEND\ModbusPortSettingsDLG.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="App\lib\ds18b20\ds18b20.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\ds18b20\ds18b20.h" />
+		<Unit filename="App\lib\ds18b20\ds18b20Config.h" />
+		<Unit filename="App\lib\ds18b20\onewire.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="App\lib\ds18b20\onewire.h" />
 		<Unit filename="App\lib\freemodbus\modbus\ascii\mbascii.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -33,6 +33,7 @@
 #include "WindowDLG.h"
 #include "ra8875.h"
 #include "usart.h"
+#include "ds18b20.h"
 
 #include "../../App/Examples/examples.c"
 
@@ -509,10 +510,10 @@ static void MX_GPIO_Init(void)
   LL_GPIO_Init(LCD_RST_GPIO_Port, &GPIO_InitStruct);
 
   /**/
-  GPIO_InitStruct.Pin = LCD_WAIT_Pin;
+  GPIO_InitStruct.Pin = LCD_WAIT_Pin|DS_Data_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
-  LL_GPIO_Init(LCD_WAIT_GPIO_Port, &GPIO_InitStruct);
+  LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /**/
   GPIO_InitStruct.Pin = LD7_Pin|LL_GPIO_PIN_15;
@@ -634,7 +635,9 @@ void t_MainTask(void const * argument)
 {
   /* USER CODE BEGIN t_MainTask */
 
-  ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
+    ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
+
+    DS18B20_TaskInit(tskIDLE_PRIORITY);
 
     USART_SetDefaults(pPrimaryPort);
     USART_SetDefaults(pSecondaryPort);
@@ -689,7 +692,7 @@ void t_MeasureTask(void const * argument)
 
 
     LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_15);
-    Delay_us(100);
+    Delay_us(20);
     LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_15);
 
     osDelay(10);

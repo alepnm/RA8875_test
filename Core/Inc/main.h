@@ -64,8 +64,9 @@ extern "C" {
 /* USER CODE BEGIN EM */
 __STATIC_INLINE void Delay_us(uint16_t delay)
 {
-    LL_TIM_SetCounter(TIM7, 1);
-    while(LL_TIM_GetCounter(TIM7) < delay);
+    LL_TIM_ClearFlag_UPDATE(TIM7);
+    LL_TIM_SetCounter(TIM7, 65535 - (delay - 1));
+    while( !LL_TIM_IsActiveFlag_UPDATE(TIM7) );
 }
 /* USER CODE END EM */
 
@@ -83,6 +84,8 @@ void Error_Handler(void);
 #define LCD_WAIT_GPIO_Port GPIOC
 #define LD7_Pin LL_GPIO_PIN_9
 #define LD7_GPIO_Port GPIOA
+#define DS_Data_Pin LL_GPIO_PIN_11
+#define DS_Data_GPIO_Port GPIOC
 #define LCD_BACKLIGHT_Pin LL_GPIO_PIN_9
 #define LCD_BACKLIGHT_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
