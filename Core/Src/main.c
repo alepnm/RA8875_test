@@ -65,7 +65,7 @@ SRAM_HandleTypeDef hsram1;
 
 osThreadId GUI_TaskHandle;
 osThreadId Main_TaskHandle;
-osThreadId MeasureTaskHandle;
+osThreadId MbTaskHandle;
 osTimerId TS_TimerHandle;
 /* USER CODE BEGIN PV */
 __IO uint32_t timestamp;
@@ -75,7 +75,12 @@ char st[20];
 extern uint8_t GUI_Initialized;
 extern WM_HWIN hWin, hWin1;
 
+
+
+extern TaskHandle_t Ds18b20Handle;
+extern TaskHandle_t AdcHandle;
 /* USER CODE END PV */
+
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -90,13 +95,16 @@ static void MX_TIM7_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_DAC_Init(void);
 static void MX_TIM8_Init(void);
+static void MX_TIM10_Init(void);
+static void MX_I2C1_Init(void);
 void t_GuiTask(void const * argument);
 void t_MainTask(void const * argument);
-void t_MeasureTask(void const * argument);
+void t_ModbusTask(void const * argument);
 void cb_TsTimer(void const * argument);
 
 /* USER CODE BEGIN PFP */
-
+extern void xADC_Task(void* arg);
+extern void xDS18B20_Task(void* arg);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -142,6 +150,8 @@ int main(void)
   MX_ADC1_Init();
   MX_DAC_Init();
   MX_TIM8_Init();
+  MX_TIM10_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
   LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_13);  // A18 - pagal default aukstas lygis
@@ -191,9 +201,9 @@ int main(void)
   osThreadDef(Main_Task, t_MainTask, osPriorityNormal, 0, 128);
   Main_TaskHandle = osThreadCreate(osThread(Main_Task), NULL);
 
-  /* definition and creation of MeasureTask */
-  osThreadDef(MeasureTask, t_MeasureTask, osPriorityIdle, 0, 128);
-  MeasureTaskHandle = osThreadCreate(osThread(MeasureTask), NULL);
+  /* definition and creation of MbTask */
+  osThreadDef(MbTask, t_ModbusTask, osPriorityIdle, 0, 128);
+  MbTaskHandle = osThreadCreate(osThread(MbTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -288,12 +298,15 @@ static void MX_ADC1_Init(void)
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_ADC1);
 
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC);
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
   /**ADC1 GPIO Configuration
   PC0   ------> ADC1_IN10
   PC1   ------> ADC1_IN11
   PC2   ------> ADC1_IN12
   PC3   ------> ADC1_IN13
+  PA2   ------> ADC1_IN2
+  PA3   ------> ADC1_IN3
   PC4   ------> ADC1_IN14
   PC5   ------> ADC1_IN15
   PB0   ------> ADC1_IN8
@@ -304,6 +317,11 @@ static void MX_ADC1_Init(void)
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_2|LL_GPIO_PIN_3;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   GPIO_InitStruct.Pin = LL_GPIO_PIN_0|LL_GPIO_PIN_1;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
@@ -341,7 +359,7 @@ static void MX_ADC1_Init(void)
   ADC_InitStruct.SequencersScanMode = LL_ADC_SEQ_SCAN_ENABLE;
   LL_ADC_Init(ADC1, &ADC_InitStruct);
   ADC_REG_InitStruct.TriggerSource = LL_ADC_REG_TRIG_SOFTWARE;
-  ADC_REG_InitStruct.SequencerLength = LL_ADC_REG_SEQ_SCAN_ENABLE_11RANKS;
+  ADC_REG_InitStruct.SequencerLength = LL_ADC_REG_SEQ_SCAN_ENABLE_12RANKS;
   ADC_REG_InitStruct.SequencerDiscont = LL_ADC_REG_SEQ_DISCONT_DISABLE;
   ADC_REG_InitStruct.ContinuousMode = LL_ADC_REG_CONV_CONTINUOUS;
   ADC_REG_InitStruct.DMATransfer = LL_ADC_REG_DMA_TRANSFER_UNLIMITED;
@@ -353,49 +371,52 @@ static void MX_ADC1_Init(void)
   LL_ADC_CommonInit(__LL_ADC_COMMON_INSTANCE(ADC1), &ADC_CommonInitStruct);
   /** Configure Regular Channel
   */
-  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_1, LL_ADC_CHANNEL_8);
+  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_1, LL_ADC_CHANNEL_2);
+  LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_2, LL_ADC_SAMPLINGTIME_480CYCLES);
+  /** Configure Regular Channel
+  */
+  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_2, LL_ADC_CHANNEL_3);
+  LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_3, LL_ADC_SAMPLINGTIME_480CYCLES);
+  /** Configure Regular Channel
+  */
+  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_3, LL_ADC_CHANNEL_8);
   LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_8, LL_ADC_SAMPLINGTIME_480CYCLES);
   /** Configure Regular Channel
   */
-  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_2, LL_ADC_CHANNEL_9);
+  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_4, LL_ADC_CHANNEL_9);
   LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_9, LL_ADC_SAMPLINGTIME_480CYCLES);
   /** Configure Regular Channel
   */
-  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_3, LL_ADC_CHANNEL_10);
+  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_5, LL_ADC_CHANNEL_10);
   LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_10, LL_ADC_SAMPLINGTIME_480CYCLES);
   /** Configure Regular Channel
   */
-  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_4, LL_ADC_CHANNEL_11);
+  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_6, LL_ADC_CHANNEL_11);
   LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_11, LL_ADC_SAMPLINGTIME_480CYCLES);
   /** Configure Regular Channel
   */
-  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_5, LL_ADC_CHANNEL_12);
+  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_7, LL_ADC_CHANNEL_12);
   LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_12, LL_ADC_SAMPLINGTIME_480CYCLES);
   /** Configure Regular Channel
   */
-  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_6, LL_ADC_CHANNEL_13);
+  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_8, LL_ADC_CHANNEL_13);
   LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_13, LL_ADC_SAMPLINGTIME_480CYCLES);
   /** Configure Regular Channel
   */
-  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_7, LL_ADC_CHANNEL_14);
+  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_9, LL_ADC_CHANNEL_14);
   LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_14, LL_ADC_SAMPLINGTIME_480CYCLES);
   /** Configure Regular Channel
   */
-  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_8, LL_ADC_CHANNEL_15);
+  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_10, LL_ADC_CHANNEL_15);
   LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_15, LL_ADC_SAMPLINGTIME_480CYCLES);
   /** Configure Regular Channel
   */
-  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_9, LL_ADC_CHANNEL_VREFINT);
+  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_11, LL_ADC_CHANNEL_VREFINT);
   LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_VREFINT, LL_ADC_SAMPLINGTIME_480CYCLES);
   LL_ADC_SetCommonPathInternalCh(__LL_ADC_COMMON_INSTANCE(ADC1), LL_ADC_PATH_INTERNAL_VREFINT);
   /** Configure Regular Channel
   */
-  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_10, LL_ADC_CHANNEL_VBAT);
-  LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_VBAT, LL_ADC_SAMPLINGTIME_480CYCLES);
-  LL_ADC_SetCommonPathInternalCh(__LL_ADC_COMMON_INSTANCE(ADC1), LL_ADC_PATH_INTERNAL_VBAT);
-  /** Configure Regular Channel
-  */
-  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_11, LL_ADC_CHANNEL_TEMPSENSOR);
+  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_12, LL_ADC_CHANNEL_TEMPSENSOR);
   LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_TEMPSENSOR, LL_ADC_SAMPLINGTIME_480CYCLES);
   LL_ADC_SetCommonPathInternalCh(__LL_ADC_COMMON_INSTANCE(ADC1), LL_ADC_PATH_INTERNAL_TEMPSENSOR);
   /* USER CODE BEGIN ADC1_Init 2 */
@@ -476,6 +497,60 @@ static void MX_DAC_Init(void)
   /* USER CODE BEGIN DAC_Init 2 */
 
   /* USER CODE END DAC_Init 2 */
+
+}
+
+/**
+  * @brief I2C1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  LL_I2C_InitTypeDef I2C_InitStruct = {0};
+
+  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
+  /**I2C1 GPIO Configuration
+  PB6   ------> I2C1_SCL
+  PB7   ------> I2C1_SDA
+  */
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_6|LL_GPIO_PIN_7;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_HIGH;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_OPENDRAIN;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
+  GPIO_InitStruct.Alternate = LL_GPIO_AF_4;
+  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* Peripheral clock enable */
+  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_I2C1);
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  /** I2C Initialization
+  */
+  LL_I2C_DisableOwnAddress2(I2C1);
+  LL_I2C_DisableGeneralCall(I2C1);
+  LL_I2C_EnableClockStretching(I2C1);
+  I2C_InitStruct.PeripheralMode = LL_I2C_MODE_I2C;
+  I2C_InitStruct.ClockSpeed = 100000;
+  I2C_InitStruct.DutyCycle = LL_I2C_DUTYCYCLE_2;
+  I2C_InitStruct.OwnAddress1 = 0;
+  I2C_InitStruct.TypeAcknowledge = LL_I2C_ACK;
+  I2C_InitStruct.OwnAddrSize = LL_I2C_OWNADDRESS1_7BIT;
+  LL_I2C_Init(I2C1, &I2C_InitStruct);
+  LL_I2C_SetOwnAddress2(I2C1, 0);
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
 
 }
 
@@ -612,6 +687,66 @@ static void MX_TIM8_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   GPIO_InitStruct.Alternate = LL_GPIO_AF_3;
   LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+}
+
+/**
+  * @brief TIM10 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM10_Init(void)
+{
+
+  /* USER CODE BEGIN TIM10_Init 0 */
+
+  /* USER CODE END TIM10_Init 0 */
+
+  LL_TIM_InitTypeDef TIM_InitStruct = {0};
+  LL_TIM_OC_InitTypeDef TIM_OC_InitStruct = {0};
+
+  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+  /* Peripheral clock enable */
+  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM10);
+
+  /* USER CODE BEGIN TIM10_Init 1 */
+
+  /* USER CODE END TIM10_Init 1 */
+  TIM_InitStruct.Prescaler = 16800;
+  TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
+  TIM_InitStruct.Autoreload = 100;
+  TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
+  LL_TIM_Init(TIM10, &TIM_InitStruct);
+  LL_TIM_DisableARRPreload(TIM10);
+  LL_TIM_OC_EnablePreload(TIM10, LL_TIM_CHANNEL_CH1);
+  TIM_OC_InitStruct.OCMode = LL_TIM_OCMODE_PWM1;
+  TIM_OC_InitStruct.OCState = LL_TIM_OCSTATE_DISABLE;
+  TIM_OC_InitStruct.OCNState = LL_TIM_OCSTATE_DISABLE;
+  TIM_OC_InitStruct.CompareValue = 50;
+  TIM_OC_InitStruct.OCPolarity = LL_TIM_OCPOLARITY_HIGH;
+  LL_TIM_OC_Init(TIM10, LL_TIM_CHANNEL_CH1, &TIM_OC_InitStruct);
+  LL_TIM_OC_DisableFast(TIM10, LL_TIM_CHANNEL_CH1);
+  /* USER CODE BEGIN TIM10_Init 2 */
+  LL_TIM_OC_SetCompareCH1(TIM10, 0);
+
+  LL_TIM_EnableAllOutputs(TIM10);
+
+  LL_TIM_CC_EnableChannel(TIM10, LL_TIM_CHANNEL_CH1);
+
+  LL_TIM_EnableCounter(TIM10);
+  /* USER CODE END TIM10_Init 2 */
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
+  /**TIM10 GPIO Configuration
+  PB8   ------> TIM10_CH1
+  */
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_8;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  GPIO_InitStruct.Alternate = LL_GPIO_AF_3;
+  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 
@@ -938,7 +1073,9 @@ void t_GuiTask(void const * argument)
   hWin = CreateWindow();
   hWin1 = CreateModbusPortSettings();
 
-  osTimerStart(TS_TimerHandle, 100);
+
+  xTaskNotifyGive( Main_TaskHandle );
+  xTaskNotifyGive( MbTaskHandle );
 
   /* Infinite loop */
   for(;;)
@@ -963,6 +1100,35 @@ void t_GuiTask(void const * argument)
 void t_MainTask(void const * argument)
 {
   /* USER CODE BEGIN t_MainTask */
+    ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
+
+    osTimerStart(TS_TimerHandle, 100);
+
+  /* Infinite loop */
+  for(;;)
+  {
+
+
+    LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_15);
+    Delay_us(20);
+    LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_15);
+
+    osDelay(10);
+  }
+  /* USER CODE END t_MainTask */
+}
+
+/* USER CODE BEGIN Header_t_ModbusTask */
+/**
+* @brief Function implementing the MbTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_t_ModbusTask */
+void t_ModbusTask(void const * argument)
+{
+  /* USER CODE BEGIN t_ModbusTask */
+    ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
 
     USART_SetDefaults(pPrimaryPort);
     USART_SetDefaults(pSecondaryPort);
@@ -988,34 +1154,9 @@ void t_MainTask(void const * argument)
         //ModbusRegistersUpdate();
 #endif
 
-
-    LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_15);
-    Delay_us(20);
-    LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_15);
-
     osDelay(10);
   }
-  /* USER CODE END t_MainTask */
-}
-
-/* USER CODE BEGIN Header_t_MeasureTask */
-/**
-* @brief Function implementing the MeasureTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_t_MeasureTask */
-void t_MeasureTask(void const * argument)
-{
-  /* USER CODE BEGIN t_MeasureTask */
-
-  /* Infinite loop */
-  for(;;)
-  {
-
-    osDelay(10);
-  }
-  /* USER CODE END t_MeasureTask */
+  /* USER CODE END t_ModbusTask */
 }
 
 /* cb_TsTimer function */

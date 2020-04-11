@@ -3,7 +3,7 @@
 #include "adc.h"
 
 
-#define ADC_CONVERTED_DATA_BUFFER_SIZE  ((uint32_t) 11)
+#define ADC_CONVERTED_DATA_BUFFER_SIZE  ((uint32_t) 12)
 
 #define VDDA_APPLI                      VREFINT_CAL_VREF
 
@@ -22,7 +22,6 @@ adcdat_t xAdcData_BankB[ADC_CONVERTED_DATA_BUFFER_SIZE];
 volatile uint8_t ubDmaTransferComplete = 0;
 
 uint16_t VRefValue = 0;
-uint16_t VBatValue = 0;
 uint16_t CpuTemperature = 0;
 
 
@@ -70,12 +69,11 @@ void xADC_Task(void* arg)
 
         ADC_StoreAdcData(xAdcData_BankA);
 
-        VRefValue =      __LL_ADC_CALC_DATA_TO_VOLTAGE(VDDA_APPLI, xAdcData_BankA[8].adcval, LL_ADC_RESOLUTION_10B);
+        VRefValue =      __LL_ADC_CALC_DATA_TO_VOLTAGE(VDDA_APPLI, xAdcData_BankA[10].adcval, LL_ADC_RESOLUTION_10B);
 
         /* vienu metu konvertuojamas arba TEMPSENSOR arba VBAT <-- pasiaiskinti */
-        VBatValue =      __LL_ADC_CALC_DATA_TO_VOLTAGE(VRefValue, xAdcData_BankA[9].adcval, LL_ADC_RESOLUTION_12B) * 2;
         CpuTemperature = __LL_ADC_CALC_TEMPERATURE_TYP_PARAMS(INTERNAL_TEMPSENSOR_AVGSLOPE, INTERNAL_TEMPSENSOR_V25, INTERNAL_TEMPSENSOR_V25_TEMP,
-                         VDDA_APPLI, xAdcData_BankA[10].adcval, LL_ADC_RESOLUTION_12B);
+                         VDDA_APPLI, xAdcData_BankA[11].adcval, LL_ADC_RESOLUTION_10B);
         //CpuTemperature = __LL_ADC_CALC_TEMPERATURE(VRefValue,  xAdcData_BankA[10].adcval, LL_ADC_RESOLUTION_10B);
 
         vTaskDelay(10);
