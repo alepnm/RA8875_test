@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name mb_stm-rescue)(type Legacy)(uri E:/Projects/9d92a9794cb7425916a55bf35890cc89fda2b843/kicad/mb_stm-rescue.lib)(options "")(descr ""))
+  (lib (name i2c_rtc)(type Legacy)(uri ${KICAD_ALEX_DIR}/user_templates/I2C_RTC_module/i2c_rtc.lib)(options "")(descr ""))
+)
