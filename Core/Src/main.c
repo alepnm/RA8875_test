@@ -81,7 +81,6 @@ extern TaskHandle_t Ds18b20Handle;
 extern TaskHandle_t AdcHandle;
 /* USER CODE END PV */
 
-
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
@@ -161,6 +160,7 @@ int main(void)
 
   /* nustatom 80% LCD sviesumo */
   LL_TIM_OC_SetCompareCH1(TIM11, 80);
+
 
   /* nustatom PWM isejimus */
   LL_TIM_OC_SetCompareCH1(TIM8, 10);
@@ -967,7 +967,13 @@ static void MX_GPIO_Init(void)
   LL_GPIO_SetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin);
 
   /**/
+  LL_GPIO_ResetOutputPin(U4DE_GPIO_Port, U4DE_Pin);
+
+  /**/
   LL_GPIO_ResetOutputPin(GPIOA, LD7_Pin|TEST_OUT_Pin);
+
+  /**/
+  LL_GPIO_ResetOutputPin(U5DE_GPIO_Port, U5DE_Pin);
 
   /**/
   GPIO_InitStruct.Pin = LCD_WAIT_Pin;
@@ -984,10 +990,26 @@ static void MX_GPIO_Init(void)
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /**/
+  GPIO_InitStruct.Pin = U4DE_Pin;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  LL_GPIO_Init(U4DE_GPIO_Port, &GPIO_InitStruct);
+
+  /**/
   GPIO_InitStruct.Pin = DS_Data_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(DS_Data_GPIO_Port, &GPIO_InitStruct);
+
+  /**/
+  GPIO_InitStruct.Pin = U5DE_Pin;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  LL_GPIO_Init(U5DE_GPIO_Port, &GPIO_InitStruct);
 
 }
 
@@ -1026,11 +1048,11 @@ static void MX_FSMC_Init(void)
   hsram1.Init.PageSize = FSMC_PAGE_SIZE_NONE;
   /* Timing */
   Timing.AddressSetupTime = 5;
-  Timing.AddressHoldTime = 15;
-  Timing.DataSetupTime = 9;
+  Timing.AddressHoldTime = 10;
+  Timing.DataSetupTime = 6;
   Timing.BusTurnAroundDuration = 0;
-  Timing.CLKDivision = 16;
-  Timing.DataLatency = 17;
+  Timing.CLKDivision = 2;
+  Timing.DataLatency = 2;
   Timing.AccessMode = FSMC_ACCESS_MODE_A;
   /* ExtTiming */
 
@@ -1070,12 +1092,14 @@ void t_GuiTask(void const * argument)
 
   GUI_Init();
 
-  hWin = CreateWindow();
-  hWin1 = CreateModbusPortSettings();
+//  hWin = CreateWindow();
+//  hWin1 = CreateModbusPortSettings();
 
 
   xTaskNotifyGive( Main_TaskHandle );
   xTaskNotifyGive( MbTaskHandle );
+
+  GUIDEMO_Main();
 
   /* Infinite loop */
   for(;;)
@@ -1100,6 +1124,9 @@ void t_GuiTask(void const * argument)
 void t_MainTask(void const * argument)
 {
   /* USER CODE BEGIN t_MainTask */
+    uint32_t blank_timeout_counter = timestamp + 10000;
+
+
     ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
 
     osTimerStart(TS_TimerHandle, 100);
@@ -1108,12 +1135,26 @@ void t_MainTask(void const * argument)
   for(;;)
   {
 
+    if(TS_Data.IsTouched){
+        LL_TIM_OC_SetCompareCH1(TIM11, 90);
+        blank_timeout_counter = timestamp + 10000;
+    }else{
+        if(blank_timeout_counter < timestamp){
+
+            uint8_t q = LL_TIM_OC_GetCompareCH1(TIM11);
+
+            if(q > 4) q--;
+
+            LL_TIM_OC_SetCompareCH1(TIM11, q);
+        }
+    }
+
 
     LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_15);
     Delay_us(20);
     LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_15);
 
-    osDelay(10);
+    osDelay(20);
   }
   /* USER CODE END t_MainTask */
 }
@@ -1164,11 +1205,11 @@ void cb_TsTimer(void const * argument)
 {
   /* USER CODE BEGIN cb_TsTimer */
 
-    //GUI_X_Lock();
+    GUI_X_Lock();
 
     TS_ReadXY();
 
-    //GUI_X_Unlock();
+    GUI_X_Unlock();
 
     GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
 

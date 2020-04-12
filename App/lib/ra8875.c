@@ -83,9 +83,9 @@ void RA8875_Init(void) {
 
 
     /* PLL clock frequency */
-    FSMC_WriteRegister(0x88, 0x05);   // PLL Control Register1
+    FSMC_WriteRegister(0x88, 0x86);   // PLL Control Register1
     HAL_Delay(1);
-    FSMC_WriteRegister(0x89, 0x01);   // PLL Control Register2
+    FSMC_WriteRegister(0x89, 0x00);   // PLL Control Register2
     HAL_Delay(1);
 
 
@@ -103,18 +103,30 @@ void RA8875_Init(void) {
     /* Horisontal settings */
     FSMC_WriteRegister(0x14, (uint8_t)(X_SIZE/8-1));   // LCD Horizontal Display Width Register
     FSMC_WriteRegister(0x15, 0x02);   // Horizontal Non-Display Period Fine Tuning Option Register
-    FSMC_WriteRegister(0x16, 0x03);   // LCD Horizontal Non-Display Period Register
+    //FSMC_WriteRegister(0x16, 0x03);   // LCD Horizontal Non-Display Period Register
+    //FSMC_WriteRegister(0x17, 0x01);   // HSYNC Start Position Register
+    //FSMC_WriteRegister(0x18, 0x03);   // HSYNC Pulse Width Register
+
+    FSMC_WriteRegister(0x16, 0x01);   // LCD Horizontal Non-Display Period Register
     FSMC_WriteRegister(0x17, 0x01);   // HSYNC Start Position Register
-    FSMC_WriteRegister(0x18, 0x03);   // HSYNC Pulse Width Register
+    FSMC_WriteRegister(0x18, 0x05);   // HSYNC Pulse Width Register
+
+
 
     /* Vertical settings */
     FSMC_WriteRegister(0x19, (uint8_t)(Y_SIZE-1));        // LCD Vertical Display Height Register0
     FSMC_WriteRegister(0x1A, (uint8_t)((Y_SIZE-1)>>8));   // LCD Vertical Display Height Register1
     FSMC_WriteRegister(0x1B, 0x0F);   // LCD Vertical Non-Display Period Register0
     FSMC_WriteRegister(0x1C, 0x00);   // LCD Vertical Non-Display Period Register1
-    FSMC_WriteRegister(0x1D, 0x0E);   // VSYNC Start Position Register0
-    FSMC_WriteRegister(0x1E, 0x06);   // VSYNC Start Position Register1
-    FSMC_WriteRegister(0x1F, 0x01);   // VSYNC Pulse Width Register
+    //FSMC_WriteRegister(0x1D, 0x0E);   // VSYNC Start Position Register0
+    //FSMC_WriteRegister(0x1E, 0x06);   // VSYNC Start Position Register1
+    //FSMC_WriteRegister(0x1F, 0x01);   // VSYNC Pulse Width Register
+
+    FSMC_WriteRegister(0x1D, 0x03);   // VSYNC Start Position Register0
+    FSMC_WriteRegister(0x1E, 0x04);   // VSYNC Start Position Register1
+    FSMC_WriteRegister(0x1F, 0x05);   // VSYNC Pulse Width Register
+
+
 
     FSMC_WriteRegister(0x20, 0x8C);   // Display Configuration Register
 

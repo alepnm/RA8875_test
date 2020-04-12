@@ -33,6 +33,12 @@
 #define ENTER_CRITICAL_SECTION() __disable_irq()
 #define EXIT_CRITICAL_SECTION() __enable_irq()
 
+#define SLAVE_RS485_RECEIVE_MODE() LL_GPIO_ResetOutputPin(U4DE_GPIO_Port, U4DE_Pin);
+#define SLAVE_RS485_SEND_MODE()    LL_GPIO_SetOutputPin(U4DE_GPIO_Port, U4DE_Pin);
+
+#define MASTER_RS485_RECEIVE_MODE() LL_GPIO_ResetOutputPin(U5DE_GPIO_Port, U5DE_Pin);
+#define MASTER_RS485_SEND_MODE()    LL_GPIO_SetOutputPin(U5DE_GPIO_Port, U5DE_Pin);
+
 
 typedef uint8_t         BOOL;
 typedef unsigned char   UCHAR;

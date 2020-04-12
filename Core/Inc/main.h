@@ -85,12 +85,16 @@ void Error_Handler(void);
 #define LCD_WAIT_GPIO_Port GPIOA
 #define LCD_RST_Pin LL_GPIO_PIN_7
 #define LCD_RST_GPIO_Port GPIOA
+#define U4DE_Pin LL_GPIO_PIN_2
+#define U4DE_GPIO_Port GPIOB
 #define LD7_Pin LL_GPIO_PIN_9
 #define LD7_GPIO_Port GPIOA
 #define TEST_OUT_Pin LL_GPIO_PIN_15
 #define TEST_OUT_GPIO_Port GPIOA
 #define DS_Data_Pin LL_GPIO_PIN_11
 #define DS_Data_GPIO_Port GPIOC
+#define U5DE_Pin LL_GPIO_PIN_3
+#define U5DE_GPIO_Port GPIOD
 #define LCD_BACKLIGHT_Pin LL_GPIO_PIN_9
 #define LCD_BACKLIGHT_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
