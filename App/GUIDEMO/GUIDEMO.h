@@ -176,7 +176,7 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 #endif
 
 #ifndef   SHOW_GUIDEMO_AATEXT
-  #define SHOW_GUIDEMO_AATEXT            (0)
+  #define SHOW_GUIDEMO_AATEXT            (1)
 #endif
 
 #ifndef   SHOW_GUIDEMO_BARGRAPH

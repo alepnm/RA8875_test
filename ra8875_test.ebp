@@ -764,6 +764,43 @@
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_utils.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="FATFS\App\fatfs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="FATFS\App\fatfs.h" />
+		<Unit filename="FATFS\Target\bsp_driver_sd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="FATFS\Target\bsp_driver_sd.h" />
+		<Unit filename="FATFS\Target\fatfs_platform.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="FATFS\Target\fatfs_platform.h" />
+		<Unit filename="FATFS\Target\ffconf.h" />
+		<Unit filename="FATFS\Target\sd_diskio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="FATFS\Target\sd_diskio.h" />
+		<Unit filename="Middlewares\Third_Party\FatFs\src\diskio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Middlewares\Third_Party\FatFs\src\diskio.h" />
+		<Unit filename="Middlewares\Third_Party\FatFs\src\ff.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Middlewares\Third_Party\FatFs\src\ff.h" />
+		<Unit filename="Middlewares\Third_Party\FatFs\src\ff_gen_drv.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Middlewares\Third_Party\FatFs\src\ff_gen_drv.h" />
+		<Unit filename="Middlewares\Third_Party\FatFs\src\ffconf_template.h" />
+		<Unit filename="Middlewares\Third_Party\FatFs\src\integer.h" />
+		<Unit filename="Middlewares\Third_Party\FatFs\src\option\syscall.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Middlewares\Third_Party\FatFs\src\option\unicode.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -819,7 +856,7 @@
 		<Extensions>
 			<code_completion />
 			<debugger>
-				<target_debugging_settings target="Debug" active_interface="ST-link">
+				<target_debugging_settings target="Release" active_interface="ST-link">
 					<debug_interface interface_id="ST-link" ip_address="localhost" ip_port="4242" path="${EMBITZ}\share\contrib" executable="STLinkGDB.exe" description="" dont_start_server="false" backoff_time="1000" options="0" reg_filter="0" active_family="STMicroelectronics" gdb_before_conn="" gdb_after_conn="">
 						<family_options family_id="STMicroelectronics">
 							<option opt_id="ID_JTAG_SWD" opt_value="swd" />
@@ -836,7 +873,7 @@
 						</family_options>
 					</debug_interface>
 				</target_debugging_settings>
-				<target_debugging_settings target="Release" active_interface="ST-link">
+				<target_debugging_settings target="Debug" active_interface="ST-link">
 					<debug_interface interface_id="ST-link" ip_address="localhost" ip_port="4242" path="${EMBITZ}\share\contrib" executable="STLinkGDB.exe" description="" dont_start_server="false" backoff_time="1000" options="0" reg_filter="0" active_family="STMicroelectronics" gdb_before_conn="" gdb_after_conn="">
 						<family_options family_id="STMicroelectronics">
 							<option opt_id="ID_JTAG_SWD" opt_value="swd" />

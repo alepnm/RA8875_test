@@ -83,9 +83,9 @@ void RA8875_Init(void) {
 
 
     /* PLL clock frequency */
-    FSMC_WriteRegister(0x88, 0x86);   // PLL Control Register1
+    FSMC_WriteRegister(0x88, 0x0C);   // PLL Control Register1
     HAL_Delay(1);
-    FSMC_WriteRegister(0x89, 0x00);   // PLL Control Register2
+    FSMC_WriteRegister(0x89, 0x02);   // PLL Control Register2
     HAL_Delay(1);
 
 
@@ -93,7 +93,7 @@ void RA8875_Init(void) {
     FSMC_WriteRegister(0x10, 0x0F);   // System Configuration Register
 
     /* pixel clock period */
-    FSMC_WriteRegister(0x04, 0x83);   // Pixel Clock Setting Register
+    FSMC_WriteRegister(0x04, 0x82);   // Pixel Clock Setting Register
     HAL_Delay(1);
 
     /* Serial Flash/ROM settings */
@@ -103,41 +103,34 @@ void RA8875_Init(void) {
     /* Horisontal settings */
     FSMC_WriteRegister(0x14, (uint8_t)(X_SIZE/8-1));   // LCD Horizontal Display Width Register
     FSMC_WriteRegister(0x15, 0x02);   // Horizontal Non-Display Period Fine Tuning Option Register
-    //FSMC_WriteRegister(0x16, 0x03);   // LCD Horizontal Non-Display Period Register
-    //FSMC_WriteRegister(0x17, 0x01);   // HSYNC Start Position Register
-    //FSMC_WriteRegister(0x18, 0x03);   // HSYNC Pulse Width Register
-
-    FSMC_WriteRegister(0x16, 0x01);   // LCD Horizontal Non-Display Period Register
+    FSMC_WriteRegister(0x16, 0x03);   // LCD Horizontal Non-Display Period Register
     FSMC_WriteRegister(0x17, 0x01);   // HSYNC Start Position Register
-    FSMC_WriteRegister(0x18, 0x05);   // HSYNC Pulse Width Register
-
-
+    FSMC_WriteRegister(0x18, 0x03);   // HSYNC Pulse Width Register
 
     /* Vertical settings */
     FSMC_WriteRegister(0x19, (uint8_t)(Y_SIZE-1));        // LCD Vertical Display Height Register0
     FSMC_WriteRegister(0x1A, (uint8_t)((Y_SIZE-1)>>8));   // LCD Vertical Display Height Register1
     FSMC_WriteRegister(0x1B, 0x0F);   // LCD Vertical Non-Display Period Register0
     FSMC_WriteRegister(0x1C, 0x00);   // LCD Vertical Non-Display Period Register1
-    //FSMC_WriteRegister(0x1D, 0x0E);   // VSYNC Start Position Register0
-    //FSMC_WriteRegister(0x1E, 0x06);   // VSYNC Start Position Register1
-    //FSMC_WriteRegister(0x1F, 0x01);   // VSYNC Pulse Width Register
 
-    FSMC_WriteRegister(0x1D, 0x03);   // VSYNC Start Position Register0
-    FSMC_WriteRegister(0x1E, 0x04);   // VSYNC Start Position Register1
-    FSMC_WriteRegister(0x1F, 0x05);   // VSYNC Pulse Width Register
-
-
+    FSMC_WriteRegister(0x1D, 0x0E);   // VSYNC Start Position Register0
+    FSMC_WriteRegister(0x1E, 0x06);   // VSYNC Start Position Register1
+    FSMC_WriteRegister(0x1F, 0x01);   // VSYNC Pulse Width Register
 
     FSMC_WriteRegister(0x20, 0x8C);   // Display Configuration Register
 
     /* setting active window X */
-    FSMC_WriteRegister(0x34, (uint8_t)(X_SIZE&0x00FF)-1);      // Horizontal End Point0 of Active Window
-    FSMC_WriteRegister(0x35, (uint8_t)((X_SIZE>>8)&0x00FF));   // Horizontal End Point1 of Active Window
+    FSMC_WriteRegister(0x30, 0x00);      // Horizontal Start Point0 of Active Window
+    FSMC_WriteRegister(0x31, 0x00);      // Horizontal Start Point1 of Active Window
+    FSMC_WriteRegister(0x34, (uint8_t)(X_SIZE&0x00FF)-1);    // Horizontal End Point0 of Active Window
+    FSMC_WriteRegister(0x35, (uint8_t)((X_SIZE>>8)&0x03));   // Horizontal End Point1 of Active Window
 
 
     /* setting active window Y */
-    FSMC_WriteRegister(0x36, (uint8_t)(Y_SIZE&0x00FF)-1);      // Vertical End Point0 of Active Window
-    FSMC_WriteRegister(0x37, (uint8_t)((Y_SIZE>>8)&0x00FF));   // Vertical End Point1 of Active Window
+    FSMC_WriteRegister(0x32, 0x00);      // Vertical Start Point0 of Active Window
+    FSMC_WriteRegister(0x33, 0x00);      // Vertical Start Point1 of Active Window
+    FSMC_WriteRegister(0x36, (uint8_t)(Y_SIZE&0x00FF)-1);    // Vertical End Point0 of Active Window
+    FSMC_WriteRegister(0x37, (uint8_t)((Y_SIZE>>8)&0x03));   // Vertical End Point1 of Active Window
 
 
     FSMC_WriteRegister(0x70, 0xA2);    // Touch Panel Control Register0
@@ -232,6 +225,7 @@ void RA8875_Init(void) {
 void FSMC_ReadDDRAM(uint16_t *pdata, int pixels){
 
     LCD->LCD_REG = 0x02;
+
     FSMC_WAIT_BUSY();
     (void)LCD->LCD_RAM;// dummy read
 

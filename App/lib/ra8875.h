@@ -73,11 +73,7 @@ extern struct _lcd Display;
 
 /* Exported macro ------------------------------------------------------------*/
 
-//#define FSMC_WAIT_BUSY() while((FSMC_ReadStatus()&0x80) == 0x80)
-#define FSMC_WAIT_BUSY() FSMC_WaitMem()
-
-
-
+#define FSMC_WAIT_BUSY() RA8875_WAIT()   //FSMC_WaitMem()
 
 /*  */
 static inline void FSMC_WaitMem(void){
@@ -134,6 +130,7 @@ static inline void FSMC_WriteRegister(uint16_t reg, uint16_t val){
 /*  */
 static inline uint16_t FSMC_GetA0(void){
 
+    //FSMC_WAIT_BUSY();
     return LCD->LCD_RAM;
 }
 
@@ -141,6 +138,7 @@ static inline uint16_t FSMC_GetA0(void){
 static inline void FSMC_SetA0(uint16_t data){
 
     LCD->LCD_RAM = data;
+    //FSMC_WAIT_BUSY();
 }
 
 

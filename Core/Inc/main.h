@@ -81,20 +81,26 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define PWM1_Pin LL_GPIO_PIN_5
+#define PWM1_GPIO_Port GPIOE
+#define PWM2_Pin LL_GPIO_PIN_6
+#define PWM2_GPIO_Port GPIOE
+#define DS_DATA_Pin LL_GPIO_PIN_13
+#define DS_DATA_GPIO_Port GPIOC
 #define LCD_WAIT_Pin LL_GPIO_PIN_6
 #define LCD_WAIT_GPIO_Port GPIOA
 #define LCD_RST_Pin LL_GPIO_PIN_7
 #define LCD_RST_GPIO_Port GPIOA
 #define U4DE_Pin LL_GPIO_PIN_2
 #define U4DE_GPIO_Port GPIOB
-#define LD7_Pin LL_GPIO_PIN_9
-#define LD7_GPIO_Port GPIOA
+#define PWM3_Pin LL_GPIO_PIN_14
+#define PWM3_GPIO_Port GPIOB
+#define PWM4_Pin LL_GPIO_PIN_15
+#define PWM4_GPIO_Port GPIOB
+#define SD_DETECT_Pin LL_GPIO_PIN_6
+#define SD_DETECT_GPIO_Port GPIOC
 #define TEST_OUT_Pin LL_GPIO_PIN_15
 #define TEST_OUT_GPIO_Port GPIOA
-#define DS_Data_Pin LL_GPIO_PIN_11
-#define DS_Data_GPIO_Port GPIOC
-#define U5DE_Pin LL_GPIO_PIN_3
-#define U5DE_GPIO_Port GPIOD
 #define LCD_BACKLIGHT_Pin LL_GPIO_PIN_9
 #define LCD_BACKLIGHT_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
