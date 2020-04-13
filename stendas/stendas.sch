@@ -535,12 +535,8 @@ Text Label 1150 1600 0    50   ~ 0
 U4RX
 Wire Wire Line
 	4450 2800 4000 2800
-Text Label 4000 2800 0    50   ~ 0
-U5TX
 Wire Wire Line
 	5250 2700 5700 2700
-Text Label 5700 2700 2    50   ~ 0
-U5RX
 $Comp
 L power:GND #PWR029
 U 1 1 5E99CBE6
@@ -667,10 +663,6 @@ Text Label 4000 1300 0    50   ~ 0
 3VDC
 Text Label 5700 1300 2    50   ~ 0
 3VDC
-Wire Wire Line
-	5250 3200 5700 3200
-Text Label 5700 3200 2    50   ~ 0
-LD7
 $Comp
 L Connector_Generic:Conn_02x07_Odd_Even J4
 U 1 1 5EA1F075
@@ -1325,11 +1317,11 @@ Wire Wire Line
 	4500 6450 4500 6400
 Connection ~ 4500 6400
 Text Label 5000 5700 2    50   ~ 0
-U5RX
+U2RX
 Text Label 5000 6000 2    50   ~ 0
-U5TX
+U2TX
 Text Label 5000 5900 2    50   ~ 0
-U5DE
+U2DE
 Wire Wire Line
 	2350 5650 2500 5650
 Text Label 3850 5400 0    50   ~ 0
@@ -1885,20 +1877,16 @@ Wire Wire Line
 Text Label 5650 6250 0    50   ~ 0
 BUZZ
 Wire Wire Line
-	4450 3400 4000 3400
-Wire Wire Line
-	5250 3400 5700 3400
-Wire Wire Line
 	4450 3300 4000 3300
 Wire Wire Line
 	5250 3300 5700 3300
-Text Label 4000 3400 0    50   ~ 0
+Text Label 5700 1700 2    50   ~ 0
 PWM1
-Text Label 5700 3400 2    50   ~ 0
+Text Label 4000 1600 0    50   ~ 0
 PWM2
-Text Label 4000 3300 0    50   ~ 0
+Text Label 2850 2900 2    50   ~ 0
 PWM3
-Text Label 5700 3300 2    50   ~ 0
+Text Label 1150 3000 0    50   ~ 0
 PWM4
 Text Label 5700 3100 2    50   ~ 0
 SWDIO
@@ -1909,7 +1897,7 @@ Wire Wire Line
 Text Label 4000 3000 0    50   ~ 0
 SWDCLK
 Text Label 5700 2900 2    50   ~ 0
-DS_DATA
+SDIO_D3
 Wire Wire Line
 	5250 2900 5700 2900
 Wire Wire Line
@@ -1920,9 +1908,9 @@ Wire Wire Line
 	1600 1500 1150 1500
 Wire Wire Line
 	2400 1500 2850 1500
-Text Label 2850 1400 2    50   ~ 0
+Text Label 2850 2000 2    50   ~ 0
 ADC_CH10
-Text Label 1150 1400 0    50   ~ 0
+Text Label 1150 2000 0    50   ~ 0
 ADC_CH11
 Text Label 2850 1500 2    50   ~ 0
 ADC_CH12
@@ -1932,9 +1920,9 @@ Wire Wire Line
 	1600 2000 1150 2000
 Wire Wire Line
 	2400 2000 2850 2000
-Text Label 2850 2000 2    50   ~ 0
+Text Label 2850 1400 2    50   ~ 0
 ADC_CH14
-Text Label 1150 2000 0    50   ~ 0
+Text Label 1150 1400 0    50   ~ 0
 ADC_CH15
 Wire Wire Line
 	2400 2100 2850 2100
@@ -1947,15 +1935,7 @@ ADC_CH9
 Wire Wire Line
 	4450 2000 4000 2000
 Text Label 4000 2000 0    50   ~ 0
-BUZ
-Wire Wire Line
-	1600 1700 1150 1700
-Wire Wire Line
-	2400 1700 2850 1700
-Text Label 2850 1700 2    50   ~ 0
-ADC_CH2
-Text Label 1150 1700 0    50   ~ 0
-ADC_CH3
+BUZZ
 Wire Wire Line
 	4450 2200 4000 2200
 Wire Wire Line
@@ -2221,20 +2201,84 @@ Wire Wire Line
 	10650 3050 10250 3050
 Wire Wire Line
 	10650 2850 10250 2850
-Text Label 10250 2950 0    50   ~ 0
-PWM1
-Text Label 10250 2850 0    50   ~ 0
-PWM2
 Text Label 10250 3150 0    50   ~ 0
-PWM3
+PWM1
 Text Label 10250 3050 0    50   ~ 0
+PWM2
+Text Label 10250 2950 0    50   ~ 0
+PWM3
+Text Label 10250 2850 0    50   ~ 0
 PWM4
 Wire Wire Line
 	2400 2200 2850 2200
+Wire Wire Line
+	5250 1700 5700 1700
+Wire Wire Line
+	4450 1600 4000 1600
+Wire Wire Line
+	2400 2900 2850 2900
+Wire Wire Line
+	1600 3000 1150 3000
 Text Label 2850 2200 2    50   ~ 0
 U4DE
+Text Label 5700 2700 2    50   ~ 0
+SDIO_CMD
+Text Label 4000 2800 0    50   ~ 0
+SDIO_CK
+Wire Wire Line
+	4450 2900 4000 2900
+Text Label 4000 2900 0    50   ~ 0
+SDIO_D2
+Text Label 5700 3300 2    50   ~ 0
+SDIO_D1
+Text Label 4000 3300 0    50   ~ 0
+SDIO_D0
+Wire Wire Line
+	4450 3400 4000 3400
+Text Label 4000 3400 0    50   ~ 0
+SD_DETECT
+Wire Wire Line
+	2400 1700 2850 1700
+Wire Wire Line
+	1600 1700 1150 1700
+Text Label 1150 1700 0    50   ~ 0
+U2RX
+Text Label 2850 1700 2    50   ~ 0
+U2TX
 Wire Wire Line
 	4450 2600 4000 2600
 Text Label 4000 2600 0    50   ~ 0
-U5DE
+U2DE
+Wire Wire Line
+	10650 4650 10250 4650
+Wire Wire Line
+	10650 4750 10250 4750
+Wire Wire Line
+	10650 4850 10250 4850
+Wire Wire Line
+	10650 4950 10250 4950
+Wire Wire Line
+	10650 5050 10250 5050
+Wire Wire Line
+	10650 5150 10250 5150
+Wire Wire Line
+	10650 5250 10250 5250
+Wire Wire Line
+	10650 5350 10250 5350
+Text Label 10250 4650 0    50   ~ 0
+ADC_CH8
+Text Label 10250 4750 0    50   ~ 0
+ADC_CH9
+Text Label 10250 4850 0    50   ~ 0
+ADC_CH10
+Text Label 10250 4950 0    50   ~ 0
+ADC_CH11
+Text Label 10250 5050 0    50   ~ 0
+ADC_CH12
+Text Label 10250 5150 0    50   ~ 0
+ADC_CH13
+Text Label 10250 5250 0    50   ~ 0
+ADC_CH14
+Text Label 10250 5350 0    50   ~ 0
+ADC_CH15
 $EndSCHEMATC
