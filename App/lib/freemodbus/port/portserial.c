@@ -36,14 +36,14 @@ extern USART_TypeDef* ports[];
 
 void vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable ) {
     if( xRxEnable ) {
-        //SLAVE_RS485_RECEIVE_MODE();
+        SLAVE_RS485_RECEIVE_MODE();
         LL_USART_EnableIT_RXNE(pMbPort->handle);
     } else {
         LL_USART_DisableIT_RXNE(pMbPort->handle);
     }
 
     if( xTxEnable ) {
-        //SLAVE_RS485_SEND_MODE();
+        SLAVE_RS485_SEND_MODE();
         LL_USART_EnableIT_TC(pMbPort->handle);
     } else {
         LL_USART_DisableIT_TC(pMbPort->handle);

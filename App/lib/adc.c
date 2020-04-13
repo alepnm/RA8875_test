@@ -3,7 +3,7 @@
 #include "adc.h"
 
 
-#define ADC_CONVERTED_DATA_BUFFER_SIZE  ((uint32_t) 12)
+#define ADC_CONVERTED_DATA_BUFFER_SIZE  ((uint32_t) 10)
 
 #define VDDA_APPLI                      VREFINT_CAL_VREF
 

@@ -99,8 +99,12 @@ void Error_Handler(void);
 #define PWM4_GPIO_Port GPIOB
 #define SD_DETECT_Pin LL_GPIO_PIN_6
 #define SD_DETECT_GPIO_Port GPIOC
+#define LD7_Pin LL_GPIO_PIN_9
+#define LD7_GPIO_Port GPIOA
 #define TEST_OUT_Pin LL_GPIO_PIN_15
 #define TEST_OUT_GPIO_Port GPIOA
+#define U2DE_Pin LL_GPIO_PIN_3
+#define U2DE_GPIO_Port GPIOD
 #define LCD_BACKLIGHT_Pin LL_GPIO_PIN_9
 #define LCD_BACKLIGHT_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */

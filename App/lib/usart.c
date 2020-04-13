@@ -193,7 +193,7 @@ void USART_TimerHandler(Port_TypeDef* port) {
 /*  */
 void USART_Init(Port_TypeDef* port){
 
-    port->handle = (port == pPrimaryPort) ? UART4 : UART5;
+    port->handle = (port == pPrimaryPort) ? UART4 : USART2;
 
     USART_Config(port, baudrates[port->Config.Baudrate], port->Config.DataBits, port->Config.Parity, port->Config.StopBits );
 
@@ -218,7 +218,7 @@ void USART_Init(Port_TypeDef* port){
 /*  */
 void USART_SetDefaults(Port_TypeDef* port){
 
-    port->handle = (port == pPrimaryPort) ? UART4 : UART5;
+    port->handle = (port == pPrimaryPort) ? UART4 : USART2;
 
     port->Config.Baudrate = BR19200;
     port->Config.MbAddr = 3;

@@ -67,7 +67,7 @@ extern __IO uint32_t timestamp;
 /* USER CODE END EV */
 
 /******************************************************************************/
-/*           Cortex-M4 Processor Interruption and Exception Handlers          */ 
+/*           Cortex-M4 Processor Interruption and Exception Handlers          */
 /******************************************************************************/
 /**
   * @brief This function handles Non maskable interrupt.
@@ -105,6 +105,32 @@ void HardFault_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles USART2 global interrupt.
+  */
+void USART2_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART2_IRQn 0 */
+  USART_IRQ_Handler(pSecondaryPort);
+  /* USER CODE END USART2_IRQn 0 */
+  /* USER CODE BEGIN USART2_IRQn 1 */
+
+  /* USER CODE END USART2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles UART4 global interrupt.
+  */
+void UART4_IRQHandler(void)
+{
+  /* USER CODE BEGIN UART4_IRQn 0 */
+    USART_IRQ_Handler(pPrimaryPort);
+  /* USER CODE END UART4_IRQn 0 */
+  /* USER CODE BEGIN UART4_IRQn 1 */
+
+  /* USER CODE END UART4_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM6 global interrupt, DAC1 and DAC2 underrun error interrupts.
   */
 void TIM6_DAC_IRQHandler(void)
@@ -140,7 +166,7 @@ void DMA2_Stream0_IRQHandler(void)
 
     }
   /* USER CODE END DMA2_Stream0_IRQn 0 */
-  
+
   /* USER CODE BEGIN DMA2_Stream0_IRQn 1 */
 
   /* USER CODE END DMA2_Stream0_IRQn 1 */
