@@ -63,7 +63,7 @@
 */
 
 // USER START (Optionally insert additional static data)
-WM_HWIN hWin, hText1, hText2, hSlider0;
+WM_HWIN hWin, hWin1, hWin2, hText1, hText2, hSlider0;
 WM_HTIMER hTimer;
 
 extern char st[];
@@ -465,6 +465,10 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
   // USER START (Optionally insert additional message handling)
 
     case WM_TIMER:
+
+
+        if(ds18b20[0].DataIsValid) TEXT_SetBkColor(hText1, GUI_GREEN);
+        else TEXT_SetBkColor(hText1, GUI_RED);
 
         TEXT_SetText(hText1, ds18b20[0].TemperatureStr);
 

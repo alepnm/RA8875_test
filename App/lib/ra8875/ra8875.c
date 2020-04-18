@@ -26,12 +26,33 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ra8875.h"
-#include "main.h"
-
 /* Private typedef -----------------------------------------------------------*/
+extern GUI_CONST_STORAGE unsigned short _acenot[];
+extern GUI_CONST_STORAGE unsigned short _ackrym[];
+
 
 struct _lcd Display;
 struct _tp TS_Data;
+
+const struct _bte Background_Enot = {
+
+    .Layer = 0,
+    .XStart = 0,
+    .YStart = 0,
+    .XEnd = X_SIZE,
+    .YEnd = Y_SIZE,
+    .pData = _acenot
+};
+
+const struct _bte Background_Krym = {
+
+    .Layer = 1,
+    .XStart = 0,
+    .YStart = 0,
+    .XEnd = X_SIZE,
+    .YEnd = Y_SIZE,
+    .pData = _ackrym
+};
 
 
 /*  */
@@ -40,8 +61,8 @@ void RA8875_Init(void) {
     uint8_t RegisterTestStatus = 0, BusTestStatus = 0;
 
     Display.IsInitilized = 0;
-    Display.FontColor = WHITE;
-    Display.BackColor = BLACK;
+    Display.FontColor = COL_WHITE;
+    Display.BackColor = COL_BLACK;
     Display.Backlight = 80;
     Display.Font.Type = 0;
     Display.Font.Width = 8;
@@ -83,9 +104,9 @@ void RA8875_Init(void) {
 
 
     /* PLL clock frequency */
-    FSMC_WriteRegister(0x88, 0x0C);   // PLL Control Register1
+    FSMC_WriteRegister(0x88, 0x05);   // PLL Control Register1
     HAL_Delay(1);
-    FSMC_WriteRegister(0x89, 0x02);   // PLL Control Register2
+    FSMC_WriteRegister(0x89, 0x01);   // PLL Control Register2
     HAL_Delay(1);
 
 
@@ -93,12 +114,12 @@ void RA8875_Init(void) {
     FSMC_WriteRegister(0x10, 0x0F);   // System Configuration Register
 
     /* pixel clock period */
-    FSMC_WriteRegister(0x04, 0x82);   // Pixel Clock Setting Register
+    FSMC_WriteRegister(0x04, 0x83);   // Pixel Clock Setting Register
     HAL_Delay(1);
 
     /* Serial Flash/ROM settings */
     FSMC_WriteRegister(0x05, 0x00);   // Serial Flash/ROM Configuration Register
-    FSMC_WriteRegister(0x06, 0x00);   // Serial Flash/ROM CLK Setting Register
+    FSMC_WriteRegister(0x06, 0x02);   // Serial Flash/ROM CLK Setting Register
 
     /* Horisontal settings */
     FSMC_WriteRegister(0x14, (uint8_t)(X_SIZE/8-1));   // LCD Horizontal Display Width Register
@@ -131,7 +152,6 @@ void RA8875_Init(void) {
     FSMC_WriteRegister(0x33, 0x00);      // Vertical Start Point1 of Active Window
     FSMC_WriteRegister(0x36, (uint8_t)(Y_SIZE&0x00FF)-1);    // Vertical End Point0 of Active Window
     FSMC_WriteRegister(0x37, (uint8_t)((Y_SIZE>>8)&0x03));   // Vertical End Point1 of Active Window
-
 
     FSMC_WriteRegister(0x70, 0xA2);    // Touch Panel Control Register0
     FSMC_WriteRegister(0x71, 0x41);    // Touch Panel Control Register1
@@ -206,14 +226,14 @@ void RA8875_Init(void) {
 
         RA8875_ClearScreen();
 
-        if(BusTestStatus) RA8875_PutString(0, 0, "BUS Test OK...");
-        else RA8875_PutString(0, 0, "BUS Test FAIL...");
+        if(BusTestStatus) TEXT_PutString(0, 0, "BUS Test OK...");
+        else TEXT_PutString(0, 0, "BUS Test FAIL...");
 
-        if(RegisterTestStatus) RA8875_PutString(0, 1, "Register Test OK...");
-        else RA8875_PutString(0, 1, "Register Test FAIL...");
+        if(RegisterTestStatus) TEXT_PutString(0, 1, "Register Test OK...");
+        else TEXT_PutString(0, 1, "Register Test FAIL...");
 
-        if( TS_Init() ) RA8875_PutString(0, 2, "Touchscreen initial OK...");
-        else RA8875_PutString(0, 2, "Touchscreen initial FAIL...");
+        if( TS_Init() ) TEXT_PutString(0, 2, "Touchscreen initial OK...");
+        else TEXT_PutString(0, 2, "Touchscreen initial FAIL...");
 
         HAL_Delay(1000);
 
@@ -221,32 +241,24 @@ void RA8875_Init(void) {
 }
 
 
-/*  */
-void FSMC_ReadDDRAM(uint16_t *pdata, int pixels){
 
-    LCD->LCD_REG = 0x02;
 
-    FSMC_WAIT_BUSY();
-    (void)LCD->LCD_RAM;// dummy read
+void RA8875_SetBTEBlock(const struct _bte* block){
 
-    while(pixels--){
-        FSMC_WAIT_BUSY();
-        *pdata = LCD->LCD_RAM;
-        pdata++;
-    }
+  FSMC_WriteRegister(0x58, (uint8_t)(block->XStart));
+  FSMC_WriteRegister(0x59, (uint8_t)(block->XStart>>8)&0x03);
+  FSMC_WriteRegister(0x5A, (uint8_t)(block->YStart));
+  FSMC_WriteRegister(0x5B, ((uint8_t)(block->YStart>>8)&0x03) | block->Layer<<7);
+
+  FSMC_WriteRegister(0x5C, (uint8_t)(block->XEnd));
+  FSMC_WriteRegister(0x5D, (uint8_t)(block->XEnd>>8)&0x03);
+
+  FSMC_WriteRegister(0x5E, (uint8_t)(block->YEnd));
+  FSMC_WriteRegister(0x5F, (uint8_t)(block->YEnd>>8)&0x03);
 }
 
-/*  */
-void FSMC_WriteDDRAM(uint16_t *pdata, int pixels){
 
-    LCD->LCD_REG = 0x02;
 
-    while(pixels--){
-        FSMC_WAIT_BUSY();
-        LCD->LCD_RAM = *pdata;
-        pdata++;
-    }
-}
 
 
 
@@ -428,8 +440,8 @@ void RA8875_ClearScreenColor(uint16_t color) {
     LCD->LCD_REG = 0x02;
 
     for(index = 0; index < DISPLAY_PIXELS; index++) {
-        FSMC_WAIT_BUSY();
         LCD->LCD_RAM = color;
+        FSMC_WAIT_BUSY();
     }
 }
 
@@ -465,37 +477,6 @@ void RA8875_SetCursor(uint8_t xpos, uint16_t ypos) {
     FSMC_WriteRegister(0x32, xpos);
     FSMC_WriteRegister(0x33, ypos);
 }
-
-
-/* ok */
-void RA8875_PutString(uint8_t col, uint8_t line, const char* str){
-
-    uint16_t posx = col*Display.Font.Width, posy = line*Display.Font.Height;
-
-    RA8875_SetTextWriteCursorAbs(posx, posy);
-
-    RA8875_EnterTextMode();
-
-    LCD->LCD_REG = 0x02;
-
-    while(*str){
-        FSMC_WAIT_BUSY();
-        LCD->LCD_RAM = *str++;
-    }
-
-    FSMC_WAIT_BUSY();
-
-    RA8875_ExitTextMode();
-}
-
-
-
-
-
-
-
-
-
 
 
 
@@ -547,200 +528,15 @@ void RA8875_SetDisplayWindow(uint8_t Xpos, uint16_t Ypos, uint8_t Height, uint16
 void RA8875_ClearScreen(void){
 
     FSMC_WriteRegister(0x8E, 0x80);
-    while((FSMC_ReadRegister(0x8E)&0x80) == 0x80) FSMC_WAIT_BUSY();
+    FSMC_WAIT_BUSY();
 }
 
 /*  */
 void RA8875_ClearActiveWindow(void){
 
     FSMC_WriteRegister(0x8E, 0xC0);
-    while((FSMC_ReadRegister(0x8E)&0x80) == 0x80) FSMC_WAIT_BUSY();
+    FSMC_WAIT_BUSY();
 }
-
-
-/*  Draw API  */
-
-/* ok */
-void RA8875_DrawLine(uint16_t Xpos_start, uint16_t Ypos_start, uint16_t Xpos_end, uint16_t Ypos_end) {
-
-    FSMC_WriteRegister(0x91, Xpos_start&0xFF);
-    FSMC_WriteRegister(0x92, Xpos_start>>0x08);
-
-    FSMC_WriteRegister(0x93, Ypos_start&0xFF);
-    FSMC_WriteRegister(0x94, Ypos_start>>0x08);
-
-    FSMC_WriteRegister(0x95, Xpos_end&0xFF);
-    FSMC_WriteRegister(0x96, Xpos_end>>0x08);
-
-    FSMC_WriteRegister(0x97, Ypos_end&0xFF);
-    FSMC_WriteRegister(0x98, Ypos_end>>0x08);
-
-    FSMC_WriteRegister(0x90, 0x80);
-
-    while((FSMC_ReadRegister(0x90)&0x80) == 0x80) FSMC_WAIT_BUSY();
-}
-
-
-/* ok */
-void RA8875_DrawRect(uint16_t Xpos_start, uint16_t Ypos_start, uint16_t Xpos_end, uint16_t Ypos_end, uint8_t fill) {
-
-    if(fill) fill = 0x20;
-
-    FSMC_WriteRegister(0x91, Xpos_start&0xFF);
-    FSMC_WriteRegister(0x92, Xpos_start>>0x08);
-
-    FSMC_WriteRegister(0x93, Ypos_start&0xFF);
-    FSMC_WriteRegister(0x94, Ypos_start>>0x08);
-
-    FSMC_WriteRegister(0x95, Xpos_end&0xFF);
-    FSMC_WriteRegister(0x96, Xpos_end>>0x08);
-
-    FSMC_WriteRegister(0x97, Ypos_end&0xFF);
-    FSMC_WriteRegister(0x98, Ypos_end>>0x08);
-
-    FSMC_WriteRegister(0x90, (0x90|fill));
-
-    while((FSMC_ReadRegister(0x90)&0x80) == 0x80) FSMC_WAIT_BUSY();
-}
-
-
-/* ok */
-void RA8875_DrawTriangle(uint16_t xa, uint16_t ya, uint16_t xb, uint16_t yb, uint16_t xc, uint16_t yc, uint8_t fill) {
-
-    if(fill) fill = 0x20;
-
-    FSMC_WriteRegister(0x91, xa&0xFF);
-    FSMC_WriteRegister(0x92, xa>>0x08);
-
-    FSMC_WriteRegister(0x93, ya&0xFF);
-    FSMC_WriteRegister(0x94, ya>>0x08);
-
-    FSMC_WriteRegister(0x95, xb&0xFF);
-    FSMC_WriteRegister(0x96, xb>>0x08);
-
-    FSMC_WriteRegister(0x97, yb&0xFF);
-    FSMC_WriteRegister(0x98, yb>>0x08);
-
-    FSMC_WriteRegister(0xA9, xc&0xFF);
-    FSMC_WriteRegister(0xAA, xc>>0x08);
-
-    FSMC_WriteRegister(0xAB, yc&0xFF);
-    FSMC_WriteRegister(0xAC, yc>>0x08);
-
-    FSMC_WriteRegister(0x90, (0x81|fill));
-
-    while((FSMC_ReadRegister(0x90)&0x80) == 0x80) FSMC_WAIT_BUSY();
-}
-
-
-/* ok */
-void RA8875_DrawCircle(uint16_t Xpos, uint16_t Ypos, uint16_t radius, uint8_t fill) {
-
-    if(fill) fill = 0x20;
-
-    /* horizontal position */
-    FSMC_WriteRegister(0x99, Xpos&0xFF);
-    FSMC_WriteRegister(0x9A, Xpos>>0x08);
-
-    /* vertical position */
-    FSMC_WriteRegister(0x9B, Ypos&0xFF);
-    FSMC_WriteRegister(0x9C, Ypos>>0x08);
-
-    /* circle radius */
-    FSMC_WriteRegister(0x9D, radius);
-
-    /* start draw */
-    FSMC_WriteRegister(0x90, (0x40|fill));
-
-    while((FSMC_ReadRegister(0x90)&0x40) == 0x40) FSMC_WAIT_BUSY();
-}
-
-
-/* ok */
-void RA8875_DrawSquareOfCircleCorner(uint16_t Xpos_start, uint16_t Ypos_start, uint16_t Xpos_end, uint16_t Ypos_end, uint16_t axish, uint16_t axisy, uint8_t fill) {
-
-    if(fill) fill = 0x40;
-
-    FSMC_WriteRegister(0x91, Xpos_start&0xFF);
-    FSMC_WriteRegister(0x92, Xpos_start>>0x08);
-
-    FSMC_WriteRegister(0x93, Ypos_start&0xFF);
-    FSMC_WriteRegister(0x94, Ypos_start>>0x08);
-
-    FSMC_WriteRegister(0x95, Xpos_end&0xFF);
-    FSMC_WriteRegister(0x96, Xpos_end>>0x08);
-
-    FSMC_WriteRegister(0x97, Ypos_end&0xFF);
-    FSMC_WriteRegister(0x98, Ypos_end>>0x08);
-
-    FSMC_WriteRegister(0xA1, axish&0xFF);
-    FSMC_WriteRegister(0xA2, axish>>0x08);
-
-    FSMC_WriteRegister(0xA3, axisy&0xFF);
-    FSMC_WriteRegister(0xA4, axisy>>0x08);
-
-    FSMC_WriteRegister(0xA0, (0xA0|fill));
-
-    while((FSMC_ReadRegister(0xA0)&0x80) == 0x80) FSMC_WAIT_BUSY();
-}
-
-
-
-/*  */
-uint8_t TS_Init(void){
-
-    TS_Data.IsTouched = 0;
-    TS_Data.XPos = 0;
-    TS_Data.YPos = 0;
-
-    FSMC_WriteRegister(0x71, 0x41);
-
-    if(FSMC_ReadRegister(0x71) == (0x41|0x80)){
-        TS_Data.IsEnabled = 1;
-        return 1;
-    }
-    else{
-        TS_Data.IsEnabled = 0;
-        return 0;
-    }
-}
-
-
-/* skaitom x-y reiksmes */
-uint8_t TS_ReadXY(void){
-
-    TS_Data.IsTouched = ((FSMC_ReadRegister(0x74)&0x80) == 0x80) ? 0 : 1;
-
-    if(TS_Data.IsTouched){
-
-        FSMC_WriteRegister(0x71, (0x42|0x04));
-        HAL_Delay(1);
-
-        FSMC_WriteRegister(0x71, (0x43|0x04));
-        HAL_Delay(1);
-
-        FSMC_WriteRegister(0x71, 0x40);
-
-        TS_Data.XAdc = (FSMC_ReadRegister(0x72)<<2); // TS_Data.XAdc = ( (FSMC_ReadRegister(0x72)<<2) | (FSMC_ReadRegister(0x74)&0x03) );
-        TS_Data.YAdc = (FSMC_ReadRegister(0x73)<<2); // TS_Data.YAdc = ( (FSMC_ReadRegister(0x73)<<2) | ((FSMC_ReadRegister(0x74)&0x0C)>>2) );
-
-        TS_Data.XPos = (TS_Data.XAdc-50) * X_SIZE / 920;
-        TS_Data.YPos = (TS_Data.YAdc-80) * Y_SIZE / 820;
-
-        FSMC_WriteRegister(0x71, 0x41);
-
-    }else{
-
-        TS_Data.XPos = -1;
-        TS_Data.YPos = -1;
-    }
-
-    sprintf(TS_Data.strXPos, "%3d", TS_Data.XPos);
-    sprintf(TS_Data.strYPos, "%3d", TS_Data.YPos);
-
-    return TS_Data.IsTouched;
-}
-
 
 
 /**

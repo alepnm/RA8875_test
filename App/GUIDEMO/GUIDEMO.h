@@ -164,15 +164,15 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 #endif
 
 #ifndef   SHOW_GUIDEMO_VSCREEN
-  #define SHOW_GUIDEMO_VSCREEN           (0)
+  #define SHOW_GUIDEMO_VSCREEN           (1)
 #endif
 
 #ifndef   SHOW_GUIDEMO_AUTOMOTIVE
-  #define SHOW_GUIDEMO_AUTOMOTIVE        (0)
+  #define SHOW_GUIDEMO_AUTOMOTIVE        (1)
 #endif
 
 #ifndef   SHOW_GUIDEMO_TRANSPARENTDIALOG
-  #define SHOW_GUIDEMO_TRANSPARENTDIALOG (0)
+  #define SHOW_GUIDEMO_TRANSPARENTDIALOG (1)
 #endif
 
 #ifndef   SHOW_GUIDEMO_AATEXT
@@ -180,23 +180,23 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 #endif
 
 #ifndef   SHOW_GUIDEMO_BARGRAPH
-  #define SHOW_GUIDEMO_BARGRAPH          (0)
+  #define SHOW_GUIDEMO_BARGRAPH          (1)
 #endif
 
 #ifndef   SHOW_GUIDEMO_FADING
-  #define SHOW_GUIDEMO_FADING            (0)
+  #define SHOW_GUIDEMO_FADING            (1)
 #endif
 
 #ifndef   SHOW_GUIDEMO_SKINNING
-  #define SHOW_GUIDEMO_SKINNING          (0)
+  #define SHOW_GUIDEMO_SKINNING          (1)
 #endif
 
 #ifndef   SHOW_GUIDEMO_SPEEDOMETER
-  #define SHOW_GUIDEMO_SPEEDOMETER       (0)
+  #define SHOW_GUIDEMO_SPEEDOMETER       (1)
 #endif
 
 #ifndef   SHOW_GUIDEMO_IMAGEFLOW
-  #define SHOW_GUIDEMO_IMAGEFLOW         (0)
+  #define SHOW_GUIDEMO_IMAGEFLOW         (1)
 #endif
 
 /*********************************************************************

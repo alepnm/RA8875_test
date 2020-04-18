@@ -67,7 +67,7 @@ extern __IO uint32_t timestamp;
 /* USER CODE END EV */
 
 /******************************************************************************/
-/*           Cortex-M4 Processor Interruption and Exception Handlers          */
+/*           Cortex-M4 Processor Interruption and Exception Handlers          */ 
 /******************************************************************************/
 /**
   * @brief This function handles Non maskable interrupt.
@@ -166,7 +166,7 @@ void DMA2_Stream0_IRQHandler(void)
 
     }
   /* USER CODE END DMA2_Stream0_IRQn 0 */
-
+  
   /* USER CODE BEGIN DMA2_Stream0_IRQn 1 */
 
   /* USER CODE END DMA2_Stream0_IRQn 1 */
