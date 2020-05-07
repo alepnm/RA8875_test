@@ -8,7 +8,7 @@ void TEXT_PutString(uint8_t col, uint8_t line, const char* str){
 
     RA8875_SetTextWriteCursorAbs(posx, posy);
 
-    RA8875_EnterTextMode();
+    RA8875_SetTextMode();
 
     LCD->LCD_REG = 0x02;
 
@@ -18,5 +18,5 @@ void TEXT_PutString(uint8_t col, uint8_t line, const char* str){
         FSMC_WAIT_BUSY();
     }
 
-    RA8875_ExitTextMode();
+    RA8875_SetGraphicMode();
 }

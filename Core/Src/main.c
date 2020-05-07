@@ -169,7 +169,7 @@ int main(void)
 
 
   /* nustatom 80% LCD sviesumo */
-  LL_TIM_OC_SetCompareCH1(TIM11, 80);
+  LL_TIM_OC_SetCompareCH1(TIM11, 0);
 
 
   /* nustatom PWM isejimus */
@@ -1151,31 +1151,38 @@ void t_GuiTask(void const * argument)
 
   GUI_X_Lock();
 
-  // BTE write
-  RA8875_SetBTEBlock(&Background_Enot);
+  FSMC_WriteRegister(0x52, 0x00);
 
-  FSMC_WriteRegister(0x51, 0xC0);
-  FSMC_WriteRegister(0x50, 0xE0); // start BTE
-
-  FSMC_WriteDDRAM(Background_Enot.pData, DISPLAY_PIXELS);
-
-  FSMC_WaitBTE();
+  /* irasom foninius paveiksliukus */
+  LCD_SetBackground(Background_Enot.pData, DISPLAY_PIXELS, 0);
+  LCD_SetBackground(Background_Krym.pData, DISPLAY_PIXELS, 1);
 
 
-  RA8875_SetBTEBlock(&Background_Krym);
 
-  FSMC_WriteRegister(0x51, 0xC0);
-  FSMC_WriteRegister(0x50, 0xE0);  // start BTE
+  LCD_SelectLayer(0);
+  //LCD_SelectLayer(1);
 
-  FSMC_WriteDDRAM(Background_Krym.pData, DISPLAY_PIXELS);
 
-  FSMC_WaitBTE();
+  BTE_SolidFill(50, 50, 30, 10, 0, COL_NAVY);
+  BTE_SolidFill(50, 50, 30, 60, 0, COL_RED);
+  BTE_SolidFill(50, 50, 30, 110, 0, COL_GREEN);
+
+  BTE_SolidFill(480, 272, 0, 0, 0, COL_BLACK);
+
+  //BTE_RasterOperation(X_SIZE, Y_SIZE, 0, 0, 1, 0, 0, 0, BTE_ROP_MOVE_POSITIVE, BTE_BOOL_SOURCE);
+  //BTE_MoveBlockPositiveDir(100, 100, 20, 10, 0, 200, 150, 1);
+
+
 
   GUI_X_Unlock();
 
+  //FSMC_WriteRegister(0x53, 0x04);
+  //FSMC_WriteRegister(0x52, 0x01);
+  //osDelay(1000);
+  //FSMC_WriteRegister(0x52, 0x00);
 
-  FSMC_WriteRegister(0x52, 0x01);
-
+  GUI_SetFont(&GUI_Font10_1);
+  GUI_SetColor(GUI_LIGHTBLUE);
 
 
 
@@ -1183,10 +1190,12 @@ void t_GuiTask(void const * argument)
   for(;;)
   {
 
+    GUI_DispStringAt(ds18b20[0].TemperatureStr, 200, 100);
 
 
     GUI_Exec();
     GUI_X_ExecIdle(); // --> user implement GUI_X.c
+    //osDelay(10);
   }
   /* USER CODE END 5 */
 }
@@ -1226,6 +1235,10 @@ void t_MainTask(void const * argument)
 //            LL_TIM_OC_SetCompareCH1(TIM11, q);
 //        }
 //    }
+
+
+    //TEXT_PutString(10, 10, ds18b20[0].TemperatureStr);
+
 
 
     LL_GPIO_SetOutputPin(TEST_OUT_GPIO_Port, TEST_OUT_Pin);
@@ -1295,12 +1308,12 @@ void cb_TsTimer(void const * argument)
             ltouch = 1;
         }
 
-        //FSMC_WriteRegister(0x52, 0x01);
+        //LCD_ShowLayer(1);
 
     }else{
         ltouch = 0;
 
-        //FSMC_WriteRegister(0x52, 0x00);
+        //LCD_ShowLayer(0);
     }
 
     GUI_X_Unlock();

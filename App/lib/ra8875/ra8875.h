@@ -7,6 +7,7 @@
 #include "GUI.h"
 #include "main.h"
 #include "ra_fsmc.h"
+#include "ra_bte.h"
 
 
 #define X_SIZE 480
@@ -48,8 +49,8 @@ struct _bte{
     uint8_t Layer;
     uint16_t XStart;
     uint16_t YStart;
-    uint16_t XEnd;
-    uint16_t YEnd;
+    uint16_t XSize;
+    uint16_t YSize;
     const unsigned short* pData;
 };
 
@@ -78,46 +79,51 @@ extern const struct _bte Background_Krym;
 
 /* Exported functions ------------------------------------------------------- */
 void RA8875_Init(void);
+void RA8875_Reset(void);
 
 
 uint16_t FSMC_ReadPixel(uint16_t xpos, uint16_t ypos);
 void FSMC_WritePixel(uint16_t xpos, uint16_t ypos, uint16_t pixel);
-void RA8875_Display_OnOff(uint8_t state);
-void RA8875_Reset(void);
-void RA8875_ClearScreen(void);
-void RA8875_ClearScreenColor(uint16_t color);
-void RA8875_SetBacklight(void); //ok
-void RA8875_SetPwm2(int pwm_duty_cycle);
+
+void RA8875_SetPwm(uint8_t ch, int pwm_duty_cycle);
 
 void RA8875_CGROMFont(void);
 void RA8875_ExtROMFont(void);
-void RA8875_EnterTextMode(void);
-void RA8875_ExitTextMode(void);
+void RA8875_SetTextMode(void);
+void RA8875_SetGraphicMode(void);
 void RA8875_SetTextWriteCursorAbs(uint16_t x, uint16_t y);
-
 void RA8875_SetPixelWriteCursor(uint16_t x, uint16_t y);
 void RA8875_SetPixelReadCursor(uint16_t x, uint16_t y);
-
-
-void RA8875_SetForeColor(uint16_t color); //ok
-void RA8875_SetBackColor(uint16_t color); //ok
 void RA8875_SetCursor(uint8_t xpos, uint16_t ypos);
 
+void RA8875_ClearActiveWindow(void);
 
 
+
+/* Display API */
+void LCD_Display_OnOff(uint8_t state);
+void LCD_SetBackground(uint16_t* pData, uint32_t len, uint8_t layer);
+void LCD_SetForeColor(uint16_t color); //ok
+void LCD_SetBackColor(uint16_t color); //ok
+uint16_t LCD_GetForeColor(void);
+uint16_t LCD_GetBackColor(void);
+void LCD_Clear(void);
+void LCD_ClearColor(uint16_t color);
+void LCD_SetBacklight(uint8_t bl);
+void LCD_SelectLayer(uint8_t layer);
+void LCD_ShowLayer(uint8_t layer);
+
+
+/* TEXT API */
 void TEXT_PutString(uint8_t col, uint8_t line, const char* str);
 
 
+/* DRAWING API */
 void GEO_DrawLine(uint16_t Xpos_start, uint16_t Ypos_start, uint16_t Xpos_end, uint16_t Ypos_end);
 void GEO_DrawTriangle(uint16_t xa, uint16_t ya, uint16_t xb, uint16_t yb, uint16_t xc, uint16_t yc, uint8_t fill);
 void GEO_DrawRect(uint16_t Xpos_start, uint16_t Ypos_start, uint16_t Xpos_end, uint16_t Ypos_end, uint8_t fill);
 void GEO_DrawCircle(uint16_t Xpos, uint16_t Ypos, uint16_t radius, uint8_t fill);
 void GEO_DrawSquareOfCircleCorner(uint16_t Xpos_start, uint16_t Ypos_start, uint16_t Xpos_end, uint16_t Ypos_end, uint16_t axish, uint16_t axisy, uint8_t fill);
-
-
-void RA8875_ClearActiveWindow(void);
-void RA8875_SetDisplayWindow(uint8_t Xpos, uint16_t Ypos, uint8_t Height, uint16_t Width);
-void RA8875_WindowModeDisable(void);
 
 
 void RA8875_SetBTEBlock(const struct _bte* block);

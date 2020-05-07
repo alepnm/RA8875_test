@@ -191,7 +191,7 @@ void xDS18B20_Task(void* arg)
 
                 ds18b20[i].Alive = (try_to_read) ? true : false;
 
-                sprintf(ds18b20[i].TemperatureStr, "%2.2f", ds18b20[i].Temperature);
+                sprintf(ds18b20[i].TemperatureStr, "%2.2f°C", ds18b20[i].Temperature);
             }
         }
         else

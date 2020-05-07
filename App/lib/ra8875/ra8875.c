@@ -39,8 +39,8 @@ const struct _bte Background_Enot = {
     .Layer = 0,
     .XStart = 0,
     .YStart = 0,
-    .XEnd = X_SIZE,
-    .YEnd = Y_SIZE,
+    .XSize = X_SIZE,
+    .YSize = Y_SIZE,
     .pData = _acenot
 };
 
@@ -49,8 +49,8 @@ const struct _bte Background_Krym = {
     .Layer = 1,
     .XStart = 0,
     .YStart = 0,
-    .XEnd = X_SIZE,
-    .YEnd = Y_SIZE,
+    .XSize = X_SIZE,
+    .YSize = Y_SIZE,
     .pData = _ackrym
 };
 
@@ -76,7 +76,7 @@ void RA8875_Init(void) {
     RA8875_Reset();
 
     /* Display ON */
-    RA8875_Display_OnOff(1);
+    LCD_Display_OnOff(1);
 
     FSMC_WAIT_BUSY();
 
@@ -160,7 +160,7 @@ void RA8875_Init(void) {
     FSMC_WriteRegister(0x8A, 0x83);    // PWM1 Control Register
     FSMC_WriteRegister(0x8C, 0x83);    // PWM2 Control Register
 
-    RA8875_SetBacklight();
+    LCD_SetBacklight(100);
 
     /* data bus test. */
     {
@@ -224,7 +224,7 @@ void RA8875_Init(void) {
         RA8875_ExtROMFont();
         //RA8875_CGROMFont();
 
-        RA8875_ClearScreen();
+        LCD_Clear();
 
         if(BusTestStatus) TEXT_PutString(0, 0, "BUS Test OK...");
         else TEXT_PutString(0, 0, "BUS Test FAIL...");
@@ -242,27 +242,6 @@ void RA8875_Init(void) {
 
 
 
-
-void RA8875_SetBTEBlock(const struct _bte* block){
-
-  FSMC_WriteRegister(0x58, (uint8_t)(block->XStart));
-  FSMC_WriteRegister(0x59, (uint8_t)(block->XStart>>8)&0x03);
-  FSMC_WriteRegister(0x5A, (uint8_t)(block->YStart));
-  FSMC_WriteRegister(0x5B, ((uint8_t)(block->YStart>>8)&0x03) | block->Layer<<7);
-
-  FSMC_WriteRegister(0x5C, (uint8_t)(block->XEnd));
-  FSMC_WriteRegister(0x5D, (uint8_t)(block->XEnd>>8)&0x03);
-
-  FSMC_WriteRegister(0x5E, (uint8_t)(block->YEnd));
-  FSMC_WriteRegister(0x5F, (uint8_t)(block->YEnd>>8)&0x03);
-}
-
-
-
-
-
-
-
 /* ok */
 void RA8875_CGROMFont(void){
 
@@ -273,12 +252,12 @@ void RA8875_CGROMFont(void){
     Display.Columns = X_SIZE/Display.Font.Width;
     Display.Lines = Y_SIZE/Display.Font.Height;
 
-    uint8_t temp = FSMC_ReadRegister(0x21);
+    uint8_t tmp = FSMC_ReadRegister(0x21);
 
-    CLEAR_BIT(temp, 1<<7);
-    CLEAR_BIT(temp, 1<<5);
+    CLEAR_BIT(tmp, 1<<7);
+    CLEAR_BIT(tmp, 1<<5);
 
-    FSMC_WriteRegister(0x21, temp);
+    FSMC_WriteRegister(0x21, tmp);
     FSMC_WriteRegister(0x22, 0x00);
     FSMC_WriteRegister(0x2E, 0x00);
     FSMC_WriteRegister(0x2F, 0x00);
@@ -294,12 +273,12 @@ void RA8875_ExtROMFont(void){
     Display.Columns = X_SIZE/Display.Font.Width;
     Display.Lines = Y_SIZE/Display.Font.Height;
 
-    uint8_t temp = FSMC_ReadRegister(0x21);
+    uint8_t tmp = FSMC_ReadRegister(0x21);
 
-    CLEAR_BIT(temp, 1<<7);
-    SET_BIT(temp, 1<<5);
+    CLEAR_BIT(tmp, 1<<7);
+    SET_BIT(tmp, 1<<5);
 
-    FSMC_WriteRegister(0x21, temp);
+    FSMC_WriteRegister(0x21, tmp);
 
     FSMC_WriteRegister(0x06, 0x03);
     FSMC_WriteRegister(0x05, 0x00);
@@ -311,21 +290,21 @@ void RA8875_ExtROMFont(void){
 
 
 /* ok */
-void RA8875_EnterTextMode(void){
+void RA8875_SetTextMode(void){
 
-    uint8_t temp = FSMC_ReadRegister(0x40);
+    uint8_t tmp = FSMC_ReadRegister(0x40);
 
-    SET_BIT(temp, 0x80);
-    FSMC_WriteRegister(0x40, temp);
+    SET_BIT(tmp, 0x80);
+    FSMC_WriteRegister(0x40, tmp);
 }
 
 /* ok */
-void RA8875_ExitTextMode(void){
+void RA8875_SetGraphicMode(void){
 
-    uint8_t temp = FSMC_ReadRegister(0x40);
+    uint8_t tmp = FSMC_ReadRegister(0x40);
 
-    CLEAR_BIT(temp, 0x80);
-    FSMC_WriteRegister(0x40, temp);
+    CLEAR_BIT(tmp, 0x80);
+    FSMC_WriteRegister(0x40, tmp);
 }
 
 /* texto rasymo koordinates nustatymas */
@@ -378,25 +357,15 @@ void RA8875_WritePixel(uint16_t xpos, uint16_t ypos, uint16_t pixel){
 
 
 
-/* PWM */
-/*  */
-void RA8875_SetBacklight(void)
+/*   */
+void RA8875_SetPwm(uint8_t ch, int pwm_duty_cycle)
 {
-    uint32_t value = (Display.Backlight * 256) / 100;
+    uint8_t reg = (ch) ? 0x8B : 0x8D;
+    uint16_t value = (pwm_duty_cycle * 2.56);
 
-    if(value > 0xFF) value = 0xFF;
+    if(value > 255) value = 255;
 
-    FSMC_WriteRegister(0x8B, value);
-}
-
-/*  */
-void RA8875_SetPwm2(int pwm_duty_cycle)
-{
-    uint32_t value = (pwm_duty_cycle * 256) / 100;
-
-    if(value > 0xFF) value = 0xFF;
-
-    FSMC_WriteRegister(0x8D, value);
+    FSMC_WriteRegister(reg, value);
 }
 
 
@@ -407,16 +376,6 @@ void RA8875_SetPwm2(int pwm_duty_cycle)
 
 
 
-
-/*  */
-void RA8875_Display_OnOff(uint8_t state){
-
-    uint8_t tmp = FSMC_ReadRegister(0x01);
-
-    (state) ? SET_BIT(tmp, 0x80) : CLEAR_BIT(tmp, 0x80);
-
-    FSMC_WriteRegister(0x01, tmp);
-}
 
 /* ok */
 void RA8875_Reset(void)
@@ -430,46 +389,6 @@ void RA8875_Reset(void)
 
 
 
-/* ok */
-void RA8875_ClearScreenColor(uint16_t color) {
-
-    uint32_t index = 0;
-
-    RA8875_SetCursor(0x00, 0x00);
-
-    LCD->LCD_REG = 0x02;
-
-    for(index = 0; index < DISPLAY_PIXELS; index++) {
-        LCD->LCD_RAM = color;
-        FSMC_WAIT_BUSY();
-    }
-}
-
-
-/* ok */
-void RA8875_SetForeColor(uint16_t color){
-
-    Display.FontColor = color;
-
-    FSMC_WriteRegister(0x63, (uint8_t)(color>>11));
-    FSMC_WriteRegister(0x64, (uint8_t)((color>>5)&0x3F));
-    FSMC_WriteRegister(0x65, (uint8_t)(color&0x1F));
-}
-
-
-/* ok */
-void RA8875_SetBackColor(uint16_t color){
-
-    Display.BackColor = color;
-
-    FSMC_WriteRegister(0x60, (uint8_t)(color>>11));
-    FSMC_WriteRegister(0x61, (uint8_t)((color>>5)&0x3F));
-    FSMC_WriteRegister(0x62, (uint8_t)(color&0x1F));
-}
-
-
-
-
 
 /* ok */
 void RA8875_SetCursor(uint8_t xpos, uint16_t ypos) {
@@ -479,57 +398,6 @@ void RA8875_SetCursor(uint8_t xpos, uint16_t ypos) {
 }
 
 
-
-
-
-
-
-/**
-  * @brief  Sets a display window
-  * @param Xpos: specifies the X buttom left position.
-  * @param Ypos: specifies the Y buttom left position.
-  * @param Height: display window height.
-  * @param Width: display window width.
-  * @retval : None
-  */
-void RA8875_SetDisplayWindow(uint8_t Xpos, uint16_t Ypos, uint8_t Height, uint16_t Width) {
-
-    /* Horizontal GRAM Start Address */
-    if(Xpos >= Height) {
-        FSMC_WriteRegister(0x80, (Xpos - Height + 1));
-    } else {
-        FSMC_WriteRegister(0x80, 0);
-    }
-
-    /* Horizontal GRAM End Address */
-    FSMC_WriteRegister(0x81, Xpos);
-
-    /* Vertical GRAM Start Address */
-    if(Ypos >= Width) {
-        FSMC_WriteRegister(0x82, (Ypos - Width + 1));
-    } else {
-        FSMC_WriteRegister(0x82, 0);
-    }
-
-    /* Vertical GRAM End Address */
-    FSMC_WriteRegister(0x83, Ypos);
-
-    RA8875_SetCursor(Xpos, Ypos);
-}
-
-
-
-
-
-
-
-
-/* ok */
-void RA8875_ClearScreen(void){
-
-    FSMC_WriteRegister(0x8E, 0x80);
-    FSMC_WAIT_BUSY();
-}
 
 /*  */
 void RA8875_ClearActiveWindow(void){
