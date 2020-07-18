@@ -60,7 +60,10 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-
+#define TOUCH_EVENT_FLAG    0x01
+#define EVENT1_FLAG         0x02
+#define EVENT2_FLAG         0x04
+#define EVENT3_FLAG         0x08
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -107,6 +110,9 @@ void Error_Handler(void);
 #define U2DE_GPIO_Port GPIOD
 #define LCD_BACKLIGHT_Pin LL_GPIO_PIN_9
 #define LCD_BACKLIGHT_GPIO_Port GPIOB
+#define RA8875_INT_Pin LL_GPIO_PIN_0
+#define RA8875_INT_GPIO_Port GPIOE
+#define RA8875_INT_EXTI_IRQn EXTI0_IRQn
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

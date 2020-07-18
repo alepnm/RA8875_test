@@ -21,23 +21,15 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-#include "fatfs.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "globals.h"
 
-#include "GUIDEMO.h"
-#include "WM.h"
-
-#include "GUISTEND.h"
-
-#include "WindowDLG.h"
 #include "ra8875.h"
 #include "usart.h"
 #include "ds18b20.h"
 #include "adc.h"
-
-#include "../../App/Examples/examples.c"
 
 #if defined(MODBUS_PORT)
     #include "mb.h"
@@ -53,6 +45,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -69,20 +62,29 @@ SRAM_HandleTypeDef hsram1;
 osThreadId GUI_TaskHandle;
 osThreadId Main_TaskHandle;
 osThreadId MbTaskHandle;
-osTimerId TS_TimerHandle;
+osThreadId Touch_TaskHandle;
 /* USER CODE BEGIN PV */
+
+/*  */
+static StaticEventGroup_t xEventGroupControlBlock;   // EventGroup objektas
+EventGroupHandle_t xEventGroupHandle = NULL;         // Hendleris
+
+/*  */
+static StaticSemaphore_t xFsmcMutexControlBlock;
+SemaphoreHandle_t xFsmcMutexHandle = NULL;
+
+
 __IO uint32_t timestamp;
 
 char st[20];
 
-
-extern uint8_t GUI_Initialized;
-extern WM_HWIN hWin, hWin1;
-//WM_HWIN hWin, hWin1, hWin2;
-
+uint8_t buf[1024];
 
 extern TaskHandle_t Ds18b20Handle;
 extern TaskHandle_t AdcHandle;
+
+
+extern const uint16_t _ackrym[];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -105,7 +107,7 @@ static void MX_USART2_UART_Init(void);
 void t_GuiTask(void const * argument);
 void t_MainTask(void const * argument);
 void t_ModbusTask(void const * argument);
-void cb_TsTimer(void const * argument);
+void t_TouchTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 extern void xADC_Task(void* arg);
@@ -157,7 +159,6 @@ int main(void)
   MX_TIM10_Init();
   MX_I2C1_Init();
   MX_SDIO_SD_Init();
-  MX_FATFS_Init();
   MX_TIM9_Init();
   MX_TIM12_Init();
   MX_USART2_UART_Init();
@@ -183,16 +184,13 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
+  xFsmcMutexHandle = xSemaphoreCreateMutexStatic( &xFsmcMutexControlBlock );
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
+  xEventGroupHandle = xEventGroupCreateStatic(&xEventGroupControlBlock);
   /* USER CODE END RTOS_SEMAPHORES */
-
-  /* Create the timer(s) */
-  /* definition and creation of TS_Timer */
-  osTimerDef(TS_Timer, cb_TsTimer);
-  TS_TimerHandle = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, NULL);
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
@@ -214,6 +212,10 @@ int main(void)
   /* definition and creation of MbTask */
   osThreadDef(MbTask, t_ModbusTask, osPriorityIdle, 0, 128);
   MbTaskHandle = osThreadCreate(osThread(MbTask), NULL);
+
+  /* definition and creation of Touch_Task */
+  osThreadDef(Touch_Task, t_TouchTask, osPriorityIdle, 0, 128);
+  Touch_TaskHandle = osThreadCreate(osThread(Touch_Task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -322,7 +324,7 @@ static void MX_ADC1_Init(void)
   GPIO_InitStruct.Pin = LL_GPIO_PIN_0|LL_GPIO_PIN_1|LL_GPIO_PIN_2|LL_GPIO_PIN_3
                           |LL_GPIO_PIN_4|LL_GPIO_PIN_5;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   GPIO_InitStruct.Pin = LL_GPIO_PIN_0|LL_GPIO_PIN_1;
@@ -570,6 +572,14 @@ static void MX_SDIO_SD_Init(void)
   hsd.Init.BusWide = SDIO_BUS_WIDE_1B;
   hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
   hsd.Init.ClockDiv = 0;
+  if (HAL_SD_Init(&hsd) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_SD_ConfigWideBusOperation(&hsd, SDIO_BUS_WIDE_4B) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN SDIO_Init 2 */
 
   /* USER CODE END SDIO_Init 2 */
@@ -986,6 +996,44 @@ static void MX_DMA_Init(void)
   /* DMA controller clock enable */
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA2);
 
+  /* Configure DMA request MEMTOMEM_DMA2_Stream1 */
+
+  /* Select channel */
+  LL_DMA_SetChannelSelection(DMA2, LL_DMA_STREAM_1, LL_DMA_CHANNEL_0);
+
+  /* Set transfer direction */
+  LL_DMA_SetDataTransferDirection(DMA2, LL_DMA_STREAM_1, LL_DMA_DIRECTION_MEMORY_TO_MEMORY);
+
+  /* Set priority level */
+  LL_DMA_SetStreamPriorityLevel(DMA2, LL_DMA_STREAM_1, LL_DMA_PRIORITY_MEDIUM);
+
+  /* Set DMA mode */
+  LL_DMA_SetMode(DMA2, LL_DMA_STREAM_1, LL_DMA_MODE_NORMAL);
+
+  /* Set peripheral increment mode */
+  LL_DMA_SetPeriphIncMode(DMA2, LL_DMA_STREAM_1, LL_DMA_PERIPH_INCREMENT);
+
+  /* Set memory increment mode */
+  LL_DMA_SetMemoryIncMode(DMA2, LL_DMA_STREAM_1, LL_DMA_MEMORY_INCREMENT);
+
+  /* Set peripheral data width */
+  LL_DMA_SetPeriphSize(DMA2, LL_DMA_STREAM_1, LL_DMA_PDATAALIGN_HALFWORD);
+
+  /* Set memory data width */
+  LL_DMA_SetMemorySize(DMA2, LL_DMA_STREAM_1, LL_DMA_MDATAALIGN_HALFWORD);
+
+  /* Enable FIFO mode */
+  LL_DMA_EnableFifoMode(DMA2, LL_DMA_STREAM_1);
+
+  /* Set FIFO threshold */
+  LL_DMA_SetFIFOThreshold(DMA2, LL_DMA_STREAM_1, LL_DMA_FIFOTHRESHOLD_FULL);
+
+  /* Set memory burst size */
+  LL_DMA_SetMemoryBurstxfer(DMA2, LL_DMA_STREAM_1, LL_DMA_MBURST_SINGLE);
+
+  /* Set peripheral burst size */
+  LL_DMA_SetPeriphBurstxfer(DMA2, LL_DMA_STREAM_1, LL_DMA_PBURST_SINGLE);
+
   /* DMA interrupt init */
   /* DMA2_Stream0_IRQn interrupt configuration */
   NVIC_SetPriority(DMA2_Stream0_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
@@ -1000,6 +1048,7 @@ static void MX_DMA_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+  LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
@@ -1058,6 +1107,26 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(U2DE_GPIO_Port, &GPIO_InitStruct);
 
+  /**/
+  LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTE, LL_SYSCFG_EXTI_LINE0);
+
+  /**/
+  EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_0;
+  EXTI_InitStruct.LineCommand = ENABLE;
+  EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+  EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_FALLING;
+  LL_EXTI_Init(&EXTI_InitStruct);
+
+  /**/
+  LL_GPIO_SetPinPull(RA8875_INT_GPIO_Port, RA8875_INT_Pin, LL_GPIO_PULL_NO);
+
+  /**/
+  LL_GPIO_SetPinMode(RA8875_INT_GPIO_Port, RA8875_INT_Pin, LL_GPIO_MODE_INPUT);
+
+  /* EXTI interrupt init*/
+  NVIC_SetPriority(EXTI0_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
+  NVIC_EnableIRQ(EXTI0_IRQn);
+
 }
 
 /* FSMC initialization function */
@@ -1098,8 +1167,8 @@ static void MX_FSMC_Init(void)
   Timing.AddressHoldTime = 15;
   Timing.DataSetupTime = 9;
   Timing.BusTurnAroundDuration = 0;
-  Timing.CLKDivision = 2;
-  Timing.DataLatency = 2;
+  Timing.CLKDivision = 16;
+  Timing.DataLatency = 17;
   Timing.AccessMode = FSMC_ACCESS_MODE_A;
   /* ExtTiming */
 
@@ -1124,6 +1193,7 @@ static void MX_FSMC_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_t_GuiTask */
@@ -1136,66 +1206,12 @@ static void MX_FSMC_Init(void)
 void t_GuiTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-
-  GUI_Init();
-  //RA8875_Init();
-
-  //hWin = CreateWindow();
-  //hWin1 = CreateModbusPortSettings();
-
-
-  xTaskNotifyGive( Main_TaskHandle );
-  xTaskNotifyGive( MbTaskHandle );
-
-  //GUIDEMO_Main();
-
-  GUI_X_Lock();
-
-  FSMC_WriteRegister(0x52, 0x00);
-
-  /* irasom foninius paveiksliukus */
-  LCD_SetBackground(Background_Enot.pData, DISPLAY_PIXELS, 0);
-  LCD_SetBackground(Background_Krym.pData, DISPLAY_PIXELS, 1);
-
-
-
-  LCD_SelectLayer(0);
-  //LCD_SelectLayer(1);
-
-
-  BTE_SolidFill(50, 50, 30, 10, 0, COL_NAVY);
-  BTE_SolidFill(50, 50, 30, 60, 0, COL_RED);
-  BTE_SolidFill(50, 50, 30, 110, 0, COL_GREEN);
-
-  BTE_SolidFill(480, 272, 0, 0, 0, COL_BLACK);
-
-  //BTE_RasterOperation(X_SIZE, Y_SIZE, 0, 0, 1, 0, 0, 0, BTE_ROP_MOVE_POSITIVE, BTE_BOOL_SOURCE);
-  //BTE_MoveBlockPositiveDir(100, 100, 20, 10, 0, 200, 150, 1);
-
-
-
-  GUI_X_Unlock();
-
-  //FSMC_WriteRegister(0x53, 0x04);
-  //FSMC_WriteRegister(0x52, 0x01);
-  //osDelay(1000);
-  //FSMC_WriteRegister(0x52, 0x00);
-
-  GUI_SetFont(&GUI_Font10_1);
-  GUI_SetColor(GUI_LIGHTBLUE);
-
-
-
+  ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
   /* Infinite loop */
   for(;;)
   {
 
-    GUI_DispStringAt(ds18b20[0].TemperatureStr, 200, 100);
-
-
-    GUI_Exec();
-    GUI_X_ExecIdle(); // --> user implement GUI_X.c
-    //osDelay(10);
+      osDelay(100);
   }
   /* USER CODE END 5 */
 }
@@ -1210,43 +1226,59 @@ void t_GuiTask(void const * argument)
 void t_MainTask(void const * argument)
 {
   /* USER CODE BEGIN t_MainTask */
-//    uint32_t blank_timeout_counter = timestamp + 10000;
+    RA8875_Init();
+
+    xTaskNotifyGive( GUI_TaskHandle );
+    xTaskNotifyGive( MbTaskHandle );
+
+    //BTE_SolidFill(480, 272, 0, 0, 0, COL_BLACK);
+    //BTE_SolidFill(480, 272, 0, 0, 1, COL_NAVY);
+
+    /* irasom foninius paveiksliukus */
+    //LCD_SetBackground(img_enot.pData, DISPLAY_PIXELS, 0);
+    //LCD_SetBackground(img_krym.pData, DISPLAY_PIXELS, 1);
 
 
-    ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
-
-    osTimerStart(TS_TimerHandle, 100);
-
-  /* Infinite loop */
-  for(;;)
-  {
-
-//    if(TS_Data.IsTouched){
-//        LL_TIM_OC_SetCompareCH1(TIM11, 90);
-//        blank_timeout_counter = timestamp + 10000;
-//    }else{
-//
-//        if(blank_timeout_counter < timestamp){
-//
-//            uint8_t q = LL_TIM_OC_GetCompareCH1(TIM11);
-//
-//            if(q > 4) q--;
-//
-//            LL_TIM_OC_SetCompareCH1(TIM11, q);
-//        }
-//    }
+    //LCD_SelectLayer(1);
+    //LCD_SelectLayer(0);
 
 
-    //TEXT_PutString(10, 10, ds18b20[0].TemperatureStr);
+    BTE_SolidFill(240, 136, 0, 0, 0, COL_NAVY);
+    BTE_SolidFill(240, 136, 240, 0, 0, COL_GREEN);
+    BTE_SolidFill(240, 136, 0, 136, 0, COL_RED);
+    BTE_SolidFill(240, 136, 240, 136, 0, COL_YELLOW);
+
+
+    //FSMC_WriteDDRAM(img_krym.pData, DISPLAY_PIXELS);
 
 
 
-    LL_GPIO_SetOutputPin(TEST_OUT_GPIO_Port, TEST_OUT_Pin);
-    Delay_us(20);
-    LL_GPIO_ResetOutputPin(TEST_OUT_GPIO_Port, TEST_OUT_Pin);
+    //RA8875_ReadExtROM(0, buf, 0x051980, 1024);
 
-    osDelay(200);
-  }
+
+    //BTE_RasterOperation(X_SIZE, Y_SIZE, 0, 0, 1, 0, 0, 0, BTE_ROP_MOVE_POSITIVE, BTE_BOOL_OP2);
+    //BTE_MoveBlockPositiveDir(100, 100, 20, 10, 0, 200, 150, 0);
+
+    LCD_ShowLayer(0);
+
+    /* Infinite loop */
+    for(;;)
+    {
+
+        TEXT_PutStringAbs(200, 10, ds18b20[0].TemperatureStr);
+        TEXT_PutStringAbs(200, 60, xAdcData_BankA[0].str_temp);
+
+
+        TEXT_PutStringAbs(200, 10, TS_Data.strXPos);
+        TEXT_PutStringAbs(260, 10, TS_Data.strYPos);
+
+
+        LL_GPIO_SetOutputPin(TEST_OUT_GPIO_Port, TEST_OUT_Pin);
+        Delay_us(20);
+        LL_GPIO_ResetOutputPin(TEST_OUT_GPIO_Port, TEST_OUT_Pin);
+
+        osDelay(20);
+    }
   /* USER CODE END t_MainTask */
 }
 
@@ -1291,36 +1323,66 @@ void t_ModbusTask(void const * argument)
   /* USER CODE END t_ModbusTask */
 }
 
-/* cb_TsTimer function */
-void cb_TsTimer(void const * argument)
+/* USER CODE BEGIN Header_t_TouchTask */
+/**
+* @brief Function implementing the Touch_Task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_t_TouchTask */
+void t_TouchTask(void const * argument)
 {
-  /* USER CODE BEGIN cb_TsTimer */
-  static uint8_t ltouch = 0;
+  /* USER CODE BEGIN t_TouchTask */
+  EventBits_t uxBits;
 
-    GUI_X_Lock();
+  /* Infinite loop */
+  for(;;)
+  {
+//      uxBits = xEventGroupWaitBits( xEventGroupHandle, TOUCH_EVENT_FLAG, pdTRUE, pdFALSE, portMAX_DELAY );
 
-    if(TS_ReadXY()){
+//      if( (uxBits&TOUCH_EVENT_FLAG) == TOUCH_EVENT_FLAG){
+//
+//          LL_TIM_CC_EnableChannel(TIM10, LL_TIM_CHANNEL_CH1);
+//          osDelay(60);
+//          LL_TIM_CC_DisableChannel(TIM10, LL_TIM_CHANNEL_CH1);
+//
+//          TS_ReadXY();
+//
+//          sprintf(TS_Data.strXPos, "%3d", TS_Data.XPos);
+//          sprintf(TS_Data.strYPos, "%3d", TS_Data.YPos);
+//
+//          xEventGroupClearBits( xEventGroupHandle, TOUCH_EVENT_FLAG );
+//      }
+//
+//      osDelay(10);
 
-        if(!ltouch){
-            LL_TIM_CC_EnableChannel(TIM10, LL_TIM_CHANNEL_CH1);
-            osDelay(100);
-            LL_TIM_CC_DisableChannel(TIM10, LL_TIM_CHANNEL_CH1);
-            ltouch = 1;
-        }
 
-        //LCD_ShowLayer(1);
+    if((FSMC_ReadStatus()&0x20) == 0x20){
 
-    }else{
-        ltouch = 0;
+         LL_TIM_CC_EnableChannel(TIM10, LL_TIM_CHANNEL_CH1);
+         osDelay(60);
+         LL_TIM_CC_DisableChannel(TIM10, LL_TIM_CHANNEL_CH1);
 
-        //LCD_ShowLayer(0);
+         TS_Data.IsTouched = 1;
+
+         while((FSMC_ReadStatus()&0x20) == 0x20){
+
+             TS_ReadXY_Manual();
+             osDelay(10);
+         }
+
+         TS_Data.IsTouched = 0;
+
+         TS_Data.XPos = 0;
+         TS_Data.YPos = 0;
+
+         sprintf(TS_Data.strXPos, "%3d", TS_Data.XPos);
+         sprintf(TS_Data.strYPos, "%3d", TS_Data.YPos);
     }
 
-    GUI_X_Unlock();
-
-    GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
-
-  /* USER CODE END cb_TsTimer */
+    osDelay(50);
+  }
+  /* USER CODE END t_TouchTask */
 }
 
  /**

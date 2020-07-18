@@ -83,104 +83,8 @@
 			<Add option="-eb_start_files" />
 			<Add option="-Wl,--cref" />
 			<Add option="-lm" />
-			<Add library="Drivers\STemWin\Lib\STemWin532_CM4_OS_GCC.a" />
 		</Linker>
-		<Unit filename="App\Conf\globals.h" />
-		<Unit filename="App\Conf\GUIConf.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\Conf\GUIConf.h" />
-		<Unit filename="App\Conf\LCDConf.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\Conf\LCDConf.h" />
-		<Unit filename="App\Examples\WindowDLG.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\Examples\WindowDLG.h" />
-		<Unit filename="App\GUIDEMO\GUIDEMO.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO.h" />
-		<Unit filename="App\GUIDEMO\GUIDEMO_AntialiasedText.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_Automotive.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_BarGraph.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_Bitmap.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_ColorBar.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_Conf.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_Cursor.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_Fading.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_Graph.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_IconView.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_ImageFlow.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_Intro.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_Listview.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_RadialMenu.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_Resource.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_Skinning.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_Speed.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_Speedometer.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_Start.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_TransparentDialog.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_Treeview.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_VScreen.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_WashingMachine.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUIDEMO\GUIDEMO_ZoomAndRotate.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUISTEND\GUISTEND.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="App\GUISTEND\GUISTEND.h" />
-		<Unit filename="App\GUISTEND\ModbusPortSettingsDLG.c">
-			<Option compilerVar="CC" />
-		</Unit>
+		<Unit filename="App\globals.h" />
 		<Unit filename="App\images\bg_enot.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -268,6 +172,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="App\lib\ra8875\ra8875.h" />
+		<Unit filename="App\lib\ra8875\ra8875_registers.h" />
 		<Unit filename="App\lib\ra8875\ra_bte.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -324,109 +229,6 @@
 		<Unit filename="Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h" />
 		<Unit filename="Drivers\CMSIS\Device\ST\STM32F4xx\Include\system_stm32f4xx.h" />
 		<Unit filename="Drivers\CMSIS\Include\cmsis_gcc.h" />
-		<Unit filename="Drivers\STemWin\inc\BUTTON.h" />
-		<Unit filename="Drivers\STemWin\inc\BUTTON_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\CALENDAR.h" />
-		<Unit filename="Drivers\STemWin\inc\CHECKBOX.h" />
-		<Unit filename="Drivers\STemWin\inc\CHECKBOX_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\CHOOSECOLOR.h" />
-		<Unit filename="Drivers\STemWin\inc\CHOOSEFILE.h" />
-		<Unit filename="Drivers\STemWin\inc\DIALOG.h" />
-		<Unit filename="Drivers\STemWin\inc\DIALOG_Intern.h" />
-		<Unit filename="Drivers\STemWin\inc\DROPDOWN.h" />
-		<Unit filename="Drivers\STemWin\inc\DROPDOWN_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\EDIT.h" />
-		<Unit filename="Drivers\STemWin\inc\EDIT_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\FRAMEWIN.h" />
-		<Unit filename="Drivers\STemWin\inc\FRAMEWIN_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\Global.h" />
-		<Unit filename="Drivers\STemWin\inc\GRAPH.h" />
-		<Unit filename="Drivers\STemWin\inc\GRAPH_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_ARRAY.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_ARRAY_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_BMP_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_ConfDefaults.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_Debug.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_FontIntern.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_GIF_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_HOOK.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_JPEG_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_SetOrientation.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_SetOrientationCX.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_SIM_Win32.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_SPRITE_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_Type.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_Version.h" />
-		<Unit filename="Drivers\STemWin\inc\GUI_VNC.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_DCache.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_DCache_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_Dist.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_FlexColor.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_FlexColor_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_Lin.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_Lin_Opt_16.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_Lin_Opt_24.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_Lin_Opt_32.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_Lin_Opt_8.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_Lin_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_NoOpt_1_8.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_Template.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_TemplateI.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIDRV_TemplateI_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\GUIMTDRV_TangoC32.h" />
-		<Unit filename="Drivers\STemWin\inc\GUITDRV_ADS7846.h" />
-		<Unit filename="Drivers\STemWin\inc\HEADER.h" />
-		<Unit filename="Drivers\STemWin\inc\HEADER_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\ICONVIEW.h" />
-		<Unit filename="Drivers\STemWin\inc\ICONVIEW_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\IMAGE.h" />
-		<Unit filename="Drivers\STemWin\inc\IMAGE_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\KNOB.h" />
-		<Unit filename="Drivers\STemWin\inc\KNOB_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\LCD.h" />
-		<Unit filename="Drivers\STemWin\inc\LCD_ConfDefaults.h" />
-		<Unit filename="Drivers\STemWin\inc\LCD_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\LCD_Protected.h" />
-		<Unit filename="Drivers\STemWin\inc\LCD_SIM.h" />
-		<Unit filename="Drivers\STemWin\inc\LISTBOX.h" />
-		<Unit filename="Drivers\STemWin\inc\LISTBOX_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\LISTVIEW.h" />
-		<Unit filename="Drivers\STemWin\inc\LISTVIEW_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\LISTWHEEL.h" />
-		<Unit filename="Drivers\STemWin\inc\LISTWHEEL_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\MENU.h" />
-		<Unit filename="Drivers\STemWin\inc\MENU_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\MESSAGEBOX.h" />
-		<Unit filename="Drivers\STemWin\inc\MULTIEDIT.h" />
-		<Unit filename="Drivers\STemWin\inc\MULTIPAGE.h" />
-		<Unit filename="Drivers\STemWin\inc\MULTIPAGE_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\PROGBAR.h" />
-		<Unit filename="Drivers\STemWin\inc\PROGBAR_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\RADIO.h" />
-		<Unit filename="Drivers\STemWin\inc\RADIO_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\SCROLLBAR.h" />
-		<Unit filename="Drivers\STemWin\inc\SCROLLBAR_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\SEGGER.h" />
-		<Unit filename="Drivers\STemWin\inc\SLIDER.h" />
-		<Unit filename="Drivers\STemWin\inc\SLIDER_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\SPINBOX.h" />
-		<Unit filename="Drivers\STemWin\inc\SPINBOX_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\SWIPELIST.h" />
-		<Unit filename="Drivers\STemWin\inc\SWIPELIST_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\TEXT.h" />
-		<Unit filename="Drivers\STemWin\inc\TEXT_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\TREEVIEW.h" />
-		<Unit filename="Drivers\STemWin\inc\TREEVIEW_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\WIDGET.h" />
-		<Unit filename="Drivers\STemWin\inc\WINDOW_Private.h" />
-		<Unit filename="Drivers\STemWin\inc\WM.h" />
-		<Unit filename="Drivers\STemWin\inc\WM_GUI.h" />
-		<Unit filename="Drivers\STemWin\inc\WM_Intern.h" />
-		<Unit filename="Drivers\STemWin\OS\GUI_X_OS.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\Legacy\stm32f4xx_hal_can_legacy.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h" />
@@ -504,7 +306,6 @@
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_crc.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_dac.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_dma.h" />
-		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_dma2d.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_exti.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_fmc.h" />
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_fmpi2c.h" />
@@ -790,43 +591,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_utils.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="FATFS\App\fatfs.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="FATFS\App\fatfs.h" />
-		<Unit filename="FATFS\Target\bsp_driver_sd.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="FATFS\Target\bsp_driver_sd.h" />
-		<Unit filename="FATFS\Target\fatfs_platform.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="FATFS\Target\fatfs_platform.h" />
-		<Unit filename="FATFS\Target\ffconf.h" />
-		<Unit filename="FATFS\Target\sd_diskio.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="FATFS\Target\sd_diskio.h" />
-		<Unit filename="Middlewares\Third_Party\FatFs\src\diskio.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="Middlewares\Third_Party\FatFs\src\diskio.h" />
-		<Unit filename="Middlewares\Third_Party\FatFs\src\ff.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="Middlewares\Third_Party\FatFs\src\ff.h" />
-		<Unit filename="Middlewares\Third_Party\FatFs\src\ff_gen_drv.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="Middlewares\Third_Party\FatFs\src\ff_gen_drv.h" />
-		<Unit filename="Middlewares\Third_Party\FatFs\src\ffconf_template.h" />
-		<Unit filename="Middlewares\Third_Party\FatFs\src\integer.h" />
-		<Unit filename="Middlewares\Third_Party\FatFs\src\option\syscall.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="Middlewares\Third_Party\FatFs\src\option\unicode.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.c">

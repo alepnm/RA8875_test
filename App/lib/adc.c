@@ -26,7 +26,7 @@ uint16_t CpuTemperature = 0;
 
 
 static uint16_t aADCxConvertedData[ADC_CONVERTED_DATA_BUFFER_SIZE];
-
+static uint16_t AvgAccuArray_A[ADC_CONVERTED_DATA_BUFFER_SIZE], AvgAccuArray_B[ADC_CONVERTED_DATA_BUFFER_SIZE];
 
 void xADC_Task(void* arg);
 static void ADC_StoreAdcData(adcdat_t* bank);
@@ -36,13 +36,16 @@ static void ADC_StoreAdcData(adcdat_t* bank);
 /*  */
 void ADC_TaskInit(UBaseType_t Priority)
 {
-    xTaskCreate((void*)xADC_Task, "AdcTask", configMINIMAL_STACK_SIZE, (void*)0, Priority, &AdcHandle);
+    xTaskCreate((void*)xADC_Task, "AdcTask", configMINIMAL_STACK_SIZE*4, (void*)0, Priority, &AdcHandle);
 }
 
 
 /*  */
 void xADC_Task(void* arg)
 {
+    static uint8_t n = 0;
+    uint8_t i = 0;
+
     /* DMA init */
     LL_DMA_ConfigAddresses(DMA2, LL_DMA_STREAM_0, LL_ADC_DMA_GetRegAddr(ADC1, LL_ADC_DMA_REG_REGULAR_DATA),
                            (uint32_t)&aADCxConvertedData, LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
@@ -67,13 +70,39 @@ void xADC_Task(void* arg)
 
         while(!ubDmaTransferComplete) vTaskDelay(10);
 
-        ADC_StoreAdcData(xAdcData_BankA);
 
-        VRefValue =      __LL_ADC_CALC_DATA_TO_VOLTAGE(VDDA_APPLI, xAdcData_BankA[10].adcval, LL_ADC_RESOLUTION_10B);
+{//averaging data
+
+        while(i < ADC_CONVERTED_DATA_BUFFER_SIZE ){
+
+            AvgAccuArray_A[i] += aADCxConvertedData[i];
+            i++;
+        }
+
+
+        if(++n > 7){
+
+            i = 0;
+
+            while(i < ADC_CONVERTED_DATA_BUFFER_SIZE ){
+
+                xAdcData_BankA[i].adcval = AvgAccuArray_A[i]>>3;
+                AvgAccuArray_A[i] = 0;
+                i++;
+            }
+
+            ADC_StoreAdcData(xAdcData_BankA);
+
+            n = 0;
+        }
+}
+
+
+        VRefValue =      __LL_ADC_CALC_DATA_TO_VOLTAGE(VDDA_APPLI, xAdcData_BankA[8].adcval, LL_ADC_RESOLUTION_10B);
 
         /* vienu metu konvertuojamas arba TEMPSENSOR arba VBAT <-- pasiaiskinti */
         CpuTemperature = __LL_ADC_CALC_TEMPERATURE_TYP_PARAMS(INTERNAL_TEMPSENSOR_AVGSLOPE, INTERNAL_TEMPSENSOR_V25, INTERNAL_TEMPSENSOR_V25_TEMP,
-                         VDDA_APPLI, xAdcData_BankA[11].adcval, LL_ADC_RESOLUTION_10B);
+                         VDDA_APPLI, xAdcData_BankA[9].adcval, LL_ADC_RESOLUTION_10B);
         //CpuTemperature = __LL_ADC_CALC_TEMPERATURE(VRefValue,  xAdcData_BankA[10].adcval, LL_ADC_RESOLUTION_10B);
 
         vTaskDelay(10);
@@ -89,7 +118,7 @@ void xADC_Task(void* arg)
 
         ADC_StoreAdcData(xAdcData_BankB);
 
-        vTaskDelay(100);
+        vTaskDelay(10);
     }
 
     vTaskDelete(NULL);
@@ -105,7 +134,11 @@ static void ADC_StoreAdcData(adcdat_t* bank)
     while(i < ADC_CONVERTED_DATA_BUFFER_SIZE ){
 
         (bank+i)->adcval = aADCxConvertedData[i];
-        (bank+i)->adc_converted_mv = __LL_ADC_CALC_DATA_TO_VOLTAGE(VDDA_APPLI, aADCxConvertedData[i], LL_ADC_RESOLUTION_10B);
+        (bank+i)->adc_conv_mv = __LL_ADC_CALC_DATA_TO_VOLTAGE(VDDA_APPLI, aADCxConvertedData[i], LL_ADC_RESOLUTION_10B);
+        (bank+i)->adc_conv_temp = ConvertADCvalueToTemp((bank+i)->adcval);
+
+        sprintf((bank+i)->str_temp, "%2.2f°C", (bank+i)->adc_conv_temp);
+
         i++;
     }
 }
@@ -128,7 +161,7 @@ float ConvertADCvalueToTemp(uint16_t adcval)
 
     //hU1-maitinimo itampa, hR-varza po maitinimo
     //sB- jutiklio beta koefic, sR- varza prie 25 laipsniu
-    float U, hR=8200, sR=10000, hU1=3300, sB=3280;
+    float U, hR = 8200, sR = 10000, hU1 = VDDA_APPLI, sB = 3280;
 
     if(!adcval) adcval = 1;
 

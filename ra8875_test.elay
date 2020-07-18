@@ -1,59 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <EmBitz_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="App\Conf\GUIConf.c" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\globals.h" open="0" top="0" tabpos="21" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="0" topLine="57" />
-		</Cursor>
-	</File>
-	<File name="App\Conf\GUIConf.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3984" topLine="36" />
-		</Cursor>
-	</File>
-	<File name="App\Conf\LCDConf.c" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3086" topLine="169" />
-		</Cursor>
-	</File>
-	<File name="App\Conf\LCDConf.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2178" topLine="2" />
-		</Cursor>
-	</File>
-	<File name="App\Examples\WindowDLG.c" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2798" topLine="33" />
-		</Cursor>
-	</File>
-	<File name="App\Examples\WindowDLG.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="App\GUIDEMO\GUIDEMO.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="28448" topLine="419" />
-		</Cursor>
-	</File>
-	<File name="App\GUIDEMO\GUIDEMO.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5963" topLine="156" />
-		</Cursor>
-	</File>
-	<File name="App\GUIDEMO\GUIDEMO_RadialMenu.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="286637" topLine="2007" />
+			<Cursor1 position="87" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="App\images\bg_enot.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="0" topLine="2897" />
+			<Cursor1 position="1462" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="App\lib\ds18b20\ds18b20.c" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\images\bg_krym.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="129" topLine="0" />
+			<Cursor1 position="1469" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="App\lib\adc.c" open="0" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="964" topLine="90" />
+		</Cursor>
+	</File>
+	<File name="App\lib\adc.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="89" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="App\lib\ds18b20\ds18b20.c" open="0" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4371" topLine="153" />
 		</Cursor>
 	</File>
 	<File name="App\lib\ds18b20\ds18b20Config.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -61,59 +36,64 @@
 			<Cursor1 position="441" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="App\lib\ra8875\ra8875.c" open="1" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\lib\ra8875\ra8875.c" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2828" topLine="72" />
+			<Cursor1 position="11814" topLine="443" />
 		</Cursor>
 	</File>
-	<File name="App\lib\ra8875\ra8875.h" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\lib\ra8875\ra8875.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="285" topLine="64" />
+			<Cursor1 position="3869" topLine="93" />
 		</Cursor>
 	</File>
-	<File name="App\lib\ra8875\ra_bte.c" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\lib\ra8875\ra8875_registers.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2241" topLine="43" />
+			<Cursor1 position="13481" topLine="143" />
 		</Cursor>
 	</File>
-	<File name="App\lib\ra8875\ra_bte.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\lib\ra8875\ra_bte.c" open="0" top="0" tabpos="23" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1966" topLine="0" />
+			<Cursor1 position="1143" topLine="12" />
 		</Cursor>
 	</File>
-	<File name="App\lib\ra8875\ra_display.c" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\lib\ra8875\ra_bte.h" open="0" top="0" tabpos="19" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="555" topLine="0" />
+			<Cursor1 position="1558" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="App\lib\ra8875\ra_fsmc.c" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\lib\ra8875\ra_display.c" open="0" top="0" tabpos="22" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="39" topLine="0" />
+			<Cursor1 position="361" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="App\lib\ra8875\ra_fsmc.h" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\lib\ra8875\ra_fsmc.c" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1001" topLine="0" />
+			<Cursor1 position="33" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="App\lib\ra8875\ra_geometric.c" open="1" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\lib\ra8875\ra_fsmc.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1789" topLine="36" />
+		</Cursor>
+	</File>
+	<File name="App\lib\ra8875\ra_geometric.c" open="0" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="2444" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="App\lib\ra8875\ra_text.c" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\lib\ra8875\ra_text.c" open="0" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="40" topLine="0" />
+			<Cursor1 position="546" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="App\lib\ra8875\ra_touch.c" open="1" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\lib\ra8875\ra_touch.c" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="21" topLine="0" />
+			<Cursor1 position="513" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="App\lib\usart.c" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="App\lib\usart.c" open="0" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="5018" topLine="177" />
+			<Cursor1 position="4553" topLine="155" />
 		</Cursor>
 	</File>
 	<File name="App\lib\usart.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -121,9 +101,14 @@
 			<Cursor1 position="112" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="Core\Inc\main.h" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Core\Inc\FreeRTOSConfig.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2853" topLine="25" />
+			<Cursor1 position="4611" topLine="51" />
+		</Cursor>
+	</File>
+	<File name="Core\Inc\main.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2305" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="Core\Inc\stm32f4xx_hal_conf.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -131,9 +116,9 @@
 			<Cursor1 position="3784" topLine="35" />
 		</Cursor>
 	</File>
-	<File name="Core\Src\main.c" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Core\Src\main.c" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="36073" topLine="1152" />
+			<Cursor1 position="41103" topLine="1322" />
 		</Cursor>
 	</File>
 	<File name="Core\Src\stm32f4xx_hal_msp.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -141,64 +126,24 @@
 			<Cursor1 position="0" topLine="159" />
 		</Cursor>
 	</File>
-	<File name="Core\Src\stm32f4xx_it.c" open="0" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Core\Src\stm32f4xx_it.c" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3803" topLine="55" />
+			<Cursor1 position="3888" topLine="87" />
 		</Cursor>
 	</File>
-	<File name="Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4886" topLine="54" />
+			<Cursor1 position="6971" topLine="79" />
+		</Cursor>
+	</File>
+	<File name="Drivers\CMSIS\Device\ST\STM32F4xx\Include\system_stm32f4xx.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="59" />
 		</Cursor>
 	</File>
 	<File name="Drivers\CMSIS\Include\cmsis_gcc.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="5090" topLine="113" />
-		</Cursor>
-	</File>
-	<File name="Drivers\STemWin\inc\GUI.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="48361" topLine="1002" />
-		</Cursor>
-	</File>
-	<File name="Drivers\STemWin\inc\GUI_Type.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="21987" topLine="603" />
-		</Cursor>
-	</File>
-	<File name="Drivers\STemWin\inc\GUIDRV_FlexColor.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5540" topLine="230" />
-		</Cursor>
-	</File>
-	<File name="Drivers\STemWin\inc\GUIDRV_Template.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="27" />
-		</Cursor>
-	</File>
-	<File name="Drivers\STemWin\inc\LCD.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="351" />
-		</Cursor>
-	</File>
-	<File name="Drivers\STemWin\inc\LCD_ConfDefaults.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="37" />
-		</Cursor>
-	</File>
-	<File name="Drivers\STemWin\inc\SLIDER.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="6285" topLine="133" />
-		</Cursor>
-	</File>
-	<File name="Drivers\STemWin\inc\WIDGET.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="123" />
-		</Cursor>
-	</File>
-	<File name="Drivers\STemWin\OS\GUI_X_OS.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3089" topLine="35" />
 		</Cursor>
 	</File>
 	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -211,6 +156,11 @@
 			<Cursor1 position="0" topLine="93" />
 		</Cursor>
 	</File>
+	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dma2d.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5300" topLine="94" />
+		</Cursor>
+	</File>
 	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_gpio.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="9679" topLine="198" />
@@ -221,9 +171,9 @@
 			<Cursor1 position="3422" topLine="52" />
 		</Cursor>
 	</File>
-	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_adc.h" open="0" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_adc.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="20409" topLine="238" />
+			<Cursor1 position="147823" topLine="1679" />
 		</Cursor>
 	</File>
 	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_crc.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -231,9 +181,9 @@
 			<Cursor1 position="1103" topLine="4" />
 		</Cursor>
 	</File>
-	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_dma.h" open="0" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_dma.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="75037" topLine="1703" />
+			<Cursor1 position="12543" topLine="450" />
 		</Cursor>
 	</File>
 	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_fsmc.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -241,12 +191,12 @@
 			<Cursor1 position="29045" topLine="590" />
 		</Cursor>
 	</File>
-	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_gpio.h" open="0" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_gpio.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="11711" topLine="251" />
+			<Cursor1 position="7365" topLine="133" />
 		</Cursor>
 	</File>
-	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_rcc.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_rcc.h" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="3083" topLine="60" />
 		</Cursor>
@@ -321,24 +271,59 @@
 			<Cursor1 position="16467" topLine="229" />
 		</Cursor>
 	</File>
-	<File name="FATFS\App\fatfs.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="380" topLine="0" />
-		</Cursor>
-	</File>
 	<File name="Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="4691" topLine="77" />
 		</Cursor>
 	</File>
-	<File name="Middlewares\Third_Party\FreeRTOS\Source\queue.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Middlewares\Third_Party\FreeRTOS\Source\event_groups.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="50442" topLine="1378" />
+			<Cursor1 position="17247" topLine="456" />
 		</Cursor>
 	</File>
-	<File name="startup\startup_stm32f4xx.S" open="1" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Middlewares\Third_Party\FreeRTOS\Source\include\event_groups.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="9439" topLine="187" />
+			<Cursor1 position="23228" topLine="530" />
+		</Cursor>
+	</File>
+	<File name="Middlewares\Third_Party\FreeRTOS\Source\include\FreeRTOS.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5872" topLine="22" />
+		</Cursor>
+	</File>
+	<File name="Middlewares\Third_Party\FreeRTOS\Source\include\semphr.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="12554" topLine="262" />
+		</Cursor>
+	</File>
+	<File name="Middlewares\Third_Party\FreeRTOS\Source\include\timers.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="52619" topLine="1143" />
+		</Cursor>
+	</File>
+	<File name="Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F\port.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="14646" topLine="357" />
+		</Cursor>
+	</File>
+	<File name="Middlewares\Third_Party\FreeRTOS\Source\queue.c" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="35077" topLine="947" />
+		</Cursor>
+	</File>
+	<File name="Middlewares\Third_Party\FreeRTOS\Source\tasks.c" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="121168" topLine="3519" />
+		</Cursor>
+	</File>
+	<File name="Middlewares\Third_Party\FreeRTOS\Source\timers.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="37841" topLine="993" />
+		</Cursor>
+	</File>
+	<File name="startup\startup_stm32f4xx.S" open="1" top="1" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9439" topLine="185" />
 		</Cursor>
 	</File>
 </EmBitz_layout_file>

@@ -2,6 +2,7 @@
 #define __RA_FSMC_H
 
 #include "main.h"
+#include "cmsis_os.h"
 
 
 #define Bank1_SRAM1_ADDR  ((uint32_t)0x60000000)  // NE1
@@ -19,32 +20,59 @@ typedef struct {
 #define LCD         ( (LCD_TypeDef *) LCD_BASE)
 
 
-#define FSMC_WAIT_BUSY() FSMC_WaitMem()
+#define FSMC_WAIT_BUSY() FSMC_Wait()//FSMC_WaitMem()
+
+
+extern SemaphoreHandle_t xFsmcMutexHandle;
+
+
+
+/*  */
+static inline void FSMC_Wait(void){
+
+    __disable_irq();
+
+    while(!LL_GPIO_IsInputPinSet(LCD_WAIT_GPIO_Port, LCD_WAIT_Pin));
+
+    __enable_irq();
+}
 
 /*  */
 static inline void FSMC_WaitMem(void){
 
+    __disable_irq();
+
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_OUTPUT);
     while((LCD->LCD_RAM&0x80) == 0x80);
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_ALTERNATE);
+
+    __enable_irq();
 }
 
 
 /*  */
 static inline void FSMC_WaitBTE(void){
 
+    __disable_irq();
+
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_OUTPUT);
     while((LCD->LCD_RAM&0x40) == 0x40);
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_ALTERNATE);
+
+    __enable_irq();
 }
 
 
 /*  */
-static inline void FSMC_WaitDMA(void){
+static inline void FSMC_WaitROM(void){
+
+    __disable_irq();
 
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_OUTPUT);
     while((LCD->LCD_RAM&0x01) == 0x01);
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_ALTERNATE);
+
+    __enable_irq();
 }
 
 

@@ -26,9 +26,12 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ra8875.h"
+#include "ra8875_registers.h"
+#include "timers.h"
 /* Private typedef -----------------------------------------------------------*/
-extern GUI_CONST_STORAGE unsigned short _acenot[];
-extern GUI_CONST_STORAGE unsigned short _ackrym[];
+
+
+extern EventGroupHandle_t xEventGroupHandle;
 
 
 struct _lcd Display;
@@ -41,7 +44,7 @@ const struct _bte Background_Enot = {
     .YStart = 0,
     .XSize = X_SIZE,
     .YSize = Y_SIZE,
-    .pData = _acenot
+    .pData = NULL
 };
 
 const struct _bte Background_Krym = {
@@ -51,7 +54,7 @@ const struct _bte Background_Krym = {
     .YStart = 0,
     .XSize = X_SIZE,
     .YSize = Y_SIZE,
-    .pData = _ackrym
+    .pData = NULL
 };
 
 
@@ -104,7 +107,7 @@ void RA8875_Init(void) {
 
 
     /* PLL clock frequency */
-    FSMC_WriteRegister(0x88, 0x05);   // PLL Control Register1
+    FSMC_WriteRegister(0x88, 0x04);   // PLL Control Register1
     HAL_Delay(1);
     FSMC_WriteRegister(0x89, 0x01);   // PLL Control Register2
     HAL_Delay(1);
@@ -153,19 +156,23 @@ void RA8875_Init(void) {
     FSMC_WriteRegister(0x36, (uint8_t)(Y_SIZE&0x00FF)-1);    // Vertical End Point0 of Active Window
     FSMC_WriteRegister(0x37, (uint8_t)((Y_SIZE>>8)&0x03));   // Vertical End Point1 of Active Window
 
-    FSMC_WriteRegister(0x70, 0xA2);    // Touch Panel Control Register0
-    FSMC_WriteRegister(0x71, 0x41);    // Touch Panel Control Register1
-    //FSMC_WriteRegister(0xF0, 0x04);    // enable TP INT
+
+    /* touch panel init */
+    TS_Init();
 
     FSMC_WriteRegister(0x8A, 0x83);    // PWM1 Control Register
     FSMC_WriteRegister(0x8C, 0x83);    // PWM2 Control Register
 
-    LCD_SetBacklight(100);
+    RA8875_ConfigIRQ();
+
+    LCD_SetBacklight(80);
 
     /* data bus test. */
     {
         uint16_t pixel;
         uint32_t i;
+
+        __disable_irq();
 
         /* irasom i GRAM testinius duomenys */
         FSMC_WriteRegister(0x40, 0x00);
@@ -173,11 +180,12 @@ void RA8875_Init(void) {
         RA8875_SetPixelWriteCursor(0, 0);
 
         LCD->LCD_REG = 0x02;
+        FSMC_WAIT_BUSY();
 
         for(i=0; i < DISPLAY_PIXELS; i++)
         {
-            FSMC_WAIT_BUSY();
             LCD->LCD_RAM = i;
+            FSMC_WAIT_BUSY();
         }
 
 
@@ -187,9 +195,10 @@ void RA8875_Init(void) {
         RA8875_SetPixelWriteCursor(0, 0);
 
         LCD->LCD_REG = 0x02;
-
         FSMC_WAIT_BUSY();
+
         (void)LCD->LCD_RAM;// dummy read
+        FSMC_WAIT_BUSY();
 
         for(i=0; i<0x10000; i++)
         {
@@ -220,9 +229,11 @@ void RA8875_Init(void) {
             Display.IsInitilized = 1;
         }
 
+        __enable_irq();
 
-        RA8875_ExtROMFont();
-        //RA8875_CGROMFont();
+
+        //RA8875_ExtROMFont();
+        RA8875_CGROMFont();
 
         LCD_Clear();
 
@@ -405,6 +416,107 @@ void RA8875_ClearActiveWindow(void){
     FSMC_WriteRegister(0x8E, 0xC0);
     FSMC_WAIT_BUSY();
 }
+
+
+
+/*  Direct Access Mode
+rom = 0 - external Font ROM
+rom = 1 - external flash
+*/
+void RA8875_ReadExtROM(uint8_t rom, uint8_t *buf, uint32_t addr, uint32_t len){
+
+    uint32_t i = 0;
+
+    if(rom != 0) rom = 0x80;
+
+    FSMC_WriteRegister(0x05, rom | 0x04);   // DMA mode
+
+    FSMC_WriteRegister(0xE0, 0x01);   // direct access mode enable
+
+    FSMC_WriteRegister(0xE1, (uint16_t)(addr>>16)&0x00FF);
+    FSMC_WriteRegister(0xE1, (uint16_t)(addr>>8)&0x00FF);
+    FSMC_WriteRegister(0xE1, (uint16_t)addr&0x00FF);
+
+    while(i<len){
+
+        FSMC_WaitROM();
+        buf[i] = FSMC_ReadRegister(0xE2);   // read data
+
+        i++;
+    }
+
+    FSMC_WriteRegister(0xE0, 0x00);   // direct access mode disable
+    FSMC_WriteRegister(0x05, 0x00);   // FONT mode
+}
+
+
+/*  */
+void RA8875_ConfigIRQ(void){
+
+    /*
+    bit0 - Font write / BTE MCU R/W interrupt
+    bit1 - BTE Process Complete Interrupt
+    bit2 - Touch Panel Interrupt (jungiam Touch modulyje)
+    bit3 - DMA Interrupt
+    bit4 - KEYSCAN Interrupt
+    */
+
+    FSMC_WriteRegister(0xF1, 0xFF);   // isvalom IRQ flagus
+}
+
+
+
+/* IRQ handler */
+void RA8875_IRQ_Handler(void){
+
+    BaseType_t xHigherPriorityTaskWoken, xResult;
+
+    uint8_t reg = FSMC_ReadRegister(0xF1);
+
+    /* check for Font write / BTE MCU R/W interrupt */
+    if((reg&0x01) == 0x01){
+
+        if(FSMC_ReadRegister(0x50)&0x80){
+        /* BTE MCU R/W interrupt */
+
+        }else{
+        /* Font write interrupt */
+
+        }
+
+        reg |= 0x01;   // clear font write / BTE MCU R/W interrupt
+    }
+
+    /* check for BTE process complete interrupt */
+    if((reg&0x02) == 0x02){
+
+        reg |= 0x02;   // clear BTE process complete interrupt
+    }
+
+    /* check for touch interrupt */
+    if((reg&0x04) == 0x04){
+
+        xResult = xEventGroupSetBitsFromISR( xEventGroupHandle, TOUCH_EVENT_FLAG, &xHigherPriorityTaskWoken );
+        //FSMC_WriteRegister(0xF1, reg|0x04);    //reg |= 0x04;   // numetam touch irq flaga
+
+        if( xResult != pdFAIL ) portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+    }
+
+    /* check for DMA interrupt */
+    if((reg&0x08) == 0x08){
+
+        reg |= 0x08;   // clear the DMA interrupt
+    }
+
+    /* check for keyscan interrupt */
+    if((reg&0x10) == 0x10){
+
+        reg |= 0x10;   // clear the keyscan interrupt
+    }
+
+    FSMC_WriteRegister(0xF1, reg);
+}
+
 
 
 /**

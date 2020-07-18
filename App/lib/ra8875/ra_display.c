@@ -95,8 +95,6 @@ void LCD_ClearColor(uint16_t color) {
 /* ok */
 void LCD_SetForeColor(uint16_t color){
 
-    Display.FontColor = color;
-
     FSMC_WriteRegister(0x63, (uint8_t)(color>>11));
     FSMC_WriteRegister(0x64, (uint8_t)((color>>5)&0x3F));
     FSMC_WriteRegister(0x65, (uint8_t)(color&0x1F));
@@ -113,8 +111,6 @@ uint16_t LCD_GetForeColor(void){
 
 /* ok */
 void LCD_SetBackColor(uint16_t color){
-
-    Display.BackColor = color;
 
     FSMC_WriteRegister(0x60, (uint8_t)(color>>11));
     FSMC_WriteRegister(0x61, (uint8_t)((color>>5)&0x3F));

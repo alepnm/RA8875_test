@@ -4,8 +4,6 @@
 #define __RA8875_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "GUI.h"
-#include "main.h"
 #include "ra_fsmc.h"
 #include "ra_bte.h"
 
@@ -17,7 +15,6 @@
 
 #define RA8875_RST_LOW()    LL_GPIO_ResetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin)
 #define RA8875_RST_HIGH()   LL_GPIO_SetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin)
-//#define RA8875_WAIT()       while(!LL_GPIO_IsInputPinSet(LCD_WAIT_GPIO_Port, LCD_WAIT_Pin))
 #define RA8875_GPOX(state)  FSMC_WriteRegister(0xC7, state);
 
 
@@ -79,6 +76,7 @@ extern const struct _bte Background_Krym;
 
 /* Exported functions ------------------------------------------------------- */
 void RA8875_Init(void);
+void RA8875_ConfigIRQ(void);
 void RA8875_Reset(void);
 
 
@@ -115,6 +113,7 @@ void LCD_ShowLayer(uint8_t layer);
 
 
 /* TEXT API */
+void TEXT_PutStringAbs(uint16_t posx, uint16_t posy, const char* str);
 void TEXT_PutString(uint8_t col, uint8_t line, const char* str);
 
 
@@ -128,9 +127,17 @@ void GEO_DrawSquareOfCircleCorner(uint16_t Xpos_start, uint16_t Ypos_start, uint
 
 void RA8875_SetBTEBlock(const struct _bte* block);
 
+void RA8875_ReadExtROM(uint8_t rom, uint8_t *buf, uint32_t addr, uint32_t len);
+void RA8875_IRQ_Handler(void);
+
 
 
 /* Touchscreen  */
+
+
+
+
+
 struct _tp{
     uint8_t        IsEnabled;
     uint8_t        IsTouched;
@@ -149,8 +156,9 @@ extern struct _tp TS_Data;
 
 
 uint8_t TS_Init(void);
-uint8_t TS_ReadXY(void);;
-
+void    TS_ReadXY_Manual(void);
+void    TS_ReadXY(void);
+void    TS_IRQ_Handler(void);
 
 #endif /* __RA8875_H */
 

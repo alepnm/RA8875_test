@@ -11,6 +11,8 @@
 /*  */
 void FSMC_ReadDDRAM(uint16_t *pdata, int pixels){
 
+    __disable_irq();
+
     LCD->LCD_REG = 0x02;
 
     FSMC_WAIT_BUSY();
@@ -21,10 +23,14 @@ void FSMC_ReadDDRAM(uint16_t *pdata, int pixels){
         *pdata = LCD->LCD_RAM;
         pdata++;
     }
+
+    __enable_irq();
 }
 
 /*  */
 void FSMC_WriteDDRAM(uint16_t *pdata, int pixels){
+
+    __disable_irq();
 
     LCD->LCD_REG = 0x02;
 
@@ -33,4 +39,6 @@ void FSMC_WriteDDRAM(uint16_t *pdata, int pixels){
         FSMC_WAIT_BUSY();
         pdata++;
     }
+
+    __enable_irq();
 }

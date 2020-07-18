@@ -5,10 +5,22 @@
 
 
 /* BTE bool operations REG[51h] Bits[7:4] */
-#define BTE_BOOL_BLACKNESS                        0x00
-#define BTE_BOOL_DEST                             0x0A
-#define BTE_BOOL_SOURCE                           0x0C
-#define BTE_BOOL_WHITENESS                        0x0F
+#define BTE_BOOL_BLACKNESS                        0x00  // 0 (Blackness)
+#define BTE_BOOL_OP1                              0x01  // ~S * ~D or ~(S + D)
+#define BTE_BOOL_OP2                              0x02  // ~S * D
+#define BTE_BOOL_OP3                              0x03  // ~S
+#define BTE_BOOL_OP4                              0x04  // S * ~D
+#define BTE_BOOL_OP5                              0x05  // ~D
+#define BTE_BOOL_OP6                              0x06  // S^D
+#define BTE_BOOL_OP7                              0x07  // ~S + ~D or ~(S * D)
+#define BTE_BOOL_OP8                              0x08  // S * D
+#define BTE_BOOL_OP9                              0x09  // ~(S^D)
+#define BTE_BOOL_DEST                             0x0A  // D
+#define BTE_BOOL_OP11                             0x0B  // ~S + D
+#define BTE_BOOL_SOURCE                           0x0C  // S
+#define BTE_BOOL_OP13                             0x0D  // S + ~D
+#define BTE_BOOL_AND                              0x0E  // S + D
+#define BTE_BOOL_WHITENESS                        0x0F  // 1 ( Whiteness )
 
 
 /* BTE Operation Functions REG[51h] Bits[3:0] */

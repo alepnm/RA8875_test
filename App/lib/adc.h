@@ -7,7 +7,9 @@
 
 typedef struct{
     uint16_t   adcval;
-    uint16_t   adc_converted_mv;
+    uint16_t   adc_conv_mv;
+    float adc_conv_temp;
+    char str_temp[10];
 }adcdat_t;
 
 extern adcdat_t xAdcData_BankA[];
