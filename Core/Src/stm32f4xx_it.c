@@ -46,6 +46,7 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
 extern volatile uint8_t ubDmaTransferComplete;
+extern uint16_t BackLightTimeoutCounter;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -66,7 +67,7 @@ extern __IO uint32_t timestamp;
 /* USER CODE END EV */
 
 /******************************************************************************/
-/*           Cortex-M4 Processor Interruption and Exception Handlers          */
+/*           Cortex-M4 Processor Interruption and Exception Handlers          */ 
 /******************************************************************************/
 /**
   * @brief This function handles Non maskable interrupt.
@@ -163,6 +164,9 @@ void TIM6_DAC_IRQHandler(void)
   USART_TimerHandler(pSecondaryPort);
 
   timestamp++;
+
+  if(BackLightTimeoutCounter) BackLightTimeoutCounter--;
+
   /* USER CODE END TIM6_DAC_IRQn 1 */
 }
 
@@ -185,7 +189,7 @@ void DMA2_Stream0_IRQHandler(void)
 
     }
   /* USER CODE END DMA2_Stream0_IRQn 0 */
-
+  
   /* USER CODE BEGIN DMA2_Stream0_IRQn 1 */
 
   /* USER CODE END DMA2_Stream0_IRQn 1 */

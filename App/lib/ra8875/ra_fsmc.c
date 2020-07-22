@@ -3,11 +3,6 @@
 
 
 
-
-
-
-
-
 /*  */
 void FSMC_ReadDDRAM(uint16_t *pdata, int pixels){
 

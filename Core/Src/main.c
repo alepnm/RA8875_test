@@ -75,6 +75,7 @@ SemaphoreHandle_t xFsmcMutexHandle = NULL;
 
 
 __IO uint32_t timestamp;
+uint16_t BackLightTimeoutCounter = 0;
 
 char st[20];
 
@@ -92,7 +93,6 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_FSMC_Init(void);
-static void MX_TIM11_Init(void);
 static void MX_CRC_Init(void);
 static void MX_UART4_Init(void);
 static void MX_TIM7_Init(void);
@@ -150,7 +150,6 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_FSMC_Init();
-  MX_TIM11_Init();
   MX_CRC_Init();
   MX_UART4_Init();
   MX_TIM7_Init();
@@ -210,7 +209,7 @@ int main(void)
   Main_TaskHandle = osThreadCreate(osThread(Main_Task), NULL);
 
   /* definition and creation of MbTask */
-  osThreadDef(MbTask, t_ModbusTask, osPriorityIdle, 0, 128);
+  osThreadDef(MbTask, t_ModbusTask, osPriorityIdle, 0, 512);
   MbTaskHandle = osThreadCreate(osThread(MbTask), NULL);
 
   /* definition and creation of Touch_Task */
@@ -324,7 +323,7 @@ static void MX_ADC1_Init(void)
   GPIO_InitStruct.Pin = LL_GPIO_PIN_0|LL_GPIO_PIN_1|LL_GPIO_PIN_2|LL_GPIO_PIN_3
                           |LL_GPIO_PIN_4|LL_GPIO_PIN_5;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   GPIO_InitStruct.Pin = LL_GPIO_PIN_0|LL_GPIO_PIN_1;
@@ -749,66 +748,6 @@ static void MX_TIM10_Init(void)
 }
 
 /**
-  * @brief TIM11 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM11_Init(void)
-{
-
-  /* USER CODE BEGIN TIM11_Init 0 */
-
-  /* USER CODE END TIM11_Init 0 */
-
-  LL_TIM_InitTypeDef TIM_InitStruct = {0};
-  LL_TIM_OC_InitTypeDef TIM_OC_InitStruct = {0};
-
-  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-  /* Peripheral clock enable */
-  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM11);
-
-  /* USER CODE BEGIN TIM11_Init 1 */
-
-  /* USER CODE END TIM11_Init 1 */
-  TIM_InitStruct.Prescaler = 16800;
-  TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 100;
-  TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
-  LL_TIM_Init(TIM11, &TIM_InitStruct);
-  LL_TIM_DisableARRPreload(TIM11);
-  LL_TIM_OC_EnablePreload(TIM11, LL_TIM_CHANNEL_CH1);
-  TIM_OC_InitStruct.OCMode = LL_TIM_OCMODE_PWM1;
-  TIM_OC_InitStruct.OCState = LL_TIM_OCSTATE_DISABLE;
-  TIM_OC_InitStruct.OCNState = LL_TIM_OCSTATE_DISABLE;
-  TIM_OC_InitStruct.CompareValue = 50;
-  TIM_OC_InitStruct.OCPolarity = LL_TIM_OCPOLARITY_HIGH;
-  LL_TIM_OC_Init(TIM11, LL_TIM_CHANNEL_CH1, &TIM_OC_InitStruct);
-  LL_TIM_OC_DisableFast(TIM11, LL_TIM_CHANNEL_CH1);
-  /* USER CODE BEGIN TIM11_Init 2 */
-  LL_TIM_OC_SetCompareCH1(TIM11, 0);
-
-  LL_TIM_EnableAllOutputs(TIM11);
-
-  LL_TIM_CC_EnableChannel(TIM11, LL_TIM_CHANNEL_CH1);
-
-  LL_TIM_EnableCounter(TIM11);
-  /* USER CODE END TIM11_Init 2 */
-  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
-  /**TIM11 GPIO Configuration
-  PB9   ------> TIM11_CH1
-  */
-  GPIO_InitStruct.Pin = LCD_BACKLIGHT_Pin;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  GPIO_InitStruct.Alternate = LL_GPIO_AF_3;
-  LL_GPIO_Init(LCD_BACKLIGHT_GPIO_Port, &GPIO_InitStruct);
-
-}
-
-/**
   * @brief TIM12 Initialization Function
   * @param None
   * @retval None
@@ -1108,6 +1047,15 @@ static void MX_GPIO_Init(void)
   LL_GPIO_Init(U2DE_GPIO_Port, &GPIO_InitStruct);
 
   /**/
+  GPIO_InitStruct.Pin = LCD_BACKLIGHT_Pin;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  GPIO_InitStruct.Alternate = LL_GPIO_AF_3;
+  LL_GPIO_Init(LCD_BACKLIGHT_GPIO_Port, &GPIO_InitStruct);
+
+  /**/
   LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTE, LL_SYSCFG_EXTI_LINE0);
 
   /**/
@@ -1118,7 +1066,7 @@ static void MX_GPIO_Init(void)
   LL_EXTI_Init(&EXTI_InitStruct);
 
   /**/
-  LL_GPIO_SetPinPull(RA8875_INT_GPIO_Port, RA8875_INT_Pin, LL_GPIO_PULL_NO);
+  LL_GPIO_SetPinPull(RA8875_INT_GPIO_Port, RA8875_INT_Pin, LL_GPIO_PULL_UP);
 
   /**/
   LL_GPIO_SetPinMode(RA8875_INT_GPIO_Port, RA8875_INT_Pin, LL_GPIO_MODE_INPUT);
@@ -1226,7 +1174,12 @@ void t_GuiTask(void const * argument)
 void t_MainTask(void const * argument)
 {
   /* USER CODE BEGIN t_MainTask */
+    uint16_t i = 0;
+
     RA8875_Init();
+
+    BackLightTimeoutCounter = 10000;
+    LCD_SetBacklight(Display.Backlight);
 
     xTaskNotifyGive( GUI_TaskHandle );
     xTaskNotifyGive( MbTaskHandle );
@@ -1240,7 +1193,7 @@ void t_MainTask(void const * argument)
 
 
     //LCD_SelectLayer(1);
-    //LCD_SelectLayer(0);
+    LCD_SelectLayer(0);
 
 
     BTE_SolidFill(240, 136, 0, 0, 0, COL_NAVY);
@@ -1252,30 +1205,59 @@ void t_MainTask(void const * argument)
     //FSMC_WriteDDRAM(img_krym.pData, DISPLAY_PIXELS);
 
 
-
-    //RA8875_ReadExtROM(0, buf, 0x051980, 1024);
-
-
     //BTE_RasterOperation(X_SIZE, Y_SIZE, 0, 0, 1, 0, 0, 0, BTE_ROP_MOVE_POSITIVE, BTE_BOOL_OP2);
     //BTE_MoveBlockPositiveDir(100, 100, 20, 10, 0, 200, 150, 0);
 
-    LCD_ShowLayer(0);
+    //LCD_ShowLayer(0);
+
+
+    //uint8_t qqq = FLASH_ReadByte(640);
+
+    //FLASH_GetScreenByAddress(480*272);
+
+
 
     /* Infinite loop */
     for(;;)
     {
 
-        TEXT_PutStringAbs(200, 10, ds18b20[0].TemperatureStr);
-        TEXT_PutStringAbs(200, 60, xAdcData_BankA[0].str_temp);
+        TEXT_PutString(100, 10, ds18b20[0].TemperatureStr);
+        TEXT_PutString(100, 32, xAdcData_BankA[0].str_temp);
 
 
-        TEXT_PutStringAbs(200, 10, TS_Data.strXPos);
-        TEXT_PutStringAbs(260, 10, TS_Data.strYPos);
-
+        TEXT_PutStringColored(200, 10, TS_Data.strXPos, COL_YELLOW, COL_NAVY);
+        TEXT_PutStringColored(260, 10, TS_Data.strYPos, COL_BLACK, COL_GREEN);
 
         LL_GPIO_SetOutputPin(TEST_OUT_GPIO_Port, TEST_OUT_Pin);
         Delay_us(20);
         LL_GPIO_ResetOutputPin(TEST_OUT_GPIO_Port, TEST_OUT_Pin);
+
+
+        if( TP_CheckForTouch() ){
+            (void)xEventGroupSetBits( xEventGroupHandle, TOUCH_EVENT_FLAG );
+        }else{
+            (void)xEventGroupClearBits( xEventGroupHandle, TOUCH_EVENT_FLAG );
+        }
+
+
+        if(BackLightTimeoutCounter) Display.Backlight = Display.BackLightMax;
+        else{
+            if(Display.Backlight > Display.BackLightMin) Display.Backlight--;
+        }
+
+        LCD_SetBacklight(Display.Backlight);
+
+
+//        if(i == 10) FLASH_GetScreenByAddress(0x000000);
+//
+//        if(i == 20){
+//
+//            i = 0;
+//            FLASH_GetScreenByAddress(0x03FC00);
+//        }
+//
+//        i++;
+
 
         osDelay(20);
     }
@@ -1338,47 +1320,31 @@ void t_TouchTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-//      uxBits = xEventGroupWaitBits( xEventGroupHandle, TOUCH_EVENT_FLAG, pdTRUE, pdFALSE, portMAX_DELAY );
+      uxBits = xEventGroupWaitBits( xEventGroupHandle, TOUCH_EVENT_FLAG, pdFALSE, pdFALSE, portMAX_DELAY );
 
-//      if( (uxBits&TOUCH_EVENT_FLAG) == TOUCH_EVENT_FLAG){
-//
-//          LL_TIM_CC_EnableChannel(TIM10, LL_TIM_CHANNEL_CH1);
-//          osDelay(60);
-//          LL_TIM_CC_DisableChannel(TIM10, LL_TIM_CHANNEL_CH1);
-//
-//          TS_ReadXY();
-//
-//          sprintf(TS_Data.strXPos, "%3d", TS_Data.XPos);
-//          sprintf(TS_Data.strYPos, "%3d", TS_Data.YPos);
-//
-//          xEventGroupClearBits( xEventGroupHandle, TOUCH_EVENT_FLAG );
-//      }
-//
-//      osDelay(10);
+      if( (uxBits&TOUCH_EVENT_FLAG) == TOUCH_EVENT_FLAG){
 
+          LL_TIM_CC_EnableChannel(TIM10, LL_TIM_CHANNEL_CH1);
+          osDelay(60);
+          LL_TIM_CC_DisableChannel(TIM10, LL_TIM_CHANNEL_CH1);
 
-    if((FSMC_ReadStatus()&0x20) == 0x20){
+          TS_Data.IsTouched = 1;
 
-         LL_TIM_CC_EnableChannel(TIM10, LL_TIM_CHANNEL_CH1);
-         osDelay(60);
-         LL_TIM_CC_DisableChannel(TIM10, LL_TIM_CHANNEL_CH1);
+          BackLightTimeoutCounter = 40000;
 
-         TS_Data.IsTouched = 1;
+          while( (xEventGroupGetBits(xEventGroupHandle)&TOUCH_EVENT_FLAG) == TOUCH_EVENT_FLAG ){
+              TS_ReadXY_Manual();
+              osDelay(10);
+          }
 
-         while((FSMC_ReadStatus()&0x20) == 0x20){
+          TS_Data.IsTouched = 0;
 
-             TS_ReadXY_Manual();
-             osDelay(10);
-         }
+          TS_Data.XPos = 0;
+          TS_Data.YPos = 0;
 
-         TS_Data.IsTouched = 0;
-
-         TS_Data.XPos = 0;
-         TS_Data.YPos = 0;
-
-         sprintf(TS_Data.strXPos, "%3d", TS_Data.XPos);
-         sprintf(TS_Data.strYPos, "%3d", TS_Data.YPos);
-    }
+          sprintf(TS_Data.strXPos, "%3d", TS_Data.XPos);
+          sprintf(TS_Data.strYPos, "%3d", TS_Data.YPos);
+      }
 
     osDelay(50);
   }

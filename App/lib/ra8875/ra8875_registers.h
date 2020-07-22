@@ -209,4 +209,208 @@
 
 
 
+
+/*  Registru bitai  */
+
+/* STATUS Register (STSR) */
+#define RA8875_STSR_MEMORY_BUSY                   0x80
+#define RA8875_STSR_BTE_BUSY                      0x40
+#define RA8875_STSR_TOUCH_EVENT_DETECTED          0x20
+#define RA8875_STSR_SLEEP_MODE_STATUS             0x10
+#define RA8875_STSR_SERIAL_FLASH_ROM_BUSY         0x01
+
+/* Power and Display Control Register (PWRR) REG[01h] */
+#define RA8875_PWRR_LCD_DISPLAY_ON                0x80   // Display ON/OFF
+#define RA8875_PWRR_SLEEP_MODE                    0x02   // Sleep Mode/Normal Mode
+#define RA8875_PWRR_SOFTWARE_RESET                0x01   // SoftReset
+
+/* Pixel Clock Setting Register (PCSR) REG[04h] */
+#define RA8875_PCSR_DATA_FETCH_ON_RISING          0x00
+#define RA8875_PCSR_DATA_FETCH_ON_FALLING         0x80   //Falling/Rising
+#define RA8875_PCSR_PCLK_PERIOD_SYSCLK_DIV1       0x00
+#define RA8875_PCSR_PCLK_PERIOD_SYSCLK_DIV2       0x01
+#define RA8875_PCSR_PCLK_PERIOD_SYSCLK_DIV4       0x02
+#define RA8875_PCSR_PCLK_PERIOD_SYSCLK_DIV8       0x03
+
+/* Serial Flash/ROM Configuration Register (SROC) REG[05h] */
+#define RA8875_SROC_EXTROM_SELECT_CS0             0x00
+#define RA8875_SROC_EXTROM_SELECT_CS1             0x80
+#define RA8875_SROC_ADRESS_MODE_24BIT             0x00
+#define RA8875_SROC_WAVEFORM_MODE0                0x00
+#define RA8875_SROC_WAVEFORM_MODE3                0x20
+#define RA8875_SROC_ROM_READ_CYCLE_NO_DUMMY       0x00
+#define RA8875_SROC_ROM_READ_CYCLE_ONE_BYTE       0x08
+#define RA8875_SROC_ROM_READ_CYCLE_TWO_BYTE       0x10
+#define RA8875_SROC_ROM_ACCESS_MODE_FONT          0x00
+#define RA8875_SROC_ROM_ACCESS_MODE_DMA           0x04
+#define RA8875_SROC_ROM_DATA_LATCH_MODE_SINGLE    0x00
+#define RA8875_SROC_ROM_DATA_LATCH_MODE_DUAL0     0x02
+#define RA8875_SROC_ROM_DATA_LATCH_MODE_DUAL1     0x03
+
+/* Serial Flash/ROM CLK Setting Register (SFCLR) REG[06h] */
+#define RA8875_SFCLR_SFCL_FREQ_SYSCLK_DIV1        0x00
+#define RA8875_SFCLR_SFCL_FREQ_SYSCLK_DIV2        0x02
+#define RA8875_SFCLR_SFCL_FREQ_SYSCLK_DIV4        0x03
+
+/* System Configuration Register (SYSR) REG[10h] */
+#define RA8875_SYSR_COLOR_DEPTH_256               0x00
+#define RA8875_SYSR_COLOR_DEPTH_16K               (2<<2)
+#define RA8875_SYSR_MCU_INTERFACE_8BIT            0x00
+#define RA8875_SYSR_MCU_INTERFACE_16BIT           0x02
+
+
+/* xSYNC Pulse Width Register (xPWR) REG[18h] ir REG[1Fh] */
+#define RA8875_xPWR_SYNC_POLARITY_LOW             0x00
+#define RA8875_xPWR_SYNC_POLARITY_HIGH            0x80
+
+
+/* Display Configuration Register (DPCR) REG[20h] */
+#define RA8875_DPCR_ONE_LAYER                     0x00
+#define RA8875_DPCR_TWO_LAYER                     0x80
+#define RA8875_DPCR_HSCAN_DIR_RIGHT               0x00
+#define RA8875_DPCR_HSCAN_DIR_LEFT                0x08
+#define RA8875_DPCR_VSCAN_DIR_RIGHT               0x00
+#define RA8875_DPCR_VSCAN_DIR_LEFT                0x04
+
+
+/* Font Control Register 0 (FNCR0) REG[21h] */
+#define RA8875_FNCR0_FONT_CGROM                   0x00
+#define RA8875_FNCR0_FONT_CGRAM                   0x80
+#define RA8875_FNCR0_FONT_INTERNAL_CGROM          0x00
+#define RA8875_FNCR0_FONT_EXTERNAL_CGROM          0x20
+#define RA8875_FNCR0_FONT_IEC8859_1               0x00
+#define RA8875_FNCR0_FONT_IEC8859_2               0x01
+#define RA8875_FNCR0_FONT_IEC8859_3               0x02
+#define RA8875_FNCR0_FONT_IEC8859_4               0x03
+
+/* Font Control Register 1 (FNCR1) REG[22h] */
+#define RA8875_FNCR1_ALIGMENT_DISABLE             0x00
+#define RA8875_FNCR1_ALIGMENT_ENABLE              0x80
+#define RA8875_FNCR1_BG_TRANSPARENCY_OFF          0x00
+#define RA8875_FNCR1_BG_TRANSPARENCY_ON           0x40
+#define RA8875_FNCR1_FONT_ROTATION_DEG0           0x00
+#define RA8875_FNCR1_FONT_ROTATION_DEG90          0x10
+#define RA8875_FNCR1_FONT_HENLARGEMENT_X1         0x00
+#define RA8875_FNCR1_FONT_HENLARGEMENT_X2         (1<<2)
+#define RA8875_FNCR1_FONT_HENLARGEMENT_X3         (2<<2)
+#define RA8875_FNCR1_FONT_HENLARGEMENT_X4         (3<<2)
+#define RA8875_FNCR1_FONT_VENLARGEMENT_X1         0x00
+#define RA8875_FNCR1_FONT_VENLARGEMENT_X2         0x01
+#define RA8875_FNCR1_FONT_VENLARGEMENT_X3         0x02
+#define RA8875_FNCR1_FONT_VENLARGEMENT_X4         0x03
+
+/* Font Write Type Setting Register REG[2Eh] */
+#define RA8875_FWTSR_FONT_SIZE_16X16              0x00
+#define RA8875_FWTSR_FONT_SIZE_24X24              0x40
+#define RA8875_FWTSR_FONT_SIZE_32X32              0x80
+#define RA8875_FWTSR_FONT_TO_FONT_WIDTH_MSK       0x3F
+
+/* Serial Font ROM Setting REG[2Fh] */
+#define RA8875_SFROM_ROM_SELECT_TYPE1             0x00
+#define RA8875_SFROM_ROM_SELECT_TYPE2             (1<<5)
+#define RA8875_SFROM_ROM_SELECT_TYPE3             (2<<5)
+#define RA8875_SFROM_ROM_SELECT_TYPE4             (3<<5)
+#define RA8875_SFROM_ROM_SELECT_TYPE5             (4<<5)
+#define RA8875_SFROM_FONT_CODING_GB2312           0x00
+#define RA8875_SFROM_FONT_CODING_GB12345          (1<<2)
+#define RA8875_SFROM_FONT_CODING_BIG5             (2<<2)
+#define RA8875_SFROM_FONT_CODING_UNICODE          (3<<2)
+#define RA8875_SFROM_FONT_CODING_ASCII            (4<<2)
+#define RA8875_SFROM_FONT_CODING_UNI_JAP          (5<<2)
+#define RA8875_SFROM_FONT_CODING_JIS0208          (6<<2)
+#define RA8875_SFROM_FONT_CODING_OTHER            (7<<2)
+#define RA8875_SFROM_FONT_TYPE_NORMAL             0x00
+#define RA8875_SFROM_FONT_TYPE_ARIAL              0x01
+#define RA8875_SFROM_FONT_TYPE_ROMAN              0x02
+#define RA8875_SFROM_FONT_TYPE_BOLD               0x03
+
+
+/* Memory Write Control Register 0 (MWCR0) REG[40h] */
+#define RA8875_MWCR0_GRAPHIC_MODE                 0x00
+#define RA8875_MWCR0_TEXT_MODE                    0x80
+#define RA8875_MWCR0_CURSOR_NOT_VISIBLE           0x00
+#define RA8875_MWCR0_CURSOR_VISIBLE               0x40
+#define RA8875_MWCR0_CURSOR_BLINK_DISABLE         0x00
+#define RA8875_MWCR0_CURSOR_BLINK_ENABLE          0x20
+#define RA8875_MWCR0_MEM_WRITE_DIR_LR_TD          0x00
+#define RA8875_MWCR0_MEM_WRITE_DIR_RL_TD          (1<<2)
+#define RA8875_MWCR0_MEM_WRITE_DIR_TD_LR          (2<<2)
+#define RA8875_MWCR0_MEM_WRITE_DIR_DT_LR          (3<<2)
+#define RA8875_MWCR0_MEM_WRITE_AUTOINC_ENABLE     0x00
+#define RA8875_MWCR0_MEM_WRITE_AUTOINC_DISABLE    0x02
+#define RA8875_MWCR0_MEM_READ_AUTOINC_ENABLE      0x00
+#define RA8875_MWCR0_MEM_READ_AUTOINC_DISABLE     0x01
+
+/* Memory Write Control Register 1 (MWCR1) REG[41h] */
+#define RA8875_MWCR1_GRAPHIC_CURSOR_DISABLE       0x00
+#define RA8875_MWCR1_GRAPHIC_CURSOR_ENABLE        0x80
+#define RA8875_MWCR1_GRAPHIC_CURSOR_SET1          0x00
+#define RA8875_MWCR1_GRAPHIC_CURSOR_SET2          (1<<4)
+#define RA8875_MWCR1_GRAPHIC_CURSOR_SET3          (2<<4)
+#define RA8875_MWCR1_GRAPHIC_CURSOR_SET4          (3<<4)
+#define RA8875_MWCR1_GRAPHIC_CURSOR_SET5          (4<<4)
+#define RA8875_MWCR1_GRAPHIC_CURSOR_SET6          (5<<4)
+#define RA8875_MWCR1_GRAPHIC_CURSOR_SET7          (6<<4)
+#define RA8875_MWCR1_GRAPHIC_CURSOR_SET8          (7<<4)
+#define RA8875_MWCR1_WR_DEST_SEL_LAYER1_2         0x00
+#define RA8875_MWCR1_WR_DEST_SEL_CGRAM            (1<<2)
+#define RA8875_MWCR1_WR_DEST_SEL_GRAPH_CURSOR     (2<<2)
+#define RA8875_MWCR1_WR_DEST_SEL_PATTERN          (3<<2)
+#define RA8875_MWCR1_SELECT_LAYER1                0x00
+#define RA8875_MWCR1_SELECT_LAYER2                0x01
+
+
+/* Memory Read Cursor Direction (MRCD) REG[45h] */
+#define RA8875_MRCD_MEM_READ_DIR_LR_TD            0x00
+#define RA8875_MRCD_MEM_READ_DIR_RL_TD            (1<<2)
+#define RA8875_MRCD_MEM_READ_DIR_TD_LR            (2<<2)
+#define RA8875_MRCD_MEM_READ_DIR_DT_LR            (3<<2)
+
+
+/* BTE Function Control Register 0 (BECR0) REG[50h] */
+#define RA8875_BECR0_BTE_ENABLE                   0x80
+#define RA8875_BECR0_BTE_IDLE                     0x00
+#define RA8875_BECR0_BTE_BUSY                     0x80
+#define RA8875_BECR0_BTE_SOURCE_BLOCK_MODE        0x00
+#define RA8875_BECR0_BTE_SOURCE_LINEAR_MODE       0x40
+#define RA8875_BECR0_BTE_DEST_BLOCK_MODE          0x00
+#define RA8875_BECR0_BTE_DEST_LINEAR_MODE         0x20
+
+
+
+/* PLL Control Register1 (PLLC1) REG[88h] */
+#define RA8875_PLLC1_PLL_PREDIV1                  0x00
+#define RA8875_PLLC1_PLL_PREDIV2                  0x80
+
+/* PLL Control Register2 (PLLC2) REG[89h] */
+#define RA8875_PLLC2_PLL_PLLDIV1                  0x00
+#define RA8875_PLLC2_PLL_PLLDIV2                  0x01
+#define RA8875_PLLC2_PLL_PLLDIV4                  0x02
+#define RA8875_PLLC2_PLL_PLLDIV8                  0x03
+#define RA8875_PLLC2_PLL_PLLDIV16                 0x04
+#define RA8875_PLLC2_PLL_PLLDIV32                 0x05
+#define RA8875_PLLC2_PLL_PLLDIV64                 0x06
+#define RA8875_PLLC2_PLL_PLLDIV1128               0x07
+
+
+
+
+/* PWMx Control Register (PxCR) REG[8Ah] ir REG[8Ch] */
+#define RA8875_PxCR_PWM_DISABLE                   0x00
+#define RA8875_PxCR_PWM_ENABLE                    0x80
+#define RA8875_PxCR_PWM_DISABLE_LEVEL_LOW         0x00
+#define RA8875_PxCR_PWM_DISABLE_LEVEL_HIGH        0x40
+#define RA8875_PxCR_PWM_FUNC_PWM                  0x00
+#define RA8875_PxCR_PWM_FUNC_FIXED_FREQ_SIGNAL    0x10
+#define RA8875_PxCR_PWM_CLOCK_DIV1                0x00
+#define RA8875_PxCR_PWM_CLOCK_DIV2                0x01
+#define RA8875_PxCR_PWM_CLOCK_DIV4                0x02
+#define RA8875_PxCR_PWM_CLOCK_DIV8                0x03
+#define RA8875_PxCR_PWM_CLOCK_DIV16               0x04
+#define RA8875_PxCR_PWM_CLOCK_DIV32               0x05
+#define RA8875_PxCR_PWM_CLOCK_DIV64               0x06
+#define RA8875_PxCR_PWM_CLOCK_DIV128              0x07
+
+
+
 #endif /* RA8875_REGISTERS_H_INCLUDED */

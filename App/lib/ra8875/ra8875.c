@@ -27,7 +27,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "ra8875.h"
 #include "ra8875_registers.h"
+
+#include "cmsis_os.h"
 #include "timers.h"
+
+
+
 /* Private typedef -----------------------------------------------------------*/
 
 
@@ -80,24 +85,25 @@ void RA8875_Init(void) {
 
     /* Display ON */
     LCD_Display_OnOff(1);
-
     FSMC_WAIT_BUSY();
+
+    RA8875_ClearScreen();
 
     /* register rw test */
     {
         uint8_t tmp1, tmp2;
 
-        FSMC_WriteRegister(0x23, 0x55);
+        FSMC_WriteRegister(RA8875_REG_CGSR, 0x55);
 
         FSMC_WAIT_BUSY();
 
-        tmp1 = FSMC_ReadRegister(0x23);
+        tmp1 = FSMC_ReadRegister(RA8875_REG_CGSR);
 
-        FSMC_WriteRegister(0x23, 0xAA);
+        FSMC_WriteRegister(RA8875_REG_CGSR, 0xAA);
 
         FSMC_WAIT_BUSY();
 
-        tmp2 = FSMC_ReadRegister(0x23);
+        tmp2 = FSMC_ReadRegister(RA8875_REG_CGSR);
 
         if ((tmp1 == 0x55) && (tmp2 == 0xAA)) RegisterTestStatus = 1;
 
@@ -107,65 +113,79 @@ void RA8875_Init(void) {
 
 
     /* PLL clock frequency */
-    FSMC_WriteRegister(0x88, 0x04);   // PLL Control Register1
+    FSMC_WriteRegister(RA8875_REG_PLLC1, RA8875_PLLC1_PLL_PREDIV1|0x8);   // PLL Control Register1
     HAL_Delay(1);
-    FSMC_WriteRegister(0x89, 0x01);   // PLL Control Register2
+    FSMC_WriteRegister(RA8875_REG_PLLC2, RA8875_PLLC2_PLL_PLLDIV2);   // PLL Control Register2
     HAL_Delay(1);
 
 
     /* color deep/MCU Interface */
-    FSMC_WriteRegister(0x10, 0x0F);   // System Configuration Register
+    FSMC_WriteRegister(RA8875_REG_SYSR, RA8875_SYSR_COLOR_DEPTH_16K|RA8875_SYSR_MCU_INTERFACE_16BIT);   // System Configuration Register
 
     /* pixel clock period */
-    FSMC_WriteRegister(0x04, 0x83);   // Pixel Clock Setting Register
+    FSMC_WriteRegister(RA8875_REG_PCSR, 0x83);   // Pixel Clock Setting Register
     HAL_Delay(1);
 
     /* Serial Flash/ROM settings */
-    FSMC_WriteRegister(0x05, 0x00);   // Serial Flash/ROM Configuration Register
-    FSMC_WriteRegister(0x06, 0x02);   // Serial Flash/ROM CLK Setting Register
+    FSMC_WriteRegister(RA8875_REG_SFCLR, 0x03);   // Serial Flash/ROM CLK Setting Register
+    FSMC_WriteRegister(RA8875_REG_SROC, 0x00);   // Serial Flash/ROM Configuration Register
 
     /* Horisontal settings */
-    FSMC_WriteRegister(0x14, (uint8_t)(X_SIZE/8-1));   // LCD Horizontal Display Width Register
-    FSMC_WriteRegister(0x15, 0x02);   // Horizontal Non-Display Period Fine Tuning Option Register
-    FSMC_WriteRegister(0x16, 0x03);   // LCD Horizontal Non-Display Period Register
-    FSMC_WriteRegister(0x17, 0x01);   // HSYNC Start Position Register
-    FSMC_WriteRegister(0x18, 0x03);   // HSYNC Pulse Width Register
+    FSMC_WriteRegister(RA8875_REG_HDWR, (uint8_t)(X_SIZE/8-1));   // LCD Horizontal Display Width Register
+    FSMC_WriteRegister(RA8875_REG_HNDFTR, 0x02);   // Horizontal Non-Display Period Fine Tuning Option Register
+    FSMC_WriteRegister(RA8875_REG_HNDR, 0x03);   // LCD Horizontal Non-Display Period Register
+    FSMC_WriteRegister(RA8875_REG_HSTR, 0x01);   // HSYNC Start Position Register
+    FSMC_WriteRegister(RA8875_REG_HPWR, RA8875_xPWR_SYNC_POLARITY_LOW|0x03);   // HSYNC Pulse Width Register
 
     /* Vertical settings */
-    FSMC_WriteRegister(0x19, (uint8_t)(Y_SIZE-1));        // LCD Vertical Display Height Register0
-    FSMC_WriteRegister(0x1A, (uint8_t)((Y_SIZE-1)>>8));   // LCD Vertical Display Height Register1
-    FSMC_WriteRegister(0x1B, 0x0F);   // LCD Vertical Non-Display Period Register0
-    FSMC_WriteRegister(0x1C, 0x00);   // LCD Vertical Non-Display Period Register1
+    FSMC_WriteRegister(RA8875_REG_VDHR0, (uint8_t)(Y_SIZE-1));        // LCD Vertical Display Height Register0
+    FSMC_WriteRegister(RA8875_REG_VDHR1, (uint8_t)((Y_SIZE-1)>>8));   // LCD Vertical Display Height Register1
+    FSMC_WriteRegister(RA8875_REG_VNDR0, 0x0F);   // LCD Vertical Non-Display Period Register0
+    FSMC_WriteRegister(RA8875_REG_VNDR1, 0x00);   // LCD Vertical Non-Display Period Register1
 
-    FSMC_WriteRegister(0x1D, 0x0E);   // VSYNC Start Position Register0
-    FSMC_WriteRegister(0x1E, 0x06);   // VSYNC Start Position Register1
-    FSMC_WriteRegister(0x1F, 0x01);   // VSYNC Pulse Width Register
+    FSMC_WriteRegister(RA8875_REG_VSTR0, 0x0E);   // VSYNC Start Position Register0
+    FSMC_WriteRegister(RA8875_REG_VSTR1, 0x06);   // VSYNC Start Position Register1
+    FSMC_WriteRegister(RA8875_REG_VPWR, RA8875_xPWR_SYNC_POLARITY_LOW|0x03);   // VSYNC Pulse Width Register
 
-    FSMC_WriteRegister(0x20, 0x8C);   // Display Configuration Register
+    FSMC_WriteRegister(RA8875_REG_DPCR, RA8875_DPCR_TWO_LAYER|
+                                        RA8875_DPCR_HSCAN_DIR_LEFT|
+                                        RA8875_DPCR_VSCAN_DIR_LEFT);   // Display Configuration Register
 
-    /* setting active window X */
-    FSMC_WriteRegister(0x30, 0x00);      // Horizontal Start Point0 of Active Window
-    FSMC_WriteRegister(0x31, 0x00);      // Horizontal Start Point1 of Active Window
-    FSMC_WriteRegister(0x34, (uint8_t)(X_SIZE&0x00FF)-1);    // Horizontal End Point0 of Active Window
-    FSMC_WriteRegister(0x35, (uint8_t)((X_SIZE>>8)&0x03));   // Horizontal End Point1 of Active Window
+    RA8875_ExtROMFont();      // init external ROM
+    RA8875_CGROMFont(0x00);   // init CGROM
+
+    FSMC_WriteRegister(RA8875_REG_FLDR, 0x00);   // Font Line Distance Setting Register
+
+    RA8875_SetActiveWindow(0, 0, X_SIZE-1, Y_SIZE-1);
+    RA8875_ClearActiveWindow();
+
+    RA8875_SetScrollWindow(0, 0, X_SIZE-1, Y_SIZE-1);
 
 
-    /* setting active window Y */
-    FSMC_WriteRegister(0x32, 0x00);      // Vertical Start Point0 of Active Window
-    FSMC_WriteRegister(0x33, 0x00);      // Vertical Start Point1 of Active Window
-    FSMC_WriteRegister(0x36, (uint8_t)(Y_SIZE&0x00FF)-1);    // Vertical End Point0 of Active Window
-    FSMC_WriteRegister(0x37, (uint8_t)((Y_SIZE>>8)&0x03));   // Vertical End Point1 of Active Window
+    FSMC_WriteRegister(RA8875_REG_MWCR0, RA8875_MWCR0_GRAPHIC_MODE|
+                                         RA8875_MWCR0_CURSOR_NOT_VISIBLE|
+                                         RA8875_MWCR0_CURSOR_BLINK_DISABLE|
+                                         RA8875_MWCR0_MEM_WRITE_DIR_LR_TD|
+                                         RA8875_MWCR0_MEM_WRITE_AUTOINC_ENABLE|
+                                         RA8875_MWCR0_MEM_READ_AUTOINC_ENABLE);   // Memory Write Control Register 0
+
+    FSMC_WriteRegister(RA8875_REG_MWCR1, RA8875_MWCR1_GRAPHIC_CURSOR_DISABLE|
+                                         RA8875_MWCR1_GRAPHIC_CURSOR_SET1|
+                                         RA8875_MWCR1_WR_DEST_SEL_LAYER1_2|
+                                         RA8875_MWCR1_SELECT_LAYER1);   // Memory Write Control Register 1
+
+    FSMC_WriteRegister(RA8875_REG_BTCR, 0x00);   //Blink Time Control Register
+
+    FSMC_WriteRegister(RA8875_REG_MRCD, RA8875_MRCD_MEM_READ_DIR_LR_TD);   // Memory Read Cursor Direction
 
 
-    /* touch panel init */
-    TS_Init();
+    FSMC_WriteRegister(RA8875_REG_BECR0, RA8875_BECR0_BTE_SOURCE_BLOCK_MODE|RA8875_BECR0_BTE_DEST_BLOCK_MODE);
 
-    FSMC_WriteRegister(0x8A, 0x83);    // PWM1 Control Register
-    FSMC_WriteRegister(0x8C, 0x83);    // PWM2 Control Register
+    FSMC_WriteRegister(RA8875_REG_P1CR, RA8875_PxCR_PWM_ENABLE|RA8875_PxCR_PWM_CLOCK_DIV8);    // PWM1 Control Register
+    FSMC_WriteRegister(RA8875_REG_P1DCR, 0x80);
 
-    RA8875_ConfigIRQ();
-
-    LCD_SetBacklight(80);
+    FSMC_WriteRegister(RA8875_REG_P2CR, RA8875_PxCR_PWM_ENABLE|RA8875_PxCR_PWM_CLOCK_DIV8);    // PWM2 Control Register
+    FSMC_WriteRegister(RA8875_REG_P2DCR, 0x80);
 
     /* data bus test. */
     {
@@ -175,7 +195,7 @@ void RA8875_Init(void) {
         __disable_irq();
 
         /* irasom i GRAM testinius duomenys */
-        FSMC_WriteRegister(0x40, 0x00);
+        FSMC_WriteRegister(RA8875_REG_MWCR0, 0x00);
 
         RA8875_SetPixelWriteCursor(0, 0);
 
@@ -190,7 +210,7 @@ void RA8875_Init(void) {
 
 
         /* tikrinam irasytus testines duomenys */
-        FSMC_WriteRegister(0x45, 0x00);
+        FSMC_WriteRegister(RA8875_REG_MRCD, 0x00);
 
         RA8875_SetPixelWriteCursor(0, 0);
 
@@ -231,20 +251,43 @@ void RA8875_Init(void) {
 
         __enable_irq();
 
+        FLASH_ExtFlashInit();
+
+        RA8875_SelectRomChip(RA8875_ROM_FONT_CHIP);
 
         //RA8875_ExtROMFont();
-        RA8875_CGROMFont();
+        RA8875_CGROMFont(RA8875_FNCR0_FONT_IEC8859_4);
+
+        /* touch panel init */
+        TS_Init();
+
+        RA8875_ConfigIRQ();
+
+        Display.BackLightMax = BACKLIGHT_MAX_DEF;
+        Display.BackLightMin = BACKLIGHT_MIN_DEF;
+        Display.Backlight = Display.Backlight;
+
+        LCD_SetBacklight(Display.Backlight);
 
         LCD_Clear();
 
-        if(BusTestStatus) TEXT_PutString(0, 0, "BUS Test OK...");
-        else TEXT_PutString(0, 0, "BUS Test FAIL...");
+        if(BusTestStatus){
+            TEXT_PutStringColored(0, 0, "BUS Test OK...", COL_GREEN, COL_BLACK);
+        }else{
+            TEXT_PutStringColored(0, 0, "BUS Test FAIL...", COL_RED, COL_BLACK);
+        }
 
-        if(RegisterTestStatus) TEXT_PutString(0, 1, "Register Test OK...");
-        else TEXT_PutString(0, 1, "Register Test FAIL...");
+        if(RegisterTestStatus){
+            TEXT_PutStringColored(0, 16, "Register Test OK...", COL_GREEN, COL_BLACK);
+        }else{
+            TEXT_PutStringColored(0, 16, "Register Test FAIL...", COL_RED, COL_BLACK);
+        }
 
-        if( TS_Init() ) TEXT_PutString(0, 2, "Touchscreen initial OK...");
-        else TEXT_PutString(0, 2, "Touchscreen initial FAIL...");
+        if( TS_Init() ){
+            TEXT_PutStringColored(0, 32, "Touchscreen initial OK...", COL_GREEN, COL_BLACK);
+        }else{
+            TEXT_PutStringColored(0, 32, "Touchscreen initial FAIL...", COL_RED, COL_BLACK);
+        }
 
         HAL_Delay(1000);
 
@@ -252,97 +295,86 @@ void RA8875_Init(void) {
 }
 
 
+/* pasirenkam ROM chipa */
+void RA8875_SelectRomChip(uint8_t chip){
+
+    if(chip == RA8875_ROM_FONT_CHIP){
+        FSMC_WriteRegister(RA8875_REG_SFCLR, RA8875_SFCLR_SFCL_FREQ_SYSCLK_DIV4);
+        FSMC_WriteRegister(RA8875_REG_SROC, RA8875_SROC_EXTROM_SELECT_CS0|RA8875_SROC_ROM_ACCESS_MODE_FONT);
+    }else{
+        FSMC_WriteRegister(RA8875_REG_SFCLR, RA8875_SFCLR_SFCL_FREQ_SYSCLK_DIV1);
+        FSMC_WriteRegister(RA8875_REG_SROC, RA8875_SROC_EXTROM_SELECT_CS1|RA8875_SROC_ROM_ACCESS_MODE_DMA|RA8875_SROC_ROM_DATA_LATCH_MODE_DUAL1);
+    }
+}
+
+
 
 /* ok */
-void RA8875_CGROMFont(void){
+void RA8875_CGROMFont(uint8_t coding){
 
-    Display.Font.Type = 0;
-    Display.Font.Width = 8;
-    Display.Font.Height = 16;
-
-    Display.Columns = X_SIZE/Display.Font.Width;
-    Display.Lines = Y_SIZE/Display.Font.Height;
-
-    uint8_t tmp = FSMC_ReadRegister(0x21);
-
-    CLEAR_BIT(tmp, 1<<7);
-    CLEAR_BIT(tmp, 1<<5);
-
-    FSMC_WriteRegister(0x21, tmp);
-    FSMC_WriteRegister(0x22, 0x00);
-    FSMC_WriteRegister(0x2E, 0x00);
-    FSMC_WriteRegister(0x2F, 0x00);
+    FSMC_WriteRegister(RA8875_REG_FNCR0, RA8875_FNCR0_FONT_CGROM|RA8875_FNCR0_FONT_INTERNAL_CGROM|coding);
+    FSMC_WriteRegister(RA8875_REG_FNCR1, RA8875_FNCR1_ALIGMENT_DISABLE|RA8875_FNCR1_BG_TRANSPARENCY_OFF|
+                                         RA8875_FNCR1_FONT_ROTATION_DEG0|RA8875_FNCR1_FONT_HENLARGEMENT_X1|
+                                         RA8875_FNCR1_FONT_VENLARGEMENT_X1);
+    FSMC_WriteRegister(RA8875_REG_FTSR, RA8875_FWTSR_FONT_SIZE_16X16|0x00);
 }
 
 /* ok */
 void RA8875_ExtROMFont(void){
 
-    Display.Font.Type = 1;
-    Display.Font.Width = 8;
-    Display.Font.Height = 12;
+    FSMC_WriteRegister(RA8875_REG_FNCR0, RA8875_FNCR0_FONT_EXTERNAL_CGROM);
+    FSMC_WriteRegister(RA8875_REG_FNCR1, RA8875_FNCR1_ALIGMENT_DISABLE|RA8875_FNCR1_BG_TRANSPARENCY_OFF|
+                                         RA8875_FNCR1_FONT_ROTATION_DEG0|RA8875_FNCR1_FONT_HENLARGEMENT_X1|
+                                         RA8875_FNCR1_FONT_VENLARGEMENT_X1);
 
-    Display.Columns = X_SIZE/Display.Font.Width;
-    Display.Lines = Y_SIZE/Display.Font.Height;
-
-    uint8_t tmp = FSMC_ReadRegister(0x21);
-
-    CLEAR_BIT(tmp, 1<<7);
-    SET_BIT(tmp, 1<<5);
-
-    FSMC_WriteRegister(0x21, tmp);
-
-    FSMC_WriteRegister(0x06, 0x03);
-    FSMC_WriteRegister(0x05, 0x00);
-    FSMC_WriteRegister(0x2E, 0x00);
-    FSMC_WriteRegister(0x2F, 0x13);
-
-    FSMC_WriteRegister(0x22, 0x00);
+    FSMC_WriteRegister(RA8875_REG_FTSR, RA8875_FWTSR_FONT_SIZE_16X16|0x00);
+    FSMC_WriteRegister(RA8875_REG_FROM, RA8875_SFROM_ROM_SELECT_TYPE1|RA8875_SFROM_FONT_CODING_ASCII|RA8875_SFROM_FONT_TYPE_ARIAL);
 }
 
 
 /* ok */
 void RA8875_SetTextMode(void){
 
-    uint8_t tmp = FSMC_ReadRegister(0x40);
+    uint8_t tmp = FSMC_ReadRegister(RA8875_REG_MWCR0);
 
     SET_BIT(tmp, 0x80);
-    FSMC_WriteRegister(0x40, tmp);
+    FSMC_WriteRegister(RA8875_REG_MWCR0, tmp);
 }
 
 /* ok */
 void RA8875_SetGraphicMode(void){
 
-    uint8_t tmp = FSMC_ReadRegister(0x40);
+    uint8_t tmp = FSMC_ReadRegister(RA8875_REG_MWCR0);
 
     CLEAR_BIT(tmp, 0x80);
-    FSMC_WriteRegister(0x40, tmp);
+    FSMC_WriteRegister(RA8875_REG_MWCR0, tmp);
 }
 
 /* texto rasymo koordinates nustatymas */
 void RA8875_SetTextWriteCursorAbs(uint16_t x, uint16_t y)
 {
-    FSMC_WriteRegister(0x2A, x);
-    FSMC_WriteRegister(0x2B, x>>8);
-    FSMC_WriteRegister(0x2C, y);
-    FSMC_WriteRegister(0x2D, y>>8);
+    FSMC_WriteRegister(RA8875_REG_FCURXL, x);
+    FSMC_WriteRegister(RA8875_REG_FCURXH, x>>8);
+    FSMC_WriteRegister(RA8875_REG_FCURYL, y);
+    FSMC_WriteRegister(RA8875_REG_FCURYH, y>>8);
 }
 
 /* pikselio rasymo i LCD RAM koordinates nustatymas  */
 void RA8875_SetPixelWriteCursor(uint16_t x, uint16_t y)
 {
-    FSMC_WriteRegister(0x47, x>>8);
-    FSMC_WriteRegister(0x46, x);
-    FSMC_WriteRegister(0x49, y>>8);
-    FSMC_WriteRegister(0x48, y);
+    FSMC_WriteRegister(RA8875_REG_CURH0, x);
+    FSMC_WriteRegister(RA8875_REG_CURH1, x>>8);
+    FSMC_WriteRegister(RA8875_REG_CURV0, y);
+    FSMC_WriteRegister(RA8875_REG_CURV1, y>>8);
 }
 
 /* pikselio skaitymo is LCD RAM koordinates nustatymas */
 void RA8875_SetPixelReadCursor(uint16_t x, uint16_t y)
 {
-    FSMC_WriteRegister(0x4B, x>>8);
-    FSMC_WriteRegister(0x4A, x);
-    FSMC_WriteRegister(0x4D, y>>8);
-    FSMC_WriteRegister(0x4C, y);
+    FSMC_WriteRegister(RA8875_REG_RCURH0, x);
+    FSMC_WriteRegister(RA8875_REG_RCURH1, x>>8);
+    FSMC_WriteRegister(RA8875_REG_RCURV0, y);
+    FSMC_WriteRegister(RA8875_REG_RCURV1, y>>8);
 }
 
 
@@ -367,16 +399,57 @@ void RA8875_WritePixel(uint16_t xpos, uint16_t ypos, uint16_t pixel){
 }
 
 
+/* Active window settings */
+void RA8875_SetActiveWindow(uint16_t startx, uint16_t starty, uint16_t endx, uint16_t endy){
+
+    FSMC_WriteRegister(RA8875_REG_HSAW0, (uint8_t)startx);
+    FSMC_WriteRegister(RA8875_REG_HSAW1, (uint8_t)(startx>>8));
+    FSMC_WriteRegister(RA8875_REG_VSAW0, (uint8_t)starty);
+    FSMC_WriteRegister(RA8875_REG_VSAW1, (uint8_t)(starty>>8));
+
+    FSMC_WriteRegister(RA8875_REG_HEAW0, (uint8_t)endx);
+    FSMC_WriteRegister(RA8875_REG_HEAW1, (uint8_t)(endx>>8));
+    FSMC_WriteRegister(RA8875_REG_VEAW0, (uint8_t)endy);
+    FSMC_WriteRegister(RA8875_REG_VEAW1, (uint8_t)(endy>>8));
+}
+
+
+/* hardwarinis aktyvaus lango isvalymas */
+void RA8875_ClearActiveWindow(void){
+
+    FSMC_WriteRegister(RA8875_REG_MCLR, 0xC0);
+    while( (FSMC_ReadRegister(RA8875_REG_MCLR)&0x80) == 0x80 );
+}
+
+/* hardwarinis displejaus isvalymas */
+void RA8875_ClearScreen(void){
+
+    FSMC_WriteRegister(RA8875_REG_MCLR, 0x80);
+    while( (FSMC_ReadRegister(RA8875_REG_MCLR)&0x80) == 0x80 );
+}
+
+
+/* Scroll window settinga */
+void RA8875_SetScrollWindow(uint16_t startx, uint16_t starty, uint16_t endx, uint16_t endy){
+
+    FSMC_WriteRegister(RA8875_REG_HSSW0, (uint8_t)startx);
+    FSMC_WriteRegister(RA8875_REG_HSSW1, (uint8_t)(startx>>8));
+    FSMC_WriteRegister(RA8875_REG_VSSW0, (uint8_t)starty);
+    FSMC_WriteRegister(RA8875_REG_VSSW1, (uint8_t)(starty>>8));
+
+    FSMC_WriteRegister(RA8875_REG_HESW0, (uint8_t)endx);
+    FSMC_WriteRegister(RA8875_REG_HESW1, (uint8_t)(endx>>8));
+    FSMC_WriteRegister(RA8875_REG_VESW0, (uint8_t)endy);
+    FSMC_WriteRegister(RA8875_REG_VESW1, (uint8_t)(endy>>8));
+}
+
 
 /*   */
-void RA8875_SetPwm(uint8_t ch, int pwm_duty_cycle)
+void RA8875_SetPwm(uint8_t ch, int val)
 {
-    uint8_t reg = (ch) ? 0x8B : 0x8D;
-    uint16_t value = (pwm_duty_cycle * 2.56);
+    uint8_t reg = (ch == 0 || ch == 1) ? 0x8B : 0x8D;
 
-    if(value > 255) value = 255;
-
-    FSMC_WriteRegister(reg, value);
+    FSMC_WriteRegister(reg, val);
 }
 
 
@@ -404,50 +477,10 @@ void RA8875_Reset(void)
 /* ok */
 void RA8875_SetCursor(uint8_t xpos, uint16_t ypos) {
 
-    FSMC_WriteRegister(0x32, xpos);
-    FSMC_WriteRegister(0x33, ypos);
+    FSMC_WriteRegister(RA8875_REG_VSAW0, xpos);
+    FSMC_WriteRegister(RA8875_REG_VSAW1, ypos);
 }
 
-
-
-/*  */
-void RA8875_ClearActiveWindow(void){
-
-    FSMC_WriteRegister(0x8E, 0xC0);
-    FSMC_WAIT_BUSY();
-}
-
-
-
-/*  Direct Access Mode
-rom = 0 - external Font ROM
-rom = 1 - external flash
-*/
-void RA8875_ReadExtROM(uint8_t rom, uint8_t *buf, uint32_t addr, uint32_t len){
-
-    uint32_t i = 0;
-
-    if(rom != 0) rom = 0x80;
-
-    FSMC_WriteRegister(0x05, rom | 0x04);   // DMA mode
-
-    FSMC_WriteRegister(0xE0, 0x01);   // direct access mode enable
-
-    FSMC_WriteRegister(0xE1, (uint16_t)(addr>>16)&0x00FF);
-    FSMC_WriteRegister(0xE1, (uint16_t)(addr>>8)&0x00FF);
-    FSMC_WriteRegister(0xE1, (uint16_t)addr&0x00FF);
-
-    while(i<len){
-
-        FSMC_WaitROM();
-        buf[i] = FSMC_ReadRegister(0xE2);   // read data
-
-        i++;
-    }
-
-    FSMC_WriteRegister(0xE0, 0x00);   // direct access mode disable
-    FSMC_WriteRegister(0x05, 0x00);   // FONT mode
-}
 
 
 /*  */
@@ -461,7 +494,7 @@ void RA8875_ConfigIRQ(void){
     bit4 - KEYSCAN Interrupt
     */
 
-    FSMC_WriteRegister(0xF1, 0xFF);   // isvalom IRQ flagus
+    FSMC_WriteRegister(RA8875_REG_INTC2, 0xFF);   // isvalom IRQ flagus
 }
 
 
@@ -469,14 +502,14 @@ void RA8875_ConfigIRQ(void){
 /* IRQ handler */
 void RA8875_IRQ_Handler(void){
 
-    BaseType_t xHigherPriorityTaskWoken, xResult;
+//    BaseType_t xHigherPriorityTaskWoken, xResult;
 
-    uint8_t reg = FSMC_ReadRegister(0xF1);
+    uint8_t reg = FSMC_ReadRegister(RA8875_REG_INTC2);
 
     /* check for Font write / BTE MCU R/W interrupt */
     if((reg&0x01) == 0x01){
 
-        if(FSMC_ReadRegister(0x50)&0x80){
+        if(FSMC_ReadRegister(RA8875_REG_BECR0)&0x80){
         /* BTE MCU R/W interrupt */
 
         }else{
@@ -496,10 +529,10 @@ void RA8875_IRQ_Handler(void){
     /* check for touch interrupt */
     if((reg&0x04) == 0x04){
 
-        xResult = xEventGroupSetBitsFromISR( xEventGroupHandle, TOUCH_EVENT_FLAG, &xHigherPriorityTaskWoken );
+        //xResult = xEventGroupSetBitsFromISR( xEventGroupHandle, TOUCH_EVENT_FLAG, &xHigherPriorityTaskWoken );
         //FSMC_WriteRegister(0xF1, reg|0x04);    //reg |= 0x04;   // numetam touch irq flaga
 
-        if( xResult != pdFAIL ) portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+        //if( xResult != pdFAIL ) portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
     }
 
     /* check for DMA interrupt */
@@ -514,7 +547,7 @@ void RA8875_IRQ_Handler(void){
         reg |= 0x10;   // clear the keyscan interrupt
     }
 
-    FSMC_WriteRegister(0xF1, reg);
+    FSMC_WriteRegister(RA8875_REG_INTC2, reg);
 }
 
 

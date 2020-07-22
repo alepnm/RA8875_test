@@ -4,6 +4,7 @@
 #define __RA8875_H
 
 /* Includes ------------------------------------------------------------------*/
+#include "ra8875_registers.h"
 #include "ra_fsmc.h"
 #include "ra_bte.h"
 
@@ -12,11 +13,17 @@
 #define Y_SIZE 272
 #define DISPLAY_PIXELS (X_SIZE*Y_SIZE)
 
+#define BACKLIGHT_MAX_DEF 80
+#define BACKLIGHT_MIN_DEF 10
+
 
 #define RA8875_RST_LOW()    LL_GPIO_ResetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin)
 #define RA8875_RST_HIGH()   LL_GPIO_SetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin)
-#define RA8875_GPOX(state)  FSMC_WriteRegister(0xC7, state);
+#define RA8875_GPOX(state)  FSMC_WriteRegister(RA8875_REG_GPIOX, state);
 
+
+#define RA8875_ROM_FONT_CHIP    0
+#define RA8875_ROM_FLASH_CHIP   1
 
 
 struct _lcd{
@@ -25,6 +32,8 @@ struct _lcd{
     __IO uint16_t BackColor;
     __IO uint16_t FontColor;
     uint8_t  Backlight;
+    uint8_t  BackLightMax;
+    uint8_t  BackLightMin;
 
     struct{
         uint8_t Type;
@@ -85,7 +94,8 @@ void FSMC_WritePixel(uint16_t xpos, uint16_t ypos, uint16_t pixel);
 
 void RA8875_SetPwm(uint8_t ch, int pwm_duty_cycle);
 
-void RA8875_CGROMFont(void);
+void RA8875_SelectRomChip(uint8_t chip);
+void RA8875_CGROMFont(uint8_t coding);
 void RA8875_ExtROMFont(void);
 void RA8875_SetTextMode(void);
 void RA8875_SetGraphicMode(void);
@@ -94,8 +104,11 @@ void RA8875_SetPixelWriteCursor(uint16_t x, uint16_t y);
 void RA8875_SetPixelReadCursor(uint16_t x, uint16_t y);
 void RA8875_SetCursor(uint8_t xpos, uint16_t ypos);
 
+void RA8875_SetActiveWindow(uint16_t startx, uint16_t starty, uint16_t endx, uint16_t endy);
 void RA8875_ClearActiveWindow(void);
+void RA8875_ClearScreen(void);
 
+void RA8875_SetScrollWindow(uint16_t startx, uint16_t starty, uint16_t endx, uint16_t endy);
 
 
 /* Display API */
@@ -113,8 +126,8 @@ void LCD_ShowLayer(uint8_t layer);
 
 
 /* TEXT API */
-void TEXT_PutStringAbs(uint16_t posx, uint16_t posy, const char* str);
-void TEXT_PutString(uint8_t col, uint8_t line, const char* str);
+void TEXT_PutString(uint16_t posx, uint16_t posy, const char* str);
+void TEXT_PutStringColored(uint16_t posx, uint16_t posy, const char* str, uint16_t color, uint16_t bgcolor);
 
 
 /* DRAWING API */
@@ -127,17 +140,19 @@ void GEO_DrawSquareOfCircleCorner(uint16_t Xpos_start, uint16_t Ypos_start, uint
 
 void RA8875_SetBTEBlock(const struct _bte* block);
 
-void RA8875_ReadExtROM(uint8_t rom, uint8_t *buf, uint32_t addr, uint32_t len);
 void RA8875_IRQ_Handler(void);
 
 
 
+/* Ext FLASH Chip */
+void FLASH_ExtFlashInit(void);
+uint8_t FLASH_ReadByte(uint32_t addr);
+
+void FLASH_GetScreenByAddress(uint32_t addr);
+
+
+
 /* Touchscreen  */
-
-
-
-
-
 struct _tp{
     uint8_t        IsEnabled;
     uint8_t        IsTouched;
@@ -158,6 +173,7 @@ extern struct _tp TS_Data;
 uint8_t TS_Init(void);
 void    TS_ReadXY_Manual(void);
 void    TS_ReadXY(void);
+uint8_t TP_CheckForTouch(void);
 void    TS_IRQ_Handler(void);
 
 #endif /* __RA8875_H */

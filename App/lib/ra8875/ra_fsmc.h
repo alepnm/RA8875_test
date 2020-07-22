@@ -2,8 +2,7 @@
 #define __RA_FSMC_H
 
 #include "main.h"
-#include "cmsis_os.h"
-
+#include "ra8875_registers.h"
 
 #define Bank1_SRAM1_ADDR  ((uint32_t)0x60000000)  // NE1
 #define Bank1_SRAM2_ADDR  ((uint32_t)0x64000000)  // NE2
@@ -23,10 +22,6 @@ typedef struct {
 #define FSMC_WAIT_BUSY() FSMC_Wait()//FSMC_WaitMem()
 
 
-extern SemaphoreHandle_t xFsmcMutexHandle;
-
-
-
 /*  */
 static inline void FSMC_Wait(void){
 
@@ -43,7 +38,7 @@ static inline void FSMC_WaitMem(void){
     __disable_irq();
 
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_OUTPUT);
-    while((LCD->LCD_RAM&0x80) == 0x80);
+    while((LCD->LCD_RAM&RA8875_STSR_MEMORY_BUSY) == RA8875_STSR_MEMORY_BUSY);
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_ALTERNATE);
 
     __enable_irq();
@@ -56,7 +51,7 @@ static inline void FSMC_WaitBTE(void){
     __disable_irq();
 
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_OUTPUT);
-    while((LCD->LCD_RAM&0x40) == 0x40);
+    while((LCD->LCD_RAM&RA8875_STSR_BTE_BUSY) == RA8875_STSR_BTE_BUSY);
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_ALTERNATE);
 
     __enable_irq();
@@ -69,7 +64,7 @@ static inline void FSMC_WaitROM(void){
     __disable_irq();
 
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_OUTPUT);
-    while((LCD->LCD_RAM&0x01) == 0x01);
+    while((LCD->LCD_RAM&RA8875_STSR_SERIAL_FLASH_ROM_BUSY) == RA8875_STSR_SERIAL_FLASH_ROM_BUSY);
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_13, LL_GPIO_MODE_ALTERNATE);
 
     __enable_irq();

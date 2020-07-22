@@ -6,10 +6,10 @@
 static void BTE_SetBlockSize(uint16_t xsize, uint16_t ysize)
 {
     /* BTE size */
-    FSMC_WriteRegister(0x5C, (uint8_t)(xsize));
-    FSMC_WriteRegister(0x5D, (uint8_t)((xsize>>8)&0x03));
-    FSMC_WriteRegister(0x5E, (uint8_t)(ysize));
-    FSMC_WriteRegister(0x5F, (uint8_t)((ysize>>8)&0x03));
+    FSMC_WriteRegister(RA8875_REG_BEWR0, (uint8_t)(xsize));
+    FSMC_WriteRegister(RA8875_REG_BEWR1, (uint8_t)((xsize>>8)&0x03));
+    FSMC_WriteRegister(RA8875_REG_BEHR0, (uint8_t)(ysize));
+    FSMC_WriteRegister(RA8875_REG_BEHR1, (uint8_t)((ysize>>8)&0x03));
 }
 
 
@@ -19,10 +19,10 @@ static void BTE_SetSourceBlockPos(uint16_t xpos, uint16_t ypos, uint8_t layer)
 {
     layer = (layer) ? 0x80 : 0x00;
 
-    FSMC_WriteRegister(0x54, (uint8_t)xpos);
-    FSMC_WriteRegister(0x55, (uint8_t)((xpos>>8)&0x03));
-    FSMC_WriteRegister(0x56, (uint8_t)ypos);
-    FSMC_WriteRegister(0x57, (uint8_t)((ypos>>8)&0x03) | layer);
+    FSMC_WriteRegister(RA8875_REG_HSBE0, (uint8_t)xpos);
+    FSMC_WriteRegister(RA8875_REG_HSBE1, (uint8_t)((xpos>>8)&0x03));
+    FSMC_WriteRegister(RA8875_REG_VSBE0, (uint8_t)ypos);
+    FSMC_WriteRegister(RA8875_REG_VSBE1, (uint8_t)((ypos>>8)&0x03) | layer);
 }
 
 
@@ -32,10 +32,10 @@ static void BTE_SetDestinationBlockPos(uint16_t xpos, uint16_t ypos, uint8_t lay
 {
     layer = (layer) ? 0x80 : 0x00;
 
-    FSMC_WriteRegister(0x58, (uint8_t)xpos);
-    FSMC_WriteRegister(0x59, (uint8_t)((xpos>>8)&0x03));
-    FSMC_WriteRegister(0x5A, (uint8_t)ypos);
-    FSMC_WriteRegister(0x5B, (uint8_t)((ypos>>8)&0x03) | layer);
+    FSMC_WriteRegister(RA8875_REG_HDBE0, (uint8_t)xpos);
+    FSMC_WriteRegister(RA8875_REG_HDBE1, (uint8_t)((xpos>>8)&0x03));
+    FSMC_WriteRegister(RA8875_REG_VDBE0, (uint8_t)ypos);
+    FSMC_WriteRegister(RA8875_REG_VDBE1, (uint8_t)((ypos>>8)&0x03) | layer);
 }
 
 
@@ -55,8 +55,8 @@ void BTE_RasterOperation(uint16_t xsize, uint16_t ysize,
     BTE_SetSourceBlockPos(source_xpos, source_ypos, source_layer);
     BTE_SetDestinationBlockPos(dest_xpos, dest_ypos, dest_layer);
 
-    FSMC_WriteRegister(0x51, ((bool_func<<4) | raster_operation));
-    FSMC_WriteRegister(0x50, 0x80); // start BTE
+    FSMC_WriteRegister(RA8875_REG_BECR1, ((bool_func<<4) | raster_operation));
+    FSMC_WriteRegister(RA8875_REG_BECR0, 0x80); // start BTE
 
     FSMC_WaitBTE();
 }
@@ -72,8 +72,8 @@ void BTE_SolidFill(uint16_t xsize, uint16_t ysize,
     BTE_SetBlockSize(xsize, ysize);
     BTE_SetDestinationBlockPos(dest_xpos, dest_ypos, dest_layer);
 
-    FSMC_WriteRegister(0x51, BTE_ROP_FILL_SOLID);
-    FSMC_WriteRegister(0x50, 0x80); // start BTE
+    FSMC_WriteRegister(RA8875_REG_BECR1, BTE_ROP_FILL_SOLID);
+    FSMC_WriteRegister(RA8875_REG_BECR0, 0x80); // start BTE
 
     FSMC_WaitBTE();
 
