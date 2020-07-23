@@ -63,10 +63,12 @@ const struct _bte Background_Krym = {
 };
 
 
+
+static void RA8875_HW_Test(void);
+
+
 /*  */
 void RA8875_Init(void) {
-
-    uint8_t RegisterTestStatus = 0, BusTestStatus = 0;
 
     Display.IsInitilized = 0;
     Display.FontColor = COL_WHITE;
@@ -84,39 +86,16 @@ void RA8875_Init(void) {
     RA8875_Reset();
 
     /* Display ON */
-    LCD_Display_OnOff(1);
+    LCD_DisplayON();
     FSMC_WAIT_BUSY();
 
     RA8875_ClearScreen();
 
-    /* register rw test */
-    {
-        uint8_t tmp1, tmp2;
-
-        FSMC_WriteRegister(RA8875_REG_CGSR, 0x55);
-
-        FSMC_WAIT_BUSY();
-
-        tmp1 = FSMC_ReadRegister(RA8875_REG_CGSR);
-
-        FSMC_WriteRegister(RA8875_REG_CGSR, 0xAA);
-
-        FSMC_WAIT_BUSY();
-
-        tmp2 = FSMC_ReadRegister(RA8875_REG_CGSR);
-
-        if ((tmp1 == 0x55) && (tmp2 == 0xAA)) RegisterTestStatus = 1;
-
-    } /* register rw test */
-
-    HAL_Delay(50); /* delay 50 ms */
-
-
     /* PLL clock frequency */
-    FSMC_WriteRegister(RA8875_REG_PLLC1, RA8875_PLLC1_PLL_PREDIV1|0x8);   // PLL Control Register1
-    HAL_Delay(1);
-    FSMC_WriteRegister(RA8875_REG_PLLC2, RA8875_PLLC2_PLL_PLLDIV2);   // PLL Control Register2
-    HAL_Delay(1);
+    FSMC_WriteRegister(RA8875_REG_PLLC1, RA8875_PLLC1_PLL_PREDIV2|0x10);   // PLL Control Register1
+    LL_mDelay(1);
+    FSMC_WriteRegister(RA8875_REG_PLLC2, RA8875_PLLC2_PLL_PLLDIV4);   // PLL Control Register2
+    LL_mDelay(1);
 
 
     /* color deep/MCU Interface */
@@ -124,7 +103,7 @@ void RA8875_Init(void) {
 
     /* pixel clock period */
     FSMC_WriteRegister(RA8875_REG_PCSR, 0x83);   // Pixel Clock Setting Register
-    HAL_Delay(1);
+    LL_mDelay(1);
 
     /* Serial Flash/ROM settings */
     FSMC_WriteRegister(RA8875_REG_SFCLR, 0x03);   // Serial Flash/ROM CLK Setting Register
@@ -162,24 +141,20 @@ void RA8875_Init(void) {
     RA8875_SetScrollWindow(0, 0, X_SIZE-1, Y_SIZE-1);
 
 
-    FSMC_WriteRegister(RA8875_REG_MWCR0, RA8875_MWCR0_GRAPHIC_MODE|
-                                         RA8875_MWCR0_CURSOR_NOT_VISIBLE|
-                                         RA8875_MWCR0_CURSOR_BLINK_DISABLE|
-                                         RA8875_MWCR0_MEM_WRITE_DIR_LR_TD|
-                                         RA8875_MWCR0_MEM_WRITE_AUTOINC_ENABLE|
-                                         RA8875_MWCR0_MEM_READ_AUTOINC_ENABLE);   // Memory Write Control Register 0
+    FSMC_WriteRegister(RA8875_REG_MWCR0, RA8875_MWCR0_GRAPHIC_MODE|RA8875_MWCR0_CURSOR_NOT_VISIBLE|RA8875_MWCR0_CURSOR_BLINK_DISABLE|
+                                         RA8875_MWCR0_MEM_WRITE_DIR_LR_TD|RA8875_MWCR0_MEM_WRITE_AUTOINC_ENABLE|RA8875_MWCR0_MEM_READ_AUTOINC_ENABLE);   // Memory Write Control Register 0
 
-    FSMC_WriteRegister(RA8875_REG_MWCR1, RA8875_MWCR1_GRAPHIC_CURSOR_DISABLE|
-                                         RA8875_MWCR1_GRAPHIC_CURSOR_SET1|
-                                         RA8875_MWCR1_WR_DEST_SEL_LAYER1_2|
+    FSMC_WriteRegister(RA8875_REG_MWCR1, RA8875_MWCR1_GRAPHIC_CURSOR_DISABLE|RA8875_MWCR1_GRAPHIC_CURSOR_SET1|RA8875_MWCR1_WR_DEST_SEL_LAYER1_2|
                                          RA8875_MWCR1_SELECT_LAYER1);   // Memory Write Control Register 1
 
     FSMC_WriteRegister(RA8875_REG_BTCR, 0x00);   //Blink Time Control Register
 
     FSMC_WriteRegister(RA8875_REG_MRCD, RA8875_MRCD_MEM_READ_DIR_LR_TD);   // Memory Read Cursor Direction
 
-
     FSMC_WriteRegister(RA8875_REG_BECR0, RA8875_BECR0_BTE_SOURCE_BLOCK_MODE|RA8875_BECR0_BTE_DEST_BLOCK_MODE);
+
+    FSMC_WriteRegister(RA8875_REG_TPCR0, RA8875_TPCR0_TOUCH_ENABLE|RA8875_TPCR0_WAIT_4096_CLOCS|RA8875_TPCR0_WAKE_DISABLE|RA8875_TPCR0_SYSTEM_CLK_DIV16);
+    FSMC_WriteRegister(RA8875_REG_TPCR1, RA8875_TPCR0_MANUAL_MODE|RA8875_TPCR0_VREF_INTERNAL|RA8875_TPCR0_DEBOUNCE_ENABLE|RA8875_TPCR0_MODE_WAIT_EVENT);
 
     FSMC_WriteRegister(RA8875_REG_P1CR, RA8875_PxCR_PWM_ENABLE|RA8875_PxCR_PWM_CLOCK_DIV8);    // PWM1 Control Register
     FSMC_WriteRegister(RA8875_REG_P1DCR, 0x80);
@@ -187,111 +162,34 @@ void RA8875_Init(void) {
     FSMC_WriteRegister(RA8875_REG_P2CR, RA8875_PxCR_PWM_ENABLE|RA8875_PxCR_PWM_CLOCK_DIV8);    // PWM2 Control Register
     FSMC_WriteRegister(RA8875_REG_P2DCR, 0x80);
 
-    /* data bus test. */
-    {
-        uint16_t pixel;
-        uint32_t i;
 
-        __disable_irq();
+    FSMC_WriteRegister(RA8875_REG_KSCR1, RA8875_KSCR1_KEYSCAN_DISABLE|RA8875_KSCR1_LONGKEY_DISABLE|RA8875_KSCR1_KEYSCAN_SAMPLING_4|RA8875_KSCR1_KEYSCAN_FREQ_DIV16);
+    FSMC_WriteRegister(RA8875_REG_KSCR2, RA8875_KSCR2_KEYSCAN_WAKE_DISABLE|RA8875_KSCR2_LONGKEY_TIMING_DIV2);
 
-        /* irasom i GRAM testinius duomenys */
-        FSMC_WriteRegister(RA8875_REG_MWCR0, 0x00);
+    FLASH_ExtFlashInit();
 
-        RA8875_SetPixelWriteCursor(0, 0);
+    RA8875_ExtROMFont();
+    //RA8875_CGROMFont(RA8875_FNCR0_FONT_IEC8859_4);
 
-        LCD->LCD_REG = 0x02;
-        FSMC_WAIT_BUSY();
+    RA8875_ConfigIRQ();
 
-        for(i=0; i < DISPLAY_PIXELS; i++)
-        {
-            LCD->LCD_RAM = i;
-            FSMC_WAIT_BUSY();
-        }
+    RA8875_HW_Test();
 
+    if( TS_Init() ){
+        TEXT_PutStringColored(0, 32, "Touchscreen initial OK...", COL_GREEN, COL_BLACK);
+    }else{
+        TEXT_PutStringColored(0, 32, "Touchscreen initial FAIL...", COL_RED, COL_BLACK);
+    }
 
-        /* tikrinam irasytus testines duomenys */
-        FSMC_WriteRegister(RA8875_REG_MRCD, 0x00);
+    Display.BackLightMax = BACKLIGHT_MAX_DEF;
+    Display.BackLightMin = BACKLIGHT_MIN_DEF;
+    Display.Backlight = Display.Backlight;
 
-        RA8875_SetPixelWriteCursor(0, 0);
+    LCD_SetBacklight(Display.Backlight);
 
-        LCD->LCD_REG = 0x02;
-        FSMC_WAIT_BUSY();
+    LL_mDelay(1000);
 
-        (void)LCD->LCD_RAM;// dummy read
-        FSMC_WAIT_BUSY();
-
-        for(i=0; i<0x10000; i++)
-        {
-            FSMC_WAIT_BUSY();
-            pixel = LCD->LCD_RAM;
-
-            if(pixel != i) break;
-        }
-
-
-        if(i == 0x10000) BusTestStatus = 1;
-
-        if(RegisterTestStatus != 1 || BusTestStatus != 1){
-
-            /* set RA8875 GPIOX pin to 0 - disp panel off */
-            RA8875_GPOX(0);// Extra General Purpose IO Register
-
-            Display.IsInitilized = 0;
-
-            // LCD inicializavimo klaida
-            while(1);
-
-        }else{
-
-            /* set RA8875 GPIOX pin to 1 - disp panel on */
-            RA8875_GPOX(1);// Extra General Purpose IO Register
-
-            Display.IsInitilized = 1;
-        }
-
-        __enable_irq();
-
-        FLASH_ExtFlashInit();
-
-        RA8875_SelectRomChip(RA8875_ROM_FONT_CHIP);
-
-        //RA8875_ExtROMFont();
-        RA8875_CGROMFont(RA8875_FNCR0_FONT_IEC8859_4);
-
-        /* touch panel init */
-        TS_Init();
-
-        RA8875_ConfigIRQ();
-
-        Display.BackLightMax = BACKLIGHT_MAX_DEF;
-        Display.BackLightMin = BACKLIGHT_MIN_DEF;
-        Display.Backlight = Display.Backlight;
-
-        LCD_SetBacklight(Display.Backlight);
-
-        LCD_Clear();
-
-        if(BusTestStatus){
-            TEXT_PutStringColored(0, 0, "BUS Test OK...", COL_GREEN, COL_BLACK);
-        }else{
-            TEXT_PutStringColored(0, 0, "BUS Test FAIL...", COL_RED, COL_BLACK);
-        }
-
-        if(RegisterTestStatus){
-            TEXT_PutStringColored(0, 16, "Register Test OK...", COL_GREEN, COL_BLACK);
-        }else{
-            TEXT_PutStringColored(0, 16, "Register Test FAIL...", COL_RED, COL_BLACK);
-        }
-
-        if( TS_Init() ){
-            TEXT_PutStringColored(0, 32, "Touchscreen initial OK...", COL_GREEN, COL_BLACK);
-        }else{
-            TEXT_PutStringColored(0, 32, "Touchscreen initial FAIL...", COL_RED, COL_BLACK);
-        }
-
-        HAL_Delay(1000);
-
-    } /* data bus test. */
+    RA8875_ClearScreen();
 }
 
 
@@ -328,7 +226,7 @@ void RA8875_ExtROMFont(void){
                                          RA8875_FNCR1_FONT_VENLARGEMENT_X1);
 
     FSMC_WriteRegister(RA8875_REG_FTSR, RA8875_FWTSR_FONT_SIZE_16X16|0x00);
-    FSMC_WriteRegister(RA8875_REG_FROM, RA8875_SFROM_ROM_SELECT_TYPE1|RA8875_SFROM_FONT_CODING_ASCII|RA8875_SFROM_FONT_TYPE_ARIAL);
+    FSMC_WriteRegister(RA8875_REG_FROM, RA8875_SFROM_ROM_SELECT_TYPE1|RA8875_SFROM_FONT_CODING_ASCII|RA8875_SFROM_FONT_TYPE_BOLD);
 }
 
 
@@ -414,6 +312,20 @@ void RA8875_SetActiveWindow(uint16_t startx, uint16_t starty, uint16_t endx, uin
 }
 
 
+/* Scroll window settingas */
+void RA8875_SetScrollWindow(uint16_t startx, uint16_t starty, uint16_t endx, uint16_t endy){
+
+    FSMC_WriteRegister(RA8875_REG_HSSW0, (uint8_t)startx);
+    FSMC_WriteRegister(RA8875_REG_HSSW1, (uint8_t)(startx>>8));
+    FSMC_WriteRegister(RA8875_REG_VSSW0, (uint8_t)starty);
+    FSMC_WriteRegister(RA8875_REG_VSSW1, (uint8_t)(starty>>8));
+
+    FSMC_WriteRegister(RA8875_REG_HESW0, (uint8_t)endx);
+    FSMC_WriteRegister(RA8875_REG_HESW1, (uint8_t)(endx>>8));
+    FSMC_WriteRegister(RA8875_REG_VESW0, (uint8_t)endy);
+    FSMC_WriteRegister(RA8875_REG_VESW1, (uint8_t)(endy>>8));
+}
+
 /* hardwarinis aktyvaus lango isvalymas */
 void RA8875_ClearActiveWindow(void){
 
@@ -429,21 +341,6 @@ void RA8875_ClearScreen(void){
 }
 
 
-/* Scroll window settinga */
-void RA8875_SetScrollWindow(uint16_t startx, uint16_t starty, uint16_t endx, uint16_t endy){
-
-    FSMC_WriteRegister(RA8875_REG_HSSW0, (uint8_t)startx);
-    FSMC_WriteRegister(RA8875_REG_HSSW1, (uint8_t)(startx>>8));
-    FSMC_WriteRegister(RA8875_REG_VSSW0, (uint8_t)starty);
-    FSMC_WriteRegister(RA8875_REG_VSSW1, (uint8_t)(starty>>8));
-
-    FSMC_WriteRegister(RA8875_REG_HESW0, (uint8_t)endx);
-    FSMC_WriteRegister(RA8875_REG_HESW1, (uint8_t)(endx>>8));
-    FSMC_WriteRegister(RA8875_REG_VESW0, (uint8_t)endy);
-    FSMC_WriteRegister(RA8875_REG_VESW1, (uint8_t)(endy>>8));
-}
-
-
 /*   */
 void RA8875_SetPwm(uint8_t ch, int val)
 {
@@ -451,14 +348,6 @@ void RA8875_SetPwm(uint8_t ch, int val)
 
     FSMC_WriteRegister(reg, val);
 }
-
-
-
-
-
-
-
-
 
 
 /* ok */
@@ -470,17 +359,6 @@ void RA8875_Reset(void)
 
     HAL_Delay(50);
 }
-
-
-
-
-/* ok */
-void RA8875_SetCursor(uint8_t xpos, uint16_t ypos) {
-
-    FSMC_WriteRegister(RA8875_REG_VSAW0, xpos);
-    FSMC_WriteRegister(RA8875_REG_VSAW1, ypos);
-}
-
 
 
 /*  */
@@ -495,7 +373,110 @@ void RA8875_ConfigIRQ(void){
     */
 
     FSMC_WriteRegister(RA8875_REG_INTC2, 0xFF);   // isvalom IRQ flagus
+
+    uint8_t reg = FSMC_ReadRegister(RA8875_REG_INTC1);
+    //FSMC_WriteRegister(RA8875_REG_INTC1, reg|RA8875_INTC1_TP_IRQ_ENABLE);   // ijungiam/isjungiam Touch IRQ
 }
+
+
+/*  */
+static void RA8875_HW_Test(void){
+
+    uint8_t tmp1 = 0, tmp2 = 0;
+    uint8_t RegisterTestStatus = 0, BusTestStatus = 0;
+    uint16_t pixel = 0;
+    uint32_t i = 0;
+
+    __disable_irq();
+
+    /* register rw test */
+    FSMC_WriteRegister(RA8875_REG_CGSR, 0x55);
+    FSMC_WAIT_BUSY();
+
+    tmp1 = FSMC_ReadRegister(RA8875_REG_CGSR);
+
+    FSMC_WriteRegister(RA8875_REG_CGSR, 0xAA);
+    FSMC_WAIT_BUSY();
+
+    tmp2 = FSMC_ReadRegister(RA8875_REG_CGSR);
+
+    if ((tmp1 == 0x55) && (tmp2 == 0xAA)) RegisterTestStatus = 1;
+
+    LL_mDelay(50); /* delay 50 ms */
+
+    /* data bus test. */
+    /* irasom i GRAM testinius duomenys */
+    FSMC_WriteRegister(RA8875_REG_MWCR0, RA8875_MWCR0_MEM_WRITE_DIR_LR_TD);
+
+    RA8875_SetPixelWriteCursor(0, 0);
+
+    LCD->LCD_REG = 0x02;
+    FSMC_WAIT_BUSY();
+
+    for(i=0; i < DISPLAY_PIXELS; i++)
+    {
+        LCD->LCD_RAM = i;
+        FSMC_WAIT_BUSY();
+    }
+
+
+    /* tikrinam irasytus testines duomenys */
+    FSMC_WriteRegister(RA8875_REG_MRCD, RA8875_MRCD_MEM_READ_DIR_LR_TD);
+
+    RA8875_SetPixelReadCursor(0, 0);
+
+    LCD->LCD_REG = 0x02;
+    FSMC_WAIT_BUSY();
+
+    (void)LCD->LCD_RAM;// dummy read
+    FSMC_WAIT_BUSY();
+
+    for(i=0; i<0x10000; i++)
+    {
+        FSMC_WAIT_BUSY();
+        pixel = LCD->LCD_RAM;
+
+        if(pixel != i) break;
+    }
+
+
+    if(i == 0x10000) BusTestStatus = 1;
+
+    if(RegisterTestStatus != 1 || BusTestStatus != 1){
+
+        /* set RA8875 GPIOX pin to 0 - disp panel off */
+        RA8875_GPOX(0);// Extra General Purpose IO Register
+
+        Display.IsInitilized = 0;
+
+        // LCD inicializavimo klaida
+        while(1);
+
+    }else{
+
+        /* set RA8875 GPIOX pin to 1 - disp panel on */
+        RA8875_GPOX(1);// Extra General Purpose IO Register
+
+        Display.IsInitilized = 1;
+    }
+
+    __enable_irq();
+
+    RA8875_ClearScreen();
+
+    if(BusTestStatus){
+        TEXT_PutStringColored(0, 0, "BUS Test OK...", COL_GREEN, COL_BLACK);
+    }else{
+        TEXT_PutStringColored(0, 0, "BUS Test FAIL...", COL_RED, COL_BLACK);
+    }
+
+    if(RegisterTestStatus){
+        TEXT_PutStringColored(0, 16, "Register Test OK...", COL_GREEN, COL_BLACK);
+    }else{
+        TEXT_PutStringColored(0, 16, "Register Test FAIL...", COL_RED, COL_BLACK);
+    }
+}
+
 
 
 
@@ -509,7 +490,7 @@ void RA8875_IRQ_Handler(void){
     /* check for Font write / BTE MCU R/W interrupt */
     if((reg&0x01) == 0x01){
 
-        if(FSMC_ReadRegister(RA8875_REG_BECR0)&0x80){
+        if( (FSMC_ReadRegister(RA8875_REG_BECR0)&0x80) == 0x80){
         /* BTE MCU R/W interrupt */
 
         }else{

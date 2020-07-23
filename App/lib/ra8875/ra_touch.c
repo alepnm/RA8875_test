@@ -7,43 +7,6 @@
 #define TS_TOUCH_DETECT   TS_WITH_IF_FLAG
 
 
-/* Touch Panel Control Register0 0x70 */
-#define TP_CR0_SYSTEM_CLK         0x00
-#define TP_CR0_SYSTEM_CLK_DIV2    0x01
-#define TP_CR0_SYSTEM_CLK_DIV4    0x02
-#define TP_CR0_SYSTEM_CLK_DIV8    0x03
-#define TP_CR0_SYSTEM_CLK_DIV16   0x04
-#define TP_CR0_SYSTEM_CLK_DIV32   0x05
-#define TP_CR0_SYSTEM_CLK_DIV64   0x06
-#define TP_CR0_SYSTEM_CLK_DIV128  0x07
-#define TP_CR0_WAKEUP_ENABLE      0x08
-#define TP_CR0_WAIT_512_CLOCS     (0x00<<5)
-#define TP_CR0_WAIT_1024_CLOCS    (0x01<<5)
-#define TP_CR0_WAIT_2048_CLOCS    (0x02<<5)
-#define TP_CR0_WAIT_4096_CLOCS    (0x03<<5)
-#define TP_CR0_WAIT_8192_CLOCS    (0x04<<5)
-#define TP_CR0_WAIT_16384_CLOCS   (0x05<<5)
-#define TP_CR0_WAIT_32768_CLOCS   (0x06<<5)
-#define TP_CR0_WAIT_65536_CLOCS   (0x07<<5)
-#define TP_CR0_TOUCH_ENABLE       0x80
-
-
-/* Touch Panel Control Register1 0x71 */
-#define TP_CR1_MANUAL_MODE        0x40
-#define TP_CR1_VREF_EXTERNAL      0x20
-#define TP_CR1_DEBOUNCE_ENABLE    0x04
-#define TP_CR1_IDLE               0x00
-#define TP_CR1_WAIT_EVENT         0x01
-#define TP_CR1_LATCH_XDATA        0x02
-#define TP_CR1_LATCH_YDATA        0x03
-
-
-/* Interrubt Control Register Touch bits */
-#define TP_ICR1_IRQ_ENABLE        0x04   //  IRQ enable/disable
-#define TP_ICR2_IF_FLAG           0x04   //  IRQ flag
-
-
-
 /*  */
 uint8_t TS_Init(void){
 
@@ -51,16 +14,7 @@ uint8_t TS_Init(void){
     TS_Data.XPos = 0;
     TS_Data.YPos = 0;
 
-    // Touch Panel Control Register0
-    FSMC_WriteRegister(RA8875_REG_TPCR0, TP_CR0_TOUCH_ENABLE|TP_CR0_WAIT_4096_CLOCS|TP_CR0_SYSTEM_CLK_DIV16);
-
-    // Touch Panel Control Register1
-    FSMC_WriteRegister(RA8875_REG_TPCR1, TP_CR1_MANUAL_MODE|TP_CR1_WAIT_EVENT|TP_CR1_DEBOUNCE_ENABLE);
-
-    uint8_t reg = FSMC_ReadRegister(RA8875_REG_INTC1);
-    //FSMC_WriteRegister(0xF0, reg|TP_ICR1_IRQ_ENABLE);   // ijungiam/isjungiam Touch IRQ
-
-    if((FSMC_ReadRegister(RA8875_REG_TPCR1)&TP_CR0_TOUCH_ENABLE) == TP_CR0_TOUCH_ENABLE){
+    if((FSMC_ReadRegister(RA8875_REG_TPCR0)&RA8875_TPCR0_TOUCH_ENABLE) == RA8875_TPCR0_TOUCH_ENABLE){
         TS_Data.IsEnabled = 1;
         return 1;
     }
@@ -132,8 +86,8 @@ uint8_t TP_CheckForTouch(void){
 
     uint8_t reg = FSMC_ReadRegister(RA8875_REG_INTC2);
 
-    if((reg&TP_ICR2_IF_FLAG) == TP_ICR2_IF_FLAG){
-        FSMC_WriteRegister(RA8875_REG_INTC2, (reg&TP_ICR2_IF_FLAG));
+    if((reg&RA8875_INTC2_TP_IF) == RA8875_INTC2_TP_IF){
+        FSMC_WriteRegister(RA8875_REG_INTC2, (reg&RA8875_INTC2_TP_IF));
         return 1;
     }
 

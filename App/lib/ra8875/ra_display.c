@@ -1,12 +1,21 @@
 #include "ra8875.h"
 
-
-/* LCD ijungimas/isjungimas */
-void LCD_Display_OnOff(uint8_t state){
+/* LCD ijungimas */
+void LCD_DisplayON(void){
 
     uint8_t tmp = FSMC_ReadRegister(RA8875_REG_PWRR);
 
-    FSMC_WriteRegister(RA8875_REG_PWRR, (tmp | state<<7));
+    SET_BIT(tmp, 0x80);
+    FSMC_WriteRegister(RA8875_REG_PWRR, (tmp));
+}
+
+/* LCD isjungimas */
+void LCD_DisplayOFF(void){
+
+    uint8_t tmp = FSMC_ReadRegister(RA8875_REG_PWRR);
+
+    CLEAR_BIT(tmp, 0x80);
+    FSMC_WriteRegister(RA8875_REG_PWRR, (tmp));
 }
 
 
@@ -43,53 +52,6 @@ void LCD_ShowLayer(uint8_t layer){
     uint8_t tmp = FSMC_ReadRegister(RA8875_REG_LTPR0);
     layer = (layer) ? 1 : 0;
     FSMC_WriteRegister(RA8875_REG_LTPR0, ((tmp&0xFE) | layer));
-}
-
-
-/* ok */
-void LCD_Clear(void){
-
-    FSMC_WriteRegister(RA8875_REG_MCLR, 0x80);
-    FSMC_WAIT_BUSY();
-}
-
-
-
-/* ok */
-void LCD_ClearColor(uint16_t color) {
-
-    uint32_t index = 0;
-
-    RA8875_SetCursor(0x00, 0x00);
-
-    LCD->LCD_REG = 0x02;
-
-    for(index = 0; index < DISPLAY_PIXELS; index++) {
-        LCD->LCD_RAM = color;
-        FSMC_WAIT_BUSY();
-    }
-
-//  LCD_SetBackColor(color);
-//
-//  /* Destination */
-//  FSMC_WriteRegister(RA8875_REG_HDBE0, 0x00);
-//  FSMC_WriteRegister(RA8875_REG_HDBE1, 0x00);
-//  FSMC_WriteRegister(RA8875_REG_VDBE0, 0x00);
-//  FSMC_WriteRegister(RA8875_REG_VDBE1, 0x00);
-//
-//  /* BTE size */
-//  FSMC_WriteRegister(RA8875_REG_BEWR0, (uint8_t)(X_SIZE));
-//  FSMC_WriteRegister(RA8875_REG_BEWR1, (uint8_t)(X_SIZE>>8)&0x03);
-//  FSMC_WriteRegister(RA8875_REG_BEHR0, (uint8_t)(Y_SIZE));
-//  FSMC_WriteRegister(RA8875_REG_BEHR1, (uint8_t)(Y_SIZE>>8)&0x03);
-//
-//  FSMC_WriteRegister(RA8875_REG_BECR1, 0xAC);
-//  FSMC_WriteRegister(RA8875_REG_BECR0, 0xE0); // start BTE
-//
-//  LCD->LCD_REG = 0x02;
-//  FSMC_WaitMem();
-//
-//  FSMC_WaitBTE();
 }
 
 

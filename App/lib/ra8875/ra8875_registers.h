@@ -377,40 +377,126 @@
 #define RA8875_BECR0_BTE_DEST_LINEAR_MODE         0x20
 
 
+/* Touch Panel Control Register0 (TPCR0) REG[70h] */
+#define RA8875_TPCR0_TOUCH_DISABLE               0x00
+#define RA8875_TPCR0_TOUCH_ENABLE                0x80
+#define RA8875_TPCR0_WAIT_512_CLOCS              0x00
+#define RA8875_TPCR0_WAIT_1024_CLOCS             (1<<4)
+#define RA8875_TPCR0_WAIT_2048_CLOCS             (2<<4)
+#define RA8875_TPCR0_WAIT_4096_CLOCS             (3<<4)
+#define RA8875_TPCR0_WAIT_8192_CLOCS             (4<<4)
+#define RA8875_TPCR0_WAIT_16384_CLOCS            (5<<4)
+#define RA8875_TPCR0_WAIT_32768_CLOCS            (6<<4)
+#define RA8875_TPCR0_WAIT_65536_CLOCS            (7<<4)
+#define RA8875_TPCR0_WAKE_DISABLE                0x00
+#define RA8875_TPCR0_WAKE_ENABLE                 0x08
+#define RA8875_TPCR0_SYSTEM_CLK_DIV1             0x00
+#define RA8875_TPCR0_SYSTEM_CLK_DIV2             0x01
+#define RA8875_TPCR0_SYSTEM_CLK_DIV4             0x02
+#define RA8875_TPCR0_SYSTEM_CLK_DIV8             0x03
+#define RA8875_TPCR0_SYSTEM_CLK_DIV16            0x04
+#define RA8875_TPCR0_SYSTEM_CLK_DIV32            0x05
+#define RA8875_TPCR0_SYSTEM_CLK_DIV64            0x06
+#define RA8875_TPCR0_SYSTEM_CLK_DIV128           0x07
+
+
+/* Touch Panel Control Register1 (TPCR1) REG[71h] */
+#define RA8875_TPCR0_AUTO_MODE                   0x00
+#define RA8875_TPCR0_MANUAL_MODE                 0x40
+#define RA8875_TPCR0_VREF_INTERNAL               0x00
+#define RA8875_TPCR0_VREF_EXTERNAL               0x20
+#define RA8875_TPCR0_DEBOUNCE_DISABLE            0x00
+#define RA8875_TPCR0_DEBOUNCE_ENABLE             0x04
+#define RA8875_TPCR0_MODE_IDLE                   0x00
+#define RA8875_TPCR0_MODE_WAIT_EVENT             0x01
+#define RA8875_TPCR0_LATCH_XDATA                 0x02
+#define RA8875_TPCR0_LATCH_YDATA                 0x03
+
+
+/* Interrupt Control Register Touch bits */
+//#define TP_ICR1_IRQ_ENABLE                       0x04   //  IRQ enable/disable
+//#define TP_ICR2_IF_FLAG                          0x04   //  IRQ flag
+
 
 /* PLL Control Register1 (PLLC1) REG[88h] */
-#define RA8875_PLLC1_PLL_PREDIV1                  0x00
-#define RA8875_PLLC1_PLL_PREDIV2                  0x80
+#define RA8875_PLLC1_PLL_PREDIV1                 0x00
+#define RA8875_PLLC1_PLL_PREDIV2                 0x80
 
 /* PLL Control Register2 (PLLC2) REG[89h] */
-#define RA8875_PLLC2_PLL_PLLDIV1                  0x00
-#define RA8875_PLLC2_PLL_PLLDIV2                  0x01
-#define RA8875_PLLC2_PLL_PLLDIV4                  0x02
-#define RA8875_PLLC2_PLL_PLLDIV8                  0x03
-#define RA8875_PLLC2_PLL_PLLDIV16                 0x04
-#define RA8875_PLLC2_PLL_PLLDIV32                 0x05
-#define RA8875_PLLC2_PLL_PLLDIV64                 0x06
-#define RA8875_PLLC2_PLL_PLLDIV1128               0x07
-
-
-
+#define RA8875_PLLC2_PLL_PLLDIV1                 0x00
+#define RA8875_PLLC2_PLL_PLLDIV2                 0x01
+#define RA8875_PLLC2_PLL_PLLDIV4                 0x02
+#define RA8875_PLLC2_PLL_PLLDIV8                 0x03
+#define RA8875_PLLC2_PLL_PLLDIV16                0x04
+#define RA8875_PLLC2_PLL_PLLDIV32                0x05
+#define RA8875_PLLC2_PLL_PLLDIV64                0x06
+#define RA8875_PLLC2_PLL_PLLDIV1128              0x07
 
 /* PWMx Control Register (PxCR) REG[8Ah] ir REG[8Ch] */
-#define RA8875_PxCR_PWM_DISABLE                   0x00
-#define RA8875_PxCR_PWM_ENABLE                    0x80
-#define RA8875_PxCR_PWM_DISABLE_LEVEL_LOW         0x00
-#define RA8875_PxCR_PWM_DISABLE_LEVEL_HIGH        0x40
-#define RA8875_PxCR_PWM_FUNC_PWM                  0x00
-#define RA8875_PxCR_PWM_FUNC_FIXED_FREQ_SIGNAL    0x10
-#define RA8875_PxCR_PWM_CLOCK_DIV1                0x00
-#define RA8875_PxCR_PWM_CLOCK_DIV2                0x01
-#define RA8875_PxCR_PWM_CLOCK_DIV4                0x02
-#define RA8875_PxCR_PWM_CLOCK_DIV8                0x03
-#define RA8875_PxCR_PWM_CLOCK_DIV16               0x04
-#define RA8875_PxCR_PWM_CLOCK_DIV32               0x05
-#define RA8875_PxCR_PWM_CLOCK_DIV64               0x06
-#define RA8875_PxCR_PWM_CLOCK_DIV128              0x07
+#define RA8875_PxCR_PWM_DISABLE                  0x00
+#define RA8875_PxCR_PWM_ENABLE                   0x80
+#define RA8875_PxCR_PWM_DISABLE_LEVEL_LOW        0x00
+#define RA8875_PxCR_PWM_DISABLE_LEVEL_HIGH       0x40
+#define RA8875_PxCR_PWM_FUNC_PWM                 0x00
+#define RA8875_PxCR_PWM_FUNC_FIXED_FREQ_SIGNAL   0x10
+#define RA8875_PxCR_PWM_CLOCK_DIV1               0x00
+#define RA8875_PxCR_PWM_CLOCK_DIV2               0x01
+#define RA8875_PxCR_PWM_CLOCK_DIV4               0x02
+#define RA8875_PxCR_PWM_CLOCK_DIV8               0x03
+#define RA8875_PxCR_PWM_CLOCK_DIV16              0x04
+#define RA8875_PxCR_PWM_CLOCK_DIV32              0x05
+#define RA8875_PxCR_PWM_CLOCK_DIV64              0x06
+#define RA8875_PxCR_PWM_CLOCK_DIV128             0x07
 
+
+
+/* Key-Scan Control Register 1 (KSCR1) REG [C0h] */
+#define RA8875_KSCR1_KEYSCAN_DISABLE             0x00
+#define RA8875_KSCR1_KEYSCAN_ENABLE              0x80
+#define RA8875_KSCR1_LONGKEY_DISABLE             0x00
+#define RA8875_KSCR1_LONGKEY_ENABLE              0x40
+#define RA8875_KSCR1_KEYSCAN_SAMPLING_4          0x00
+#define RA8875_KSCR1_KEYSCAN_SAMPLING_8          (1<<4)
+#define RA8875_KSCR1_KEYSCAN_SAMPLING_16         (2<<4)
+#define RA8875_KSCR1_KEYSCAN_SAMPLING_32         (3<<4)
+#define RA8875_KSCR1_KEYSCAN_FREQ_DIV1           0x00
+#define RA8875_KSCR1_KEYSCAN_FREQ_DIV2           0x01
+#define RA8875_KSCR1_KEYSCAN_FREQ_DIV4           0x02
+#define RA8875_KSCR1_KEYSCAN_FREQ_DIV8           0x03
+#define RA8875_KSCR1_KEYSCAN_FREQ_DIV16          0x04
+#define RA8875_KSCR1_KEYSCAN_FREQ_DIV32          0x05
+#define RA8875_KSCR1_KEYSCAN_FREQ_DIV64          0x06
+#define RA8875_KSCR1_KEYSCAN_FREQ_DIV128         0x07
+
+/* Key-Scan Control Register 2 (KSCR2) REG [C1h] */
+#define RA8875_KSCR2_KEYSCAN_WAKE_DISABLE        0x00
+#define RA8875_KSCR2_KEYSCAN_WAKE_ENABLE         0x80
+#define RA8875_KSCR2_LONGKEY_TIMING_DIV1         0x00
+#define RA8875_KSCR2_LONGKEY_TIMING_DIV2         (1<<2)
+#define RA8875_KSCR2_LONGKEY_TIMING_DIV4         (2<<2)
+#define RA8875_KSCR2_LONGKEY_TIMING_DIV8         (3<<2)
+
+/* Interrupt Control Register1 (INTC1) REG[F0h] */
+#define RA8875_INTC1_KEYSCAN_IRQ_DISABLE         0x00
+#define RA8875_INTC1_KEYSCAN_IRQ_ENABLE          0x10
+#define RA8875_INTC1_DMA_IRQ_DISABLE             0x00
+#define RA8875_INTC1_DMA_IRQ_ENABLE              0x08
+#define RA8875_INTC1_TP_IRQ_DISABLE              0x00
+#define RA8875_INTC1_TP_IRQ_ENABLE               0x04
+#define RA8875_INTC1_BTE_COMPLETE_IRQ_DISABLE    0x00
+#define RA8875_INTC1_BTE_COMPLETE_IRQ_ENABLE     0x02
+#define RA8875_INTC1_BTE_MCU_IRQ_DISABLE         0x00
+#define RA8875_INTC1_BTE_MCU_IRQ_ENABLE          0x01
+#define RA8875_INTC1_FONT_WRITE_IRQ_DISABLE      0x00
+#define RA8875_INTC1_FONT_WRITE_IRQ_ENABLE       0x01
+
+/* Interrupt Control Register1 (INTC2) REG[F1h] */
+#define RA8875_INTC2_KEYSCAN_IF                  0x10
+#define RA8875_INTC2_DMA_IF                      0x08
+#define RA8875_INTC2_TP_IF                       0x04
+#define RA8875_INTC2_BTE_COMPLETE_IF             0x02
+#define RA8875_INTC2_BTE_MCU_IF                  0x01
+#define RA8875_INTC2_FONT_WRITE_IF               0x01
 
 
 #endif /* RA8875_REGISTERS_H_INCLUDED */

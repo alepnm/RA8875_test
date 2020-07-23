@@ -102,7 +102,6 @@ void RA8875_SetGraphicMode(void);
 void RA8875_SetTextWriteCursorAbs(uint16_t x, uint16_t y);
 void RA8875_SetPixelWriteCursor(uint16_t x, uint16_t y);
 void RA8875_SetPixelReadCursor(uint16_t x, uint16_t y);
-void RA8875_SetCursor(uint8_t xpos, uint16_t ypos);
 
 void RA8875_SetActiveWindow(uint16_t startx, uint16_t starty, uint16_t endx, uint16_t endy);
 void RA8875_ClearActiveWindow(void);
@@ -112,14 +111,13 @@ void RA8875_SetScrollWindow(uint16_t startx, uint16_t starty, uint16_t endx, uin
 
 
 /* Display API */
-void LCD_Display_OnOff(uint8_t state);
+void LCD_DisplayON(void);
+void LCD_DisplayOFF(void);
 void LCD_SetBackground(uint16_t* pData, uint32_t len, uint8_t layer);
 void LCD_SetForeColor(uint16_t color); //ok
 void LCD_SetBackColor(uint16_t color); //ok
 uint16_t LCD_GetForeColor(void);
 uint16_t LCD_GetBackColor(void);
-void LCD_Clear(void);
-void LCD_ClearColor(uint16_t color);
 void LCD_SetBacklight(uint8_t bl);
 void LCD_SelectLayer(uint8_t layer);
 void LCD_ShowLayer(uint8_t layer);

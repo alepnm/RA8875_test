@@ -1216,6 +1216,12 @@ void t_MainTask(void const * argument)
     //FLASH_GetScreenByAddress(480*272);
 
 
+    //GEO_DrawCircle(240, 136, 50, 1);
+    //GEO_DrawRect(200, 50, 300, 150, 1);
+    //GEO_DrawTriangle(240, 30, 120, 200, 360, 200, 0);
+
+    //LCD_DisplayOFF();
+
 
     /* Infinite loop */
     for(;;)
@@ -1346,7 +1352,7 @@ void t_TouchTask(void const * argument)
           sprintf(TS_Data.strYPos, "%3d", TS_Data.YPos);
       }
 
-    osDelay(50);
+    //osDelay(50);
   }
   /* USER CODE END t_TouchTask */
 }
