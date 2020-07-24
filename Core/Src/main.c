@@ -26,6 +26,8 @@
 /* USER CODE BEGIN Includes */
 #include "globals.h"
 
+#include "WindowDLG.h"
+
 #include "ra8875.h"
 #include "usart.h"
 #include "ds18b20.h"
@@ -201,19 +203,19 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of GUI_Task */
-  osThreadDef(GUI_Task, t_GuiTask, osPriorityIdle, 0, 1280);
+  osThreadDef(GUI_Task, t_GuiTask, osPriorityNormal, 0, 384);
   GUI_TaskHandle = osThreadCreate(osThread(GUI_Task), NULL);
 
   /* definition and creation of Main_Task */
-  osThreadDef(Main_Task, t_MainTask, osPriorityNormal, 0, 128);
+  osThreadDef(Main_Task, t_MainTask, osPriorityNormal, 0, 256);
   Main_TaskHandle = osThreadCreate(osThread(Main_Task), NULL);
 
   /* definition and creation of MbTask */
-  osThreadDef(MbTask, t_ModbusTask, osPriorityIdle, 0, 512);
+  osThreadDef(MbTask, t_ModbusTask, osPriorityNormal, 0, 256);
   MbTaskHandle = osThreadCreate(osThread(MbTask), NULL);
 
   /* definition and creation of Touch_Task */
-  osThreadDef(Touch_Task, t_TouchTask, osPriorityIdle, 0, 128);
+  osThreadDef(Touch_Task, t_TouchTask, osPriorityNormal, 0, 128);
   Touch_TaskHandle = osThreadCreate(osThread(Touch_Task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -1153,15 +1155,27 @@ static void MX_FSMC_Init(void)
 /* USER CODE END Header_t_GuiTask */
 void t_GuiTask(void const * argument)
 {
-  /* USER CODE BEGIN 5 */
-  ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
-  /* Infinite loop */
-  for(;;)
-  {
+    /* USER CODE BEGIN 5 */
+    //ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
+    GUI_Init();
+    hWin = CreateWindow();
 
-      osDelay(100);
-  }
-  /* USER CODE END 5 */
+    xTaskNotifyGive( Main_TaskHandle );
+
+
+    /* Infinite loop */
+    for(;;)
+    {
+         GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
+
+
+         //GUI_Delay(10);
+
+         GUI_Exec();
+         //GUI_X_ExecIdle(); // --> user implement GUI_X.c
+         //osDelay(100);
+    }
+    /* USER CODE END 5 */
 }
 
 /* USER CODE BEGIN Header_t_MainTask */
@@ -1176,13 +1190,13 @@ void t_MainTask(void const * argument)
   /* USER CODE BEGIN t_MainTask */
     uint16_t i = 0;
 
-    RA8875_Init();
+    //RA8875_Init();
+    //xTaskNotifyGive( GUI_TaskHandle );
 
-    BackLightTimeoutCounter = 10000;
-    LCD_SetBacklight(Display.Backlight);
+    ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
 
-    xTaskNotifyGive( GUI_TaskHandle );
-    xTaskNotifyGive( MbTaskHandle );
+    //xTaskNotifyGive( GUI_TaskHandle );
+    //xTaskNotifyGive( MbTaskHandle );
 
     //BTE_SolidFill(480, 272, 0, 0, 0, COL_BLACK);
     //BTE_SolidFill(480, 272, 0, 0, 1, COL_NAVY);
@@ -1193,13 +1207,13 @@ void t_MainTask(void const * argument)
 
 
     //LCD_SelectLayer(1);
-    LCD_SelectLayer(0);
+    //LCD_SelectLayer(0);
 
 
-    BTE_SolidFill(240, 136, 0, 0, 0, COL_NAVY);
-    BTE_SolidFill(240, 136, 240, 0, 0, COL_GREEN);
-    BTE_SolidFill(240, 136, 0, 136, 0, COL_RED);
-    BTE_SolidFill(240, 136, 240, 136, 0, COL_YELLOW);
+    //BTE_SolidFill(240, 136, 0, 0, 0, COL_NAVY);
+    //BTE_SolidFill(240, 136, 240, 0, 0, COL_GREEN);
+    //BTE_SolidFill(240, 136, 0, 136, 0, COL_RED);
+    //BTE_SolidFill(240, 136, 240, 136, 0, COL_YELLOW);
 
 
     //FSMC_WriteDDRAM(img_krym.pData, DISPLAY_PIXELS);
@@ -1227,12 +1241,12 @@ void t_MainTask(void const * argument)
     for(;;)
     {
 
-        TEXT_PutString(100, 10, ds18b20[0].TemperatureStr);
-        TEXT_PutString(100, 32, xAdcData_BankA[0].str_temp);
-
-
-        TEXT_PutStringColored(200, 10, TS_Data.strXPos, COL_YELLOW, COL_NAVY);
-        TEXT_PutStringColored(260, 10, TS_Data.strYPos, COL_BLACK, COL_GREEN);
+//        TEXT_PutString(100, 10, ds18b20[0].TemperatureStr);
+//        TEXT_PutString(100, 32, xAdcData_BankA[0].str_temp);
+//
+//
+//        TEXT_PutStringColored(200, 10, TS_Data.strXPos, COL_YELLOW, COL_NAVY);
+//        TEXT_PutStringColored(260, 10, TS_Data.strYPos, COL_BLACK, COL_GREEN);
 
         LL_GPIO_SetOutputPin(TEST_OUT_GPIO_Port, TEST_OUT_Pin);
         Delay_us(20);
@@ -1339,20 +1353,19 @@ void t_TouchTask(void const * argument)
           BackLightTimeoutCounter = 40000;
 
           while( (xEventGroupGetBits(xEventGroupHandle)&TOUCH_EVENT_FLAG) == TOUCH_EVENT_FLAG ){
+
               TS_ReadXY_Manual();
               osDelay(10);
           }
 
           TS_Data.IsTouched = 0;
 
-          TS_Data.XPos = 0;
-          TS_Data.YPos = 0;
+          TS_Data.XPos = -1;
+          TS_Data.YPos = -1;
 
           sprintf(TS_Data.strXPos, "%3d", TS_Data.XPos);
           sprintf(TS_Data.strYPos, "%3d", TS_Data.YPos);
       }
-
-    //osDelay(50);
   }
   /* USER CODE END t_TouchTask */
 }

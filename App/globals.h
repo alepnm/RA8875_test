@@ -2,6 +2,8 @@
 #define GLOBALS_H_INCLUDED
 
 
+#include "GUI.h"
+
 
 const struct _img_data{
   uint16_t      xsize; // xSize

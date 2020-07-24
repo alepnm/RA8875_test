@@ -37,7 +37,7 @@
 
 
 extern EventGroupHandle_t xEventGroupHandle;
-
+extern uint16_t BackLightTimeoutCounter;
 
 struct _lcd Display;
 struct _tp TS_Data;
@@ -92,7 +92,7 @@ void RA8875_Init(void) {
     RA8875_ClearScreen();
 
     /* PLL clock frequency */
-    FSMC_WriteRegister(RA8875_REG_PLLC1, RA8875_PLLC1_PLL_PREDIV2|0x10);   // PLL Control Register1
+    FSMC_WriteRegister(RA8875_REG_PLLC1, RA8875_PLLC1_PLL_PREDIV2|0x15);   // PLL Control Register1
     LL_mDelay(1);
     FSMC_WriteRegister(RA8875_REG_PLLC2, RA8875_PLLC2_PLL_PLLDIV4);   // PLL Control Register2
     LL_mDelay(1);
@@ -183,7 +183,8 @@ void RA8875_Init(void) {
 
     Display.BackLightMax = BACKLIGHT_MAX_DEF;
     Display.BackLightMin = BACKLIGHT_MIN_DEF;
-    Display.Backlight = Display.Backlight;
+    BackLightTimeoutCounter = 10000;
+    Display.Backlight = 100;
 
     LCD_SetBacklight(Display.Backlight);
 
