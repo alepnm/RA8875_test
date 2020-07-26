@@ -64,6 +64,13 @@ extern "C" {
 #define EVENT1_FLAG         0x02
 #define EVENT2_FLAG         0x04
 #define EVENT3_FLAG         0x08
+
+
+#define SOUND_VOLUME_NONE   0x00
+#define SOUND_VOLUME_LOW    0x01
+#define SOUND_VOLUME_MID    0x05
+#define SOUND_VOLUME_HIGH   0x32
+
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/

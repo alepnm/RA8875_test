@@ -71,6 +71,11 @@ Purpose     : Display controller initialization
 //
 #define GUI_NUMBYTES  (1024) *  80   // x KByte
 
+#define TOUCH_AD_LEFT     0x03C0
+#define TOUCH_AD_RIGHT    0x0034
+#define TOUCH_AD_TOP      0x03B0
+#define TOUCH_AD_BOTTOM   0x0034
+
 /*********************************************************************
 *
 *       Static data
@@ -110,11 +115,14 @@ void GUI_X_Config(void)
 
   GUI_ALLOC_AssignMemory(extMem, GUI_NUMBYTES);
 
+
+
+
+
   //
   // Set default font
   //
   GUI_SetDefaultFont(GUI_DEFAULT_FONT);
-
 }
 
 /*************************** End of file ****************************/

@@ -20,7 +20,9 @@
 
 // USER START (Optionally insert additional includes)
 #include "WindowDLG.h"
-//#include "main.h"
+#include "ra8875.h"
+#include "ds18b20.h"
+#include "adc.h"
 // USER END
 
 /*********************************************************************
@@ -47,7 +49,8 @@
 #define ID_SLIDER_1 (GUI_ID_USER + 0x11)
 #define ID_TEXT_0 (GUI_ID_USER + 0x12)
 #define ID_TEXT_1 (GUI_ID_USER + 0x13)
-
+#define ID_TEXT_2 (GUI_ID_USER + 0x14)
+#define ID_TEXT_3 (GUI_ID_USER + 0x15)
 
 // USER START (Optionally insert additional defines)
 // USER END
@@ -60,10 +63,11 @@
 */
 
 // USER START (Optionally insert additional static data)
-WM_HWIN hWin, hText1, hText2, hSlider0;
+WM_HWIN hWin, hText1, hText2, hText3, hText4, hSlider0;
 WM_HTIMER hTimer;
 
 extern char st[];
+extern uint16_t BackLightTimeoutCounter;
 
 // USER END
 
@@ -71,27 +75,31 @@ extern char st[];
 *
 *       _aDialogCreate
 */
-static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-  { WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 480, 272, 0, 0x0, 0 },
-  { EDIT_CreateIndirect, "Edit", ID_EDIT_0, 377, 197, 51, 16, 0, 0x64, 0 },
-  { BUTTON_CreateIndirect, "Button", ID_BUTTON_0, 258, 191, 80, 20, 0, 0x0, 0 },
-  { SLIDER_CreateIndirect, "Slider", ID_SLIDER_0, 446, 15, 20, 218, 8, 0x0, 0 },
-  { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_0, 50, 20, 80, 20, 0, 0x0, 0 },
-  { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_1, 50, 45, 80, 20, 0, 0x0, 0 },
-  { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_2, 50, 70, 80, 20, 0, 0x0, 0 },
-  { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_3, 50, 95, 80, 20, 0, 0x0, 0 },
-  { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_4, 50, 120, 80, 20, 0, 0x0, 0 },
-  { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_5, 50, 145, 80, 20, 0, 0x0, 0 },
-  { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_6, 50, 170, 80, 20, 0, 0x0, 0 },
-  { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_7, 50, 195, 80, 20, 0, 0x0, 0 },
-  { RADIO_CreateIndirect, "Radio", ID_RADIO_0, 149, 113, 80, 99, 0, 0x1405, 0 },
-  { BUTTON_CreateIndirect, "0", ID_BUTTON_1, 8, 8, 22, 20, 0, 0x0, 0 },
-  { BUTTON_CreateIndirect, "0", ID_BUTTON_2, 448, 244, 22, 20, 0, 0x0, 0 },
-  { SLIDER_CreateIndirect, "Slider", ID_SLIDER_1, 9, 237, 427, 20, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "Text", ID_TEXT_0, 322, 30, 58, 15, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "Text", ID_TEXT_1, 322, 45, 58, 15, 0, 0x0, 0 },
-  // USER START (Optionally insert additional widgets)
-  // USER END
+static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] =
+{
+    { WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 480, 272, 0, 0x0, 0 },
+    { EDIT_CreateIndirect, "Edit", ID_EDIT_0, 377, 197, 51, 16, 0, 0x64, 0 },
+    { BUTTON_CreateIndirect, "Button", ID_BUTTON_0, 258, 191, 80, 20, 0, 0x0, 0 },
+    { SLIDER_CreateIndirect, "Slider", ID_SLIDER_0, 446, 15, 20, 218, 8, 0x0, 0 },
+    { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_0, 50, 20, 80, 20, 0, 0x0, 0 },
+    { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_1, 50, 45, 80, 20, 0, 0x0, 0 },
+    { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_2, 50, 70, 80, 20, 0, 0x0, 0 },
+    { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_3, 50, 95, 80, 20, 0, 0x0, 0 },
+    { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_4, 50, 120, 80, 20, 0, 0x0, 0 },
+    { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_5, 50, 145, 80, 20, 0, 0x0, 0 },
+    { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_6, 50, 170, 80, 20, 0, 0x0, 0 },
+    { CHECKBOX_CreateIndirect, "Checkbox", ID_CHECKBOX_7, 50, 195, 80, 20, 0, 0x0, 0 },
+    { RADIO_CreateIndirect, "Radio", ID_RADIO_0, 149, 113, 80, 99, 0, 0x1405, 0 },
+    { BUTTON_CreateIndirect, "0", ID_BUTTON_1, 8, 8, 22, 20, 0, 0x0, 0 },
+    { BUTTON_CreateIndirect, "0", ID_BUTTON_2, 448, 244, 22, 20, 0, 0x0, 0 },
+    { SLIDER_CreateIndirect, "Slider", ID_SLIDER_1, 9, 237, 427, 20, 0, 0x0, 0 },
+    { TEXT_CreateIndirect, "Text", ID_TEXT_0, 322, 30, 58, 15, 0, 0x0, 0 },
+    { TEXT_CreateIndirect, "Text", ID_TEXT_1, 322, 45, 58, 15, 0, 0x0, 0 },
+
+    { TEXT_CreateIndirect, "Text", ID_TEXT_2, 200, 10, 58, 15, 0, 0x0, 0 },
+    { TEXT_CreateIndirect, "Text", ID_TEXT_3, 240, 10, 58, 15, 0, 0x0, 0 },
+    // USER START (Optionally insert additional widgets)
+    // USER END
 };
 
 /*********************************************************************
@@ -108,362 +116,394 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 *
 *       _cbDialog
 */
-static void _cbDialog(WM_MESSAGE * pMsg) {
-  WM_HWIN hItem;
-  int     NCode;
-  int     Id;
-  // USER START (Optionally insert additional variables)
-
-  // USER END
-
-  switch (pMsg->MsgId) {
-  case WM_INIT_DIALOG:
-    //
-    // Initialization of 'Window'
-    //
-    hItem = pMsg->hWin;
-    WINDOW_SetBkColor(hItem, GUI_MAKE_COLOR(0x009E9E9E));
-    //
-    // Initialization of 'Edit'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_0);
-    EDIT_SetText(hItem, "0");
-    //
-    // Initialization of 'Checkbox'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_0);
-    CHECKBOX_SetText(hItem, "Check");
-    //
-    // Initialization of 'Checkbox'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_1);
-    CHECKBOX_SetText(hItem, "Check");
-    //
-    // Initialization of 'Checkbox'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_2);
-    CHECKBOX_SetText(hItem, "Check");
-    //
-    // Initialization of 'Checkbox'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_3);
-    CHECKBOX_SetText(hItem, "Check");
-    //
-    // Initialization of 'Checkbox'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_4);
-    CHECKBOX_SetText(hItem, "Check");
-    //
-    // Initialization of 'Checkbox'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_5);
-    CHECKBOX_SetText(hItem, "Check");
-    //
-    // Initialization of 'Checkbox'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_6);
-    CHECKBOX_SetText(hItem, "Check");
-    //
-    // Initialization of 'Checkbox'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_7);
-    CHECKBOX_SetText(hItem, "Check");
-    //
-    // Initialization of 'Radio'
-    //
-    hItem = WM_GetDialogItem(pMsg->hWin, ID_RADIO_0);
-    RADIO_SetFont(hItem, GUI_FONT_13_1);
-    // USER START (Optionally insert additional code for further widget initialization)
-
-    hText1 = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
-    TEXT_SetTextColor(hText1, GUI_BLUE);
-
-    hText2 = WM_GetDialogItem(pMsg->hWin, ID_TEXT_1);
-
-    hSlider0 = WM_GetDialogItem(pMsg->hWin, ID_SLIDER_0);
-    SLIDER_SetRange(hSlider0, 10, 100);
-
-    hTimer = WM_CreateTimer(pMsg->hWin, 0, 100, 0);
+static void _cbDialog(WM_MESSAGE * pMsg)
+{
+    WM_HWIN hItem;
+    int     NCode;
+    int     Id;
+    // USER START (Optionally insert additional variables)
 
     // USER END
-    break;
-  case WM_NOTIFY_PARENT:
-    Id    = WM_GetId(pMsg->hWinSrc);
-    NCode = pMsg->Data.v;
-    switch(Id) {
-    case ID_EDIT_0: // Notifications sent by 'Edit'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
+
+    switch (pMsg->MsgId)
+    {
+    case WM_INIT_DIALOG:
+        //
+        // Initialization of 'Window'
+        //
+        hItem = pMsg->hWin;
+        WINDOW_SetBkColor(hItem, GUI_MAKE_COLOR(0x009E9E9E));
+        //
+        // Initialization of 'Edit'
+        //
+        hItem = WM_GetDialogItem(pMsg->hWin, ID_EDIT_0);
+        EDIT_SetText(hItem, "0");
+        //
+        // Initialization of 'Checkbox'
+        //
+        hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_0);
+        CHECKBOX_SetText(hItem, "Check");
+        //
+        // Initialization of 'Checkbox'
+        //
+        hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_1);
+        CHECKBOX_SetText(hItem, "Check");
+        //
+        // Initialization of 'Checkbox'
+        //
+        hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_2);
+        CHECKBOX_SetText(hItem, "Check");
+        //
+        // Initialization of 'Checkbox'
+        //
+        hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_3);
+        CHECKBOX_SetText(hItem, "Check");
+        //
+        // Initialization of 'Checkbox'
+        //
+        hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_4);
+        CHECKBOX_SetText(hItem, "Check");
+        //
+        // Initialization of 'Checkbox'
+        //
+        hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_5);
+        CHECKBOX_SetText(hItem, "Check");
+        //
+        // Initialization of 'Checkbox'
+        //
+        hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_6);
+        CHECKBOX_SetText(hItem, "Check");
+        //
+        // Initialization of 'Checkbox'
+        //
+        hItem = WM_GetDialogItem(pMsg->hWin, ID_CHECKBOX_7);
+        CHECKBOX_SetText(hItem, "Check");
+        //
+        // Initialization of 'Radio'
+        //
+        hItem = WM_GetDialogItem(pMsg->hWin, ID_RADIO_0);
+        RADIO_SetFont(hItem, GUI_FONT_13_1);
+        // USER START (Optionally insert additional code for further widget initialization)
+
+        hText1 = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
+        TEXT_SetTextColor(hText1, GUI_BLUE);
+
+        hText2 = WM_GetDialogItem(pMsg->hWin, ID_TEXT_1);
+
+        hText3 = WM_GetDialogItem(pMsg->hWin, ID_TEXT_2);
+        TEXT_SetFont( hText3, &GUI_Font8x16);
+        TEXT_SetTextColor(hText3, GUI_GREEN);
+
+        hText4 = WM_GetDialogItem(pMsg->hWin, ID_TEXT_3);
+        TEXT_SetFont( hText4, &GUI_Font8x16);
+        TEXT_SetTextColor(hText4, GUI_GREEN);
+
+        hSlider0 = WM_GetDialogItem(pMsg->hWin, ID_SLIDER_0);
+        SLIDER_SetRange(hSlider0, 10, 100);
+
+        hTimer = WM_CreateTimer(pMsg->hWin, 0, 10, 0);
+
         // USER END
         break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
+    case WM_NOTIFY_PARENT:
+        Id    = WM_GetId(pMsg->hWinSrc);
+        NCode = pMsg->Data.v;
+        switch(Id)
+        {
+        case ID_EDIT_0: // Notifications sent by 'Edit'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_VALUE_CHANGED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+        case ID_BUTTON_0: // Notifications sent by 'Button'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+        case ID_SLIDER_0: // Notifications sent by 'Slider'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_VALUE_CHANGED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+        case ID_CHECKBOX_0: // Notifications sent by 'Checkbox'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_VALUE_CHANGED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+        case ID_CHECKBOX_1: // Notifications sent by 'Checkbox'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_VALUE_CHANGED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+        case ID_CHECKBOX_2: // Notifications sent by 'Checkbox'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_VALUE_CHANGED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+        case ID_CHECKBOX_3: // Notifications sent by 'Checkbox'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_VALUE_CHANGED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+        case ID_CHECKBOX_4: // Notifications sent by 'Checkbox'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_VALUE_CHANGED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+        case ID_CHECKBOX_5: // Notifications sent by 'Checkbox'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_VALUE_CHANGED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+        case ID_CHECKBOX_6: // Notifications sent by 'Checkbox'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_VALUE_CHANGED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+        case ID_CHECKBOX_7: // Notifications sent by 'Checkbox'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_VALUE_CHANGED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+        case ID_RADIO_0: // Notifications sent by 'Radio'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_VALUE_CHANGED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+        case ID_BUTTON_1: // Notifications sent by '0'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+        case ID_BUTTON_2: // Notifications sent by '0'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+        case ID_SLIDER_1: // Notifications sent by 'Slider'
+            switch(NCode)
+            {
+            case WM_NOTIFICATION_CLICKED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_RELEASED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+            case WM_NOTIFICATION_VALUE_CHANGED:
+                // USER START (Optionally insert code for reacting on notification message)
+                // USER END
+                break;
+                // USER START (Optionally insert additional code for further notification handling)
+                // USER END
+            }
+            break;
+            // USER START (Optionally insert additional code for further Ids)
+            // USER END
+        }
         break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_BUTTON_0: // Notifications sent by 'Button'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_SLIDER_0: // Notifications sent by 'Slider'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_CHECKBOX_0: // Notifications sent by 'Checkbox'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_CHECKBOX_1: // Notifications sent by 'Checkbox'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_CHECKBOX_2: // Notifications sent by 'Checkbox'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_CHECKBOX_3: // Notifications sent by 'Checkbox'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_CHECKBOX_4: // Notifications sent by 'Checkbox'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_CHECKBOX_5: // Notifications sent by 'Checkbox'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_CHECKBOX_6: // Notifications sent by 'Checkbox'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_CHECKBOX_7: // Notifications sent by 'Checkbox'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_RADIO_0: // Notifications sent by 'Radio'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_BUTTON_1: // Notifications sent by '0'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_BUTTON_2: // Notifications sent by '0'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    case ID_SLIDER_1: // Notifications sent by 'Slider'
-      switch(NCode) {
-      case WM_NOTIFICATION_CLICKED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_RELEASED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      case WM_NOTIFICATION_VALUE_CHANGED:
-        // USER START (Optionally insert code for reacting on notification message)
-        // USER END
-        break;
-      // USER START (Optionally insert additional code for further notification handling)
-      // USER END
-      }
-      break;
-    // USER START (Optionally insert additional code for further Ids)
-    // USER END
-    }
-    break;
-  // USER START (Optionally insert additional message handling)
+        // USER START (Optionally insert additional message handling)
 
     case WM_TIMER:
+        TEXT_SetText(hText1, ds18b20[0].TemperatureStr);
+        TEXT_SetText(hText2, xAdcData_BankA[0].str_temp);
+        TEXT_SetText(hText3, TP_Data.strXPos);
+        TEXT_SetText(hText4, TP_Data.strYPos);
 
+
+        WM_RestartTimer(pMsg->Data.v, 100);
         break;
 
-  // USER END
-  default:
-    WM_DefaultProc(pMsg);
-    break;
-  }
+        // USER END
+    default:
+        WM_DefaultProc(pMsg);
+        break;
+    }
 }
 
 /*********************************************************************
@@ -478,12 +518,13 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 */
 WM_HWIN CreateWindow(void);
 
-WM_HWIN CreateWindow(void) {
+WM_HWIN CreateWindow(void)
+{
 
-  WM_HWIN hWin;
+    WM_HWIN hWin;
 
-  hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
-  return hWin;
+    hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
+    return hWin;
 }
 
 // USER START (Optionally insert additional public code)

@@ -40,7 +40,6 @@ extern EventGroupHandle_t xEventGroupHandle;
 extern uint16_t BackLightTimeoutCounter;
 
 struct _lcd Display;
-struct _tp TS_Data;
 
 const struct _bte Background_Enot = {
 
@@ -153,8 +152,8 @@ void RA8875_Init(void) {
 
     FSMC_WriteRegister(RA8875_REG_BECR0, RA8875_BECR0_BTE_SOURCE_BLOCK_MODE|RA8875_BECR0_BTE_DEST_BLOCK_MODE);
 
-    FSMC_WriteRegister(RA8875_REG_TPCR0, RA8875_TPCR0_TOUCH_ENABLE|RA8875_TPCR0_WAIT_4096_CLOCS|RA8875_TPCR0_WAKE_DISABLE|RA8875_TPCR0_SYSTEM_CLK_DIV16);
-    FSMC_WriteRegister(RA8875_REG_TPCR1, RA8875_TPCR0_MANUAL_MODE|RA8875_TPCR0_VREF_INTERNAL|RA8875_TPCR0_DEBOUNCE_ENABLE|RA8875_TPCR0_MODE_WAIT_EVENT);
+    FSMC_WriteRegister(RA8875_REG_TPCR0, RA8875_TPCR0_TOUCH_ENABLE|RA8875_TPCR0_WAIT_4096_CLOCS|RA8875_TPCR0_WAKE_DISABLE|RA8875_TPCR0_SYSTEM_CLK_DIV1);
+    FSMC_WriteRegister(RA8875_REG_TPCR1, RA8875_TPCR1_MANUAL_MODE|RA8875_TPCR1_VREF_INTERNAL|RA8875_TPCR1_DEBOUNCE_DISABLE|RA8875_TPCR1_MODE_WAIT_EVENT);
 
     FSMC_WriteRegister(RA8875_REG_P1CR, RA8875_PxCR_PWM_ENABLE|RA8875_PxCR_PWM_CLOCK_DIV8);    // PWM1 Control Register
     FSMC_WriteRegister(RA8875_REG_P1DCR, 0x80);
@@ -175,7 +174,7 @@ void RA8875_Init(void) {
 
     RA8875_HW_Test();
 
-    if( TS_Init() ){
+    if( TP_Init() ){
         TEXT_PutStringColored(0, 32, "Touchscreen initial OK...", COL_GREEN, COL_BLACK);
     }else{
         TEXT_PutStringColored(0, 32, "Touchscreen initial FAIL...", COL_RED, COL_BLACK);
@@ -503,30 +502,30 @@ void RA8875_IRQ_Handler(void){
     }
 
     /* check for BTE process complete interrupt */
-    if((reg&0x02) == 0x02){
+    if((reg&RA8875_INTC2_BTE_COMPLETE_IF) == RA8875_INTC2_BTE_COMPLETE_IF){
 
-        reg |= 0x02;   // clear BTE process complete interrupt
+        reg |= RA8875_INTC2_BTE_COMPLETE_IF;   // clear BTE process complete interrupt
     }
 
     /* check for touch interrupt */
-    if((reg&0x04) == 0x04){
+    if((reg&RA8875_INTC2_TP_IF) == RA8875_INTC2_TP_IF){
+
+        reg |= RA8875_INTC2_TP_IF;   // numetam touch irq flaga
 
         //xResult = xEventGroupSetBitsFromISR( xEventGroupHandle, TOUCH_EVENT_FLAG, &xHigherPriorityTaskWoken );
-        //FSMC_WriteRegister(0xF1, reg|0x04);    //reg |= 0x04;   // numetam touch irq flaga
-
         //if( xResult != pdFAIL ) portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
     }
 
     /* check for DMA interrupt */
-    if((reg&0x08) == 0x08){
+    if((reg&RA8875_INTC2_DMA_IF) == RA8875_INTC2_DMA_IF){
 
-        reg |= 0x08;   // clear the DMA interrupt
+        reg |= RA8875_INTC2_DMA_IF;   // clear the DMA interrupt
     }
 
     /* check for keyscan interrupt */
-    if((reg&0x10) == 0x10){
+    if((reg&RA8875_INTC2_KEYSCAN_IF) == RA8875_INTC2_KEYSCAN_IF){
 
-        reg |= 0x10;   // clear the keyscan interrupt
+        reg |= RA8875_INTC2_KEYSCAN_IF;   // clear the keyscan interrupt
     }
 
     FSMC_WriteRegister(RA8875_REG_INTC2, reg);

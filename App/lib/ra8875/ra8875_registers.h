@@ -401,16 +401,20 @@
 
 
 /* Touch Panel Control Register1 (TPCR1) REG[71h] */
-#define RA8875_TPCR0_AUTO_MODE                   0x00
-#define RA8875_TPCR0_MANUAL_MODE                 0x40
-#define RA8875_TPCR0_VREF_INTERNAL               0x00
-#define RA8875_TPCR0_VREF_EXTERNAL               0x20
-#define RA8875_TPCR0_DEBOUNCE_DISABLE            0x00
-#define RA8875_TPCR0_DEBOUNCE_ENABLE             0x04
-#define RA8875_TPCR0_MODE_IDLE                   0x00
-#define RA8875_TPCR0_MODE_WAIT_EVENT             0x01
-#define RA8875_TPCR0_LATCH_XDATA                 0x02
-#define RA8875_TPCR0_LATCH_YDATA                 0x03
+#define RA8875_TPCR1_AUTO_MODE                   0x00
+#define RA8875_TPCR1_MANUAL_MODE                 0x40
+#define RA8875_TPCR1_VREF_INTERNAL               0x00
+#define RA8875_TPCR1_VREF_EXTERNAL               0x20
+#define RA8875_TPCR1_DEBOUNCE_DISABLE            0x00
+#define RA8875_TPCR1_DEBOUNCE_ENABLE             0x04
+#define RA8875_TPCR1_MODE_IDLE                   0x00
+#define RA8875_TPCR1_MODE_WAIT_EVENT             0x01
+#define RA8875_TPCR1_LATCH_XDATA                 0x02
+#define RA8875_TPCR1_LATCH_YDATA                 0x03
+
+
+/* Touch Panel X/Y Low Byte Data Register (TPXYL) REG[74h] */
+#define RA8875_TPXYL_TP_TOUCH_EVENT_MSK          0x80
 
 
 /* Interrupt Control Register Touch bits */

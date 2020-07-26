@@ -64,8 +64,10 @@ SRAM_HandleTypeDef hsram1;
 osThreadId GUI_TaskHandle;
 osThreadId Main_TaskHandle;
 osThreadId MbTaskHandle;
-osThreadId Touch_TaskHandle;
+osTimerId TS_TimerHandle;
 /* USER CODE BEGIN PV */
+
+struct _sys Sys;
 
 /*  */
 static StaticEventGroup_t xEventGroupControlBlock;   // EventGroup objektas
@@ -85,7 +87,6 @@ uint8_t buf[1024];
 
 extern TaskHandle_t Ds18b20Handle;
 extern TaskHandle_t AdcHandle;
-
 
 extern const uint16_t _ackrym[];
 /* USER CODE END PV */
@@ -109,7 +110,7 @@ static void MX_USART2_UART_Init(void);
 void t_GuiTask(void const * argument);
 void t_MainTask(void const * argument);
 void t_ModbusTask(void const * argument);
-void t_TouchTask(void const * argument);
+void TS_TimerCallback(void const * argument);
 
 /* USER CODE BEGIN PFP */
 extern void xADC_Task(void* arg);
@@ -165,6 +166,15 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
+
+  /* STM32F405x/407x/415x/417x Revision Z devices: prefetch is supported  */
+  if (HAL_GetREVID() == 0x1001)
+  {
+    /* Enable the Flash prefetch */
+    __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
+  }
+
+
   LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_13);  // A18 - pagal default aukstas lygis
   LL_GPIO_ResetOutputPin(GPIOD, LL_GPIO_PIN_4); // RD - pagal default zemas lygis
   LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_9);
@@ -193,6 +203,11 @@ int main(void)
   xEventGroupHandle = xEventGroupCreateStatic(&xEventGroupControlBlock);
   /* USER CODE END RTOS_SEMAPHORES */
 
+  /* Create the timer(s) */
+  /* definition and creation of TS_Timer */
+  osTimerDef(TS_Timer, TS_TimerCallback);
+  TS_TimerHandle = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, NULL);
+
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
@@ -203,20 +218,16 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of GUI_Task */
-  osThreadDef(GUI_Task, t_GuiTask, osPriorityNormal, 0, 384);
+  osThreadDef(GUI_Task, t_GuiTask, osPriorityIdle, 0, 512);
   GUI_TaskHandle = osThreadCreate(osThread(GUI_Task), NULL);
 
   /* definition and creation of Main_Task */
-  osThreadDef(Main_Task, t_MainTask, osPriorityNormal, 0, 256);
+  osThreadDef(Main_Task, t_MainTask, osPriorityNormal, 0, 128);
   Main_TaskHandle = osThreadCreate(osThread(Main_Task), NULL);
 
   /* definition and creation of MbTask */
-  osThreadDef(MbTask, t_ModbusTask, osPriorityNormal, 0, 256);
+  osThreadDef(MbTask, t_ModbusTask, osPriorityIdle, 0, 512);
   MbTaskHandle = osThreadCreate(osThread(MbTask), NULL);
-
-  /* definition and creation of Touch_Task */
-  osThreadDef(Touch_Task, t_TouchTask, osPriorityNormal, 0, 128);
-  Touch_TaskHandle = osThreadCreate(osThread(Touch_Task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -225,6 +236,9 @@ int main(void)
 #endif
 
   ADC_TaskInit(tskIDLE_PRIORITY);
+
+
+  GUI_X_InitOS();
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */
@@ -722,7 +736,7 @@ static void MX_TIM10_Init(void)
   TIM_OC_InitStruct.OCMode = LL_TIM_OCMODE_PWM1;
   TIM_OC_InitStruct.OCState = LL_TIM_OCSTATE_DISABLE;
   TIM_OC_InitStruct.OCNState = LL_TIM_OCSTATE_DISABLE;
-  TIM_OC_InitStruct.CompareValue = 50;
+  TIM_OC_InitStruct.CompareValue = 0;
   TIM_OC_InitStruct.OCPolarity = LL_TIM_OCPOLARITY_HIGH;
   LL_TIM_OC_Init(TIM10, LL_TIM_CHANNEL_CH1, &TIM_OC_InitStruct);
   LL_TIM_OC_DisableFast(TIM10, LL_TIM_CHANNEL_CH1);
@@ -1117,8 +1131,8 @@ static void MX_FSMC_Init(void)
   Timing.AddressHoldTime = 15;
   Timing.DataSetupTime = 9;
   Timing.BusTurnAroundDuration = 0;
-  Timing.CLKDivision = 16;
-  Timing.DataLatency = 17;
+  Timing.CLKDivision = 2;
+  Timing.DataLatency = 2;
   Timing.AccessMode = FSMC_ACCESS_MODE_A;
   /* ExtTiming */
 
@@ -1142,7 +1156,16 @@ static void MX_FSMC_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+static void SysInit(void){
 
+    Sys.SoundVolume = SOUND_VOLUME_LOW;
+
+
+
+    //RA8875_Init();
+
+    LL_TIM_OC_SetCompareCH1(TIM10, Sys.SoundVolume);
+}
 
 /* USER CODE END 4 */
 
@@ -1155,27 +1178,26 @@ static void MX_FSMC_Init(void)
 /* USER CODE END Header_t_GuiTask */
 void t_GuiTask(void const * argument)
 {
-    /* USER CODE BEGIN 5 */
-    //ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
+  /* USER CODE BEGIN 5 */
+
     GUI_Init();
+
+    /* Start the TS Timer */
+    osTimerStart(TS_TimerHandle, 50);
+
     hWin = CreateWindow();
 
     xTaskNotifyGive( Main_TaskHandle );
 
-
     /* Infinite loop */
     for(;;)
     {
-         GUI_TOUCH_StoreState(TS_Data.XPos, TS_Data.YPos);
 
-
-         //GUI_Delay(10);
 
          GUI_Exec();
-         //GUI_X_ExecIdle(); // --> user implement GUI_X.c
-         //osDelay(100);
+         GUI_X_ExecIdle();
     }
-    /* USER CODE END 5 */
+  /* USER CODE END 5 */
 }
 
 /* USER CODE BEGIN Header_t_MainTask */
@@ -1188,96 +1210,18 @@ void t_GuiTask(void const * argument)
 void t_MainTask(void const * argument)
 {
   /* USER CODE BEGIN t_MainTask */
-    uint16_t i = 0;
-
-    //RA8875_Init();
-    //xTaskNotifyGive( GUI_TaskHandle );
+    SysInit();
 
     ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
 
-    //xTaskNotifyGive( GUI_TaskHandle );
-    //xTaskNotifyGive( MbTaskHandle );
-
-    //BTE_SolidFill(480, 272, 0, 0, 0, COL_BLACK);
-    //BTE_SolidFill(480, 272, 0, 0, 1, COL_NAVY);
-
-    /* irasom foninius paveiksliukus */
-    //LCD_SetBackground(img_enot.pData, DISPLAY_PIXELS, 0);
-    //LCD_SetBackground(img_krym.pData, DISPLAY_PIXELS, 1);
-
-
-    //LCD_SelectLayer(1);
-    //LCD_SelectLayer(0);
-
-
-    //BTE_SolidFill(240, 136, 0, 0, 0, COL_NAVY);
-    //BTE_SolidFill(240, 136, 240, 0, 0, COL_GREEN);
-    //BTE_SolidFill(240, 136, 0, 136, 0, COL_RED);
-    //BTE_SolidFill(240, 136, 240, 136, 0, COL_YELLOW);
-
-
-    //FSMC_WriteDDRAM(img_krym.pData, DISPLAY_PIXELS);
-
-
-    //BTE_RasterOperation(X_SIZE, Y_SIZE, 0, 0, 1, 0, 0, 0, BTE_ROP_MOVE_POSITIVE, BTE_BOOL_OP2);
-    //BTE_MoveBlockPositiveDir(100, 100, 20, 10, 0, 200, 150, 0);
-
-    //LCD_ShowLayer(0);
-
-
-    //uint8_t qqq = FLASH_ReadByte(640);
-
-    //FLASH_GetScreenByAddress(480*272);
-
-
-    //GEO_DrawCircle(240, 136, 50, 1);
-    //GEO_DrawRect(200, 50, 300, 150, 1);
-    //GEO_DrawTriangle(240, 30, 120, 200, 360, 200, 0);
-
-    //LCD_DisplayOFF();
-
+    xTaskNotifyGive( MbTaskHandle );
 
     /* Infinite loop */
     for(;;)
     {
-
-//        TEXT_PutString(100, 10, ds18b20[0].TemperatureStr);
-//        TEXT_PutString(100, 32, xAdcData_BankA[0].str_temp);
-//
-//
-//        TEXT_PutStringColored(200, 10, TS_Data.strXPos, COL_YELLOW, COL_NAVY);
-//        TEXT_PutStringColored(260, 10, TS_Data.strYPos, COL_BLACK, COL_GREEN);
-
         LL_GPIO_SetOutputPin(TEST_OUT_GPIO_Port, TEST_OUT_Pin);
         Delay_us(20);
         LL_GPIO_ResetOutputPin(TEST_OUT_GPIO_Port, TEST_OUT_Pin);
-
-
-        if( TP_CheckForTouch() ){
-            (void)xEventGroupSetBits( xEventGroupHandle, TOUCH_EVENT_FLAG );
-        }else{
-            (void)xEventGroupClearBits( xEventGroupHandle, TOUCH_EVENT_FLAG );
-        }
-
-
-        if(BackLightTimeoutCounter) Display.Backlight = Display.BackLightMax;
-        else{
-            if(Display.Backlight > Display.BackLightMin) Display.Backlight--;
-        }
-
-        LCD_SetBacklight(Display.Backlight);
-
-
-//        if(i == 10) FLASH_GetScreenByAddress(0x000000);
-//
-//        if(i == 20){
-//
-//            i = 0;
-//            FLASH_GetScreenByAddress(0x03FC00);
-//        }
-//
-//        i++;
-
 
         osDelay(20);
     }
@@ -1325,49 +1269,48 @@ void t_ModbusTask(void const * argument)
   /* USER CODE END t_ModbusTask */
 }
 
-/* USER CODE BEGIN Header_t_TouchTask */
-/**
-* @brief Function implementing the Touch_Task thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_t_TouchTask */
-void t_TouchTask(void const * argument)
+/* TS_TimerCallback function */
+void TS_TimerCallback(void const * argument)
 {
-  /* USER CODE BEGIN t_TouchTask */
-  EventBits_t uxBits;
+    static uint8_t lastPressed;
 
-  /* Infinite loop */
-  for(;;)
-  {
-      uxBits = xEventGroupWaitBits( xEventGroupHandle, TOUCH_EVENT_FLAG, pdFALSE, pdFALSE, portMAX_DELAY );
+    /* USER CODE BEGIN TS_TimerCallback */
 
-      if( (uxBits&TOUCH_EVENT_FLAG) == TOUCH_EVENT_FLAG){
+      GUI_X_Lock();
 
-          LL_TIM_CC_EnableChannel(TIM10, LL_TIM_CHANNEL_CH1);
-          osDelay(60);
-          LL_TIM_CC_DisableChannel(TIM10, LL_TIM_CHANNEL_CH1);
+      TP_Data.State.Pressed = TP_CheckStatus();
 
-          TS_Data.IsTouched = 1;
+      if(TP_Data.State.Pressed){
 
-          BackLightTimeoutCounter = 40000;
-
-          while( (xEventGroupGetBits(xEventGroupHandle)&TOUCH_EVENT_FLAG) == TOUCH_EVENT_FLAG ){
-
-              TS_ReadXY_Manual();
-              osDelay(10);
+          if(lastPressed != TP_Data.State.Pressed){
+              LL_TIM_CC_EnableChannel(TIM10, LL_TIM_CHANNEL_CH1);
+              osDelay(60);
+              LL_TIM_CC_DisableChannel(TIM10, LL_TIM_CHANNEL_CH1);
           }
 
-          TS_Data.IsTouched = 0;
+          TP_ReadXY_Manual();
+          BackLightTimeoutCounter = 40000;
 
-          TS_Data.XPos = -1;
-          TS_Data.YPos = -1;
-
-          sprintf(TS_Data.strXPos, "%3d", TS_Data.XPos);
-          sprintf(TS_Data.strYPos, "%3d", TS_Data.YPos);
+      }else{
+          TP_Data.State.x = -1;
+          TP_Data.State.y = -1;
       }
-  }
-  /* USER CODE END t_TouchTask */
+
+      lastPressed = TP_Data.State.Pressed;
+
+      GUI_TOUCH_StoreStateEx(&TP_Data.State);
+
+
+      if(BackLightTimeoutCounter) Display.Backlight = Display.BackLightMax;
+      else{
+          if(Display.Backlight > Display.BackLightMin) Display.Backlight--;
+      }
+
+      LCD_SetBacklight(Display.Backlight);
+
+      GUI_X_Unlock();
+
+  /* USER CODE END TS_TimerCallback */
 }
 
  /**

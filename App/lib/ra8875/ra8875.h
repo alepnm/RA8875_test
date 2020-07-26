@@ -4,6 +4,7 @@
 #define __RA8875_H
 
 /* Includes ------------------------------------------------------------------*/
+#include "GUI.h"
 #include "ra8875_registers.h"
 #include "ra_fsmc.h"
 #include "ra_bte.h"
@@ -24,6 +25,15 @@
 
 #define RA8875_ROM_FONT_CHIP    0
 #define RA8875_ROM_FLASH_CHIP   1
+
+
+struct _sys{
+    uint8_t SoundVolume;
+
+
+};
+
+extern struct _sys Sys;
 
 
 struct _lcd{
@@ -149,30 +159,26 @@ uint8_t FLASH_ReadByte(uint32_t addr);
 void FLASH_GetScreenByAddress(uint32_t addr);
 
 
-
 /* Touchscreen  */
 struct _tp{
-    uint8_t        IsEnabled;
-    uint8_t        IsTouched;
-    uint8_t        ConvStep;
 
-    __IO uint16_t  XAdc;
-    __IO uint16_t  YAdc;
-    __IO int       XPos;
-    __IO int       YPos;
-
-    char           strXPos[10];
-    char           strYPos[10];
+    uint8_t            IsEnabled;
+    __IO uint16_t      XAdc;
+    __IO uint16_t      YAdc;
+    GUI_PID_STATE      State;
+    char               strXPos[10];
+    char               strYPos[10];
 };
 
-extern struct _tp TS_Data;
+extern struct _tp TP_Data;
 
 
-uint8_t TS_Init(void);
-void    TS_ReadXY_Manual(void);
-void    TS_ReadXY(void);
-uint8_t TP_CheckForTouch(void);
-void    TS_IRQ_Handler(void);
+uint8_t TP_Init(void);
+void    TP_ReadXY_Manual(void);
+void    TP_ReadXY(void);
+void    TP_ReadXY_Avg(void);
+uint8_t TP_CheckStatus(void);
+void    TP_IRQ_Handler(void);
 
 #endif /* __RA8875_H */
 
